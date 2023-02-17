@@ -1,0 +1,9 @@
+build/*
+
+*.aux
+*.fls
+*.log
+*.synctex.gz
+*.pdf
+*.fdb_latexmk
+
