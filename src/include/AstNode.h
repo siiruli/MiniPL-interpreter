@@ -1,55 +1,71 @@
 #include <string>
+#include <vector>
 #include "Visitor.h"
-class AstNode {
+#include "Value.h"
+
+enum Type {Int, Bool, String};
+
+
+class ExprAstNode {
   public: 
-    const void visit(Visitor * visitor);
-
-};
-
-class ExprAstNode : AstNode{
-  public: 
-    int value;
-    const void visit(Visitor * visitor);
+    Value value;
 };
 
 
-class StatementsAstNode : AstNode{
-  public:
-    const void visit(Visitor * visitor);
-};
 
-class DeclAstNode : AstNode{
+class DeclAstNode {
   public: 
     std::string varId;
-    int type;
+    Type type;
 };
 
-class AssignAstNode : AstNode{
+class AssignAstNode {
   public:
     std::string varId;
     ExprAstNode expr;
 };
 
-class ForAstNode : AstNode{
+
+
+class ReadAstNode {
+  public: 
+    std::string varId;
+};
+
+class PrintAstNode {
+  public:
+    ExprAstNode expr;
+};
+
+class StatementsAstNode;
+class ForAstNode;
+class IfAstNode;
+
+typedef std::variant<
+  ExprAstNode,
+  DeclAstNode, 
+  AssignAstNode, 
+  ForAstNode, 
+  IfAstNode, 
+  ReadAstNode, 
+  PrintAstNode,
+  StatementsAstNode> AstNode;
+
+class StatementsAstNode {
+  public:
+    std::vector<AstNode> statements; 
+};
+
+class ForAstNode {
   public:
     std::string varId;
     ExprAstNode startExpr, endExpr;
     StatementsAstNode statements;
 };
 
-class IfAstNode : AstNode{
+class IfAstNode {
   public:
     ExprAstNode expr;
     StatementsAstNode ifStatements, elseStatements;
-};
-
-class ReadAstNode : AstNode{
-  public: 
-    std::string varId;
-};
-
-class PrintAstNode : AstNode{
-  public:
-    ExprAstNode expr;
 };
 

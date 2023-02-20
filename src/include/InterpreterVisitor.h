@@ -1,27 +1,29 @@
 #include <map>
+#include "Value.h"
 #include "Visitor.h"
 #include "AstNode.h"
 
-enum Type {Int, Bool, String};
+
 
 class InterpreterVisitor : Visitor {
   public:
-    void visitIf(IfAstNode &node);
-    void visitDecl(DeclAstNode &node);
-    void visitAssign(AssignAstNode &node);
-    void visitFor(ForAstNode & node);
-    void visitPrint(PrintAstNode & node);
-    void visitRead(ReadAstNode & node);
+    void visit(AstNode &node);
+    void visit(IfAstNode &node);
+    void visit(DeclAstNode &node);
+    void visit(AssignAstNode &node);
+    void visit(ForAstNode &node);
+    void visit(PrintAstNode &node);
+    void visit(ReadAstNode &node);
+    void visit(ExprAstNode &node);
+    void visit(StatementsAstNode &node);
   private:
   
-    std::map<std::string, int> variables; 
+    std::map<std::string, Value> variables; 
 
-    template<typename T> 
-    void setValue(std::string varId, T value);
-    
+    // use unique_ptr
 
-    void init(int type, std::string varId);
-    int getType(std::string varId);
-    int getValue(std::string varId);
+    void initVar(Type type, std::string varId);
+    void setVar(std::string varId, Value val);
+    Value &getVar(std::string varId);
     
 };
