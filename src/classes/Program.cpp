@@ -1,8 +1,9 @@
 #include "Program.h"
 
 ProgramIterator::ProgramIterator(std::string &program) :
-  program(program) {
-    pos = Position{0, 0};
+  program(program) 
+{
+  pos = Position{0, 0};
 }
 
 void ProgramIterator::move(){
