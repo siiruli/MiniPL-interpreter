@@ -17,30 +17,34 @@ std::optional<Token> Scanner::getToken(){
       if(next == '/' || next == '*') scanComment();
     }
     // end if c is not whitespace
-    if(!isspace(*c)) break;
+    if(!isspace(static_cast<unsigned char>(*c))) break;
+
+    program.move();
   }
   // scan a token  
   Position startPos = program.currentPosition();
-  std::optional<TokenValue> tokenValue;
+  std::optional<std::pair<TokenType, TokenValue>> token;
 
   if(auto c = program.currentChar()){
     if(isalpha(*c)){
       std::string id = scanIdentifier();
       // if id is a keyword, return the keyword
       if(auto keyword = isKeyword(id)){
-        tokenValue = *keyword;
+        token  = {TokenType::Keyword, *keyword};
       }else{
-        tokenValue = id;
+        token = {TokenType::Identifier, id};
       }
     }
-    if(*c == '"') tokenValue = scanString();
+    if(*c == '"') token = {TokenType::Literal, scanString()};
   }
 
   Position endPos = program.currentPosition();
   program.move();
 
-  if(auto value = tokenValue) return Token{startPos, endPos, *value};
-  else {
+  if(token.has_value()) {
+    auto [type, value] = token.value();
+    return Token{type, startPos, endPos, value};
+  }else {
     return {};
   }
 }
@@ -72,9 +76,10 @@ void Scanner::scanComment(){
   }
 }
 std::optional<Keyword> Scanner::isKeyword(std::string &ident){
-  for(int i = 0; i<13; ++i) {
-    if(ident == keywords[i]) return static_cast<Keyword>(i);
+  for(int i = 0; i<n_keywords; ++i) {
+    if(ident == std::string(keywords[i])) return static_cast<Keyword>(i);
   }
+  return {};
 }
 
 std::string Scanner::scanIdentifier(){
@@ -94,29 +99,30 @@ std::string Scanner::scanString(){
   std::string error = "";
 
   if( auto c = program.currentChar(); *c == '"'){
-    program.peekChar();
+    program.move();
   }
 
   while(program.currentChar() != '"'){
-    if(auto c = program.currentChar()){
-
-      if(c == '\n'){
-        // ERROR
-      }else if(c == '\\'){
-        // escape characters
-        if(auto c = program.peekChar()){
-          lexeme += *c;
-        }else{
-          // ERRROR
-        }
-      }else{
+    if(!program.currentChar().has_value()){
+      // error
+    }
+    char c = program.currentChar().value();
+    if(c == '\n'){
+      // ERROR
+    }
+    
+    if(c == '\\'){
+      // escape characters
+      if(auto c = program.peekChar()){
         lexeme += *c;
+      }else{
+        // ERRROR
       }
     }else{
-
+      lexeme += c;
     }
 
-
+    program.move();
   }
   return lexeme;
 }

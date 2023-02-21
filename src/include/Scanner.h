@@ -12,6 +12,7 @@ enum class Keyword {
   Var = 0, For, End, In, Do, Read, Print, Int, String, Bool, 
   Assert, If, Else
 };
+constexpr int n_keywords = 13;
 constexpr const char *keywords[] = {
   "var", "for" , "end" , "in" , "do" , "read" , "print" , 
   "int" , "string" , "bool" , "assert" , "if" , "else"
@@ -21,13 +22,16 @@ enum class Punctuation {
   Assign, Semicolon, Colon, Range, OpenParen, ClosedParen
 };
 
-enum class CharType {Letter, Digit, Punct, Operator};
-
 typedef std::variant<
   int, std::string, Operator, Keyword, Punctuation
 > TokenValue;
 
+enum class TokenType {
+  Literal, Identifier, Operator, Keyword, Punctuation
+};
+
 struct Token {
+  TokenType type;
   Position startPos;
   Position endPos;
   TokenValue value;
@@ -50,9 +54,6 @@ class Scanner {
     Punctuation scanPunctuation();
 
     std::optional<Keyword> isKeyword(std::string &id);    
-
-
-    CharType characterType(char c);
 
   
 

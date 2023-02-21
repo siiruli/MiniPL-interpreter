@@ -8,7 +8,7 @@ ProgramIterator::ProgramIterator(std::string &program) :
 
 void ProgramIterator::move(){
   if(currentChar() == '\n') ++pos.lineNumber;
-  ++pos.charIndex;
+  if(pos.charIndex < program.size()) ++pos.charIndex;
 }
 
 const std::optional<char> ProgramIterator::currentChar(){

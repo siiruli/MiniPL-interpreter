@@ -26,5 +26,12 @@ TEST_F(ProgramTest, programIterator) {
   EXPECT_EQ(it.currentPosition().lineNumber, 1);
   EXPECT_EQ(it.currentChar(), 'b');
   EXPECT_FALSE(it.peekChar().has_value());
+
+
+  it.move();
+  EXPECT_EQ(it.currentPosition().charIndex, 3);
+  EXPECT_EQ(it.currentPosition().lineNumber, 1);
+  EXPECT_FALSE(it.currentChar().has_value());
+  EXPECT_FALSE(it.peekChar().has_value());
   
 }
