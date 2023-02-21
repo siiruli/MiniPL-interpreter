@@ -62,9 +62,7 @@ TEST_F(ScannerTest, scanKeyword) {
 
     EXPECT_TRUE(std::holds_alternative<Keyword>(token.value));
     EXPECT_EQ(std::get<Keyword>(token.value), kw);
-  }
-
-  
+  }  
 }
 TEST_F(ScannerTest, scanString) {
   std::string program = 
@@ -79,4 +77,22 @@ TEST_F(ScannerTest, scanString) {
   EXPECT_TRUE(std::holds_alternative<std::string>(token.value));
   EXPECT_EQ(std::get<std::string>(token.value), correctValue);
   
+}
+
+TEST_F(ScannerTest, scanInt) {
+  std::vector<std::pair<std::string, int>> tests = {
+    {"10", 10}, 
+    {"0 ", 0}, 
+    {"503217103\n", 503217103}, 
+    {"01401840;", 1401840}
+  };
+  for(auto [program, correct] : tests){
+    Scanner scanner(program);
+    auto tokenOpt = scanner.getToken();
+    EXPECT_TRUE(tokenOpt.has_value());
+    Token token = tokenOpt.value();
+
+    EXPECT_TRUE(std::holds_alternative<int>(token.value));
+    EXPECT_EQ(std::get<int>(token.value), correct);
+  }  
 }

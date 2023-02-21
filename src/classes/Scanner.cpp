@@ -21,6 +21,7 @@ std::optional<Token> Scanner::getToken(){
 
     program.move();
   }
+
   // scan a token  
   Position startPos = program.currentPosition();
   std::optional<std::pair<TokenType, TokenValue>> token;
@@ -36,6 +37,7 @@ std::optional<Token> Scanner::getToken(){
         token = {TokenType::Identifier, id};
       }
     }
+    if(isdigit(c)) token = {TokenType::Literal, scanInteger()};
     if(c == '"') token = {TokenType::Literal, scanString()};
   }
 
@@ -78,7 +80,8 @@ void Scanner::scanComment(){
 }
 std::optional<Keyword> Scanner::isKeyword(std::string &ident){
   for(int i = 0; i<n_keywords; ++i) {
-    if(ident == std::string(keywords[i])) return static_cast<Keyword>(i);
+    if(ident == std::string(keywords[i])) 
+      return static_cast<Keyword>(i);
   }
   return {};
 }
@@ -93,7 +96,16 @@ std::string Scanner::scanIdentifier(){
   }
   return ident;
 }
-
+int Scanner::scanInteger(){
+  std::string lexeme = "";
+  lexeme += program.currentChar().value();
+  while(auto c = program.peekChar()){
+    if(!isdigit(static_cast<unsigned char>(*c))) break;
+    lexeme += *c;
+    program.move();
+  }
+  return std::stoi(lexeme);
+}
 
 std::string Scanner::scanString(){
   std::string lexeme = "";
