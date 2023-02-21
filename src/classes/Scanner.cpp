@@ -25,8 +25,9 @@ std::optional<Token> Scanner::getToken(){
   Position startPos = program.currentPosition();
   std::optional<std::pair<TokenType, TokenValue>> token;
 
-  if(auto c = program.currentChar()){
-    if(isalpha(*c)){
+  if(auto curChar = program.currentChar()){
+    unsigned char c = static_cast<unsigned char>(*curChar);
+    if(isalpha(c)){
       std::string id = scanIdentifier();
       // if id is a keyword, return the keyword
       if(auto keyword = isKeyword(id)){
@@ -35,7 +36,7 @@ std::optional<Token> Scanner::getToken(){
         token = {TokenType::Identifier, id};
       }
     }
-    if(*c == '"') token = {TokenType::Literal, scanString()};
+    if(c == '"') token = {TokenType::Literal, scanString()};
   }
 
   Position endPos = program.currentPosition();
@@ -86,7 +87,7 @@ std::string Scanner::scanIdentifier(){
   std::string ident = "";
   ident += program.currentChar().value();
   while(auto c = program.peekChar()){
-    if(!isalnum(*c)) break;
+    if(!isalnum(static_cast<unsigned char>(*c))) break;
     ident += *c;
     program.move();
   }
