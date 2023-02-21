@@ -1,9 +1,12 @@
 #include <string>
 #include <optional>
 #include <variant>
-#include "Span.h"
+#include "Program.h"
 
-enum class Operator {Add, Sub, Mul, Div, Less, Equal, And, Not};
+enum class Operator {Add = 0, Sub, Mul, Div, Less, Equal, And, Not};
+constexpr const char operators[] = {
+  '+', '-', '*', '/', '<', '=', '&', '!'
+};
 // These must be in the same order
 enum class Keyword {
   Var = 0, For, End, In, Do, Read, Print, Int, String, Bool, 
@@ -14,35 +17,42 @@ constexpr const char *keywords[] = {
   "int" , "string" , "bool" , "assert" , "if" , "else"
 };
 
-enum class Punctuation {Assign, Semicolon, Colon, Range};
+enum class Punctuation {
+  Assign, Semicolon, Colon, Range, OpenParen, ClosedParen
+};
+
+enum class CharType {Letter, Digit, Punct, Operator};
+
+typedef std::variant<
+  int, std::string, Operator, Keyword, Punctuation
+> TokenValue;
 
 struct Token {
-  Position position;
-  std::variant<
-    int, std::string, Operator, Keyword, Punctuation
-  > value;
+  Position startPos;
+  Position endPos;
+  TokenValue value;
 };
 
 
 
 class Scanner {
   public:
-    Scanner(std::string &program);
+    Scanner(std::string &programText);
 
-    Token getToken();
+    std::optional<Token> getToken();
   private: 
-    std::string &program;
-    Position pos;
-
-    std::optional<char> nextChar();
-    std::optional<char> currentChar();
-    
-    
+    ProgramIterator program;
     std::string scanString();
+    std::string scanIdentifier();
+    int scanInteger();
     void scanComment();
+    Operator scanOperator();
+    Punctuation scanPunctuation();
+
+    std::optional<Keyword> isKeyword(std::string &id);    
 
 
-
+    CharType characterType(char c);
 
   
 
