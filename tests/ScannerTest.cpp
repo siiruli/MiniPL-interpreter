@@ -15,8 +15,13 @@ TEST_F(ScannerTest, comment) {
   };
   for(std::string program : programs){
     Scanner scanner(program);
-    auto tokenOpt = scanner.getToken();
-    EXPECT_FALSE(tokenOpt.has_value());
+    auto tokenOpt = scanner.scanToken();
+    
+    EXPECT_TRUE(tokenOpt.has_value());
+    EXPECT_EQ(
+      std::get<OtherToken>(tokenOpt.value().value), 
+      OtherToken::Eof
+    );
   }
   
 }
@@ -29,8 +34,12 @@ TEST_F(ScannerTest, space) {
   };
   for(std::string program : programs){
     Scanner scanner(program);
-    auto tokenOpt = scanner.getToken();
-    EXPECT_FALSE(tokenOpt.has_value());
+    auto tokenOpt = scanner.scanToken();
+    EXPECT_TRUE(tokenOpt.has_value());
+    EXPECT_EQ(
+      std::get<OtherToken>(tokenOpt.value().value), 
+      OtherToken::Eof
+    );
   }
   
 }
@@ -39,7 +48,7 @@ TEST_F(ScannerTest, scanIdent) {
     "variable fpmf \n afoaeim ";
   std::string correctValue = "variable";
   Scanner scanner(program);
-  auto tokenOpt = scanner.getToken();
+  auto tokenOpt = scanner.scanToken();
   EXPECT_TRUE(tokenOpt.has_value());
   Token token = tokenOpt.value();
 
@@ -56,7 +65,7 @@ TEST_F(ScannerTest, scanKeyword) {
   };
   for(auto [program, kw] : tests){
     Scanner scanner(program);
-    auto tokenOpt = scanner.getToken();
+    auto tokenOpt = scanner.scanToken();
     EXPECT_TRUE(tokenOpt.has_value());
     Token token = tokenOpt.value();
 
@@ -70,7 +79,7 @@ TEST_F(ScannerTest, scanString) {
       This is not in a string";
   std::string correctValue = "This is in a string ";
   Scanner scanner(program);
-  auto tokenOpt = scanner.getToken();
+  auto tokenOpt = scanner.scanToken();
   EXPECT_TRUE(tokenOpt.has_value());
   Token token = tokenOpt.value();
 
@@ -88,7 +97,7 @@ TEST_F(ScannerTest, scanInt) {
   };
   for(auto [program, correct] : tests){
     Scanner scanner(program);
-    auto tokenOpt = scanner.getToken();
+    auto tokenOpt = scanner.scanToken();
     EXPECT_TRUE(tokenOpt.has_value());
     Token token = tokenOpt.value();
 

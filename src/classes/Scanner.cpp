@@ -5,26 +5,41 @@
 #include <vector>
 
 Scanner::Scanner(std::string &programText) : program(programText) {
+  current = Token{
+    TokenType::OtherToken, 
+    program.currentPosition(),
+    program.currentPosition(),
+    OtherToken::Sof
+  };
 } 
 
+Token Scanner::currentToken(){
+  return current;
+}
+void Scanner::nextToken(){
+  auto token = scanToken();
+  while(!token.has_value()) token = scanToken();
+  current = token.value();
+}
 
-std::optional<Token> Scanner::getToken(){
+std::optional<Token> Scanner::scanToken(){
   // Skip whitespace and comments
   while(auto c = program.currentChar()){
     // skip over comments
     if(*c == '/'){
       auto next = program.peekChar();
       if(next == '/' || next == '*') scanComment();
+    
     }
     // end if c is not whitespace
-    if(!isspace(static_cast<unsigned char>(*c))) break;
+    else if(!isspace(static_cast<unsigned char>(*c))) break;
 
     program.move();
   }
 
   // scan a token  
   Position startPos = program.currentPosition();
-  std::optional<std::pair<TokenType, TokenValue>> token;
+  std::optional<std::pair<TokenType, TokenValue>> token = std::nullopt;
 
   if(auto curChar = program.currentChar()){
     unsigned char c = static_cast<unsigned char>(*curChar);
@@ -39,6 +54,9 @@ std::optional<Token> Scanner::getToken(){
     }
     if(isdigit(c)) token = {TokenType::Literal, scanInteger()};
     if(c == '"') token = {TokenType::Literal, scanString()};
+  }
+  else{
+    token = {TokenType::OtherToken, OtherToken::Eof};
   }
 
   Position endPos = program.currentPosition();
@@ -62,6 +80,7 @@ void Scanner::scanComment(){
     while(program.currentChar() != '\n'){
       program.move();
     }
+    program.move();
   }else if(c1 =='/' && c2 == '*'){
     int nestingLevel = 1;
     while(auto c = program.currentChar()){

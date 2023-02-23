@@ -21,13 +21,15 @@ constexpr const char *keywords[] = {
 enum class Punctuation {
   Assign, Semicolon, Colon, Range, OpenParen, ClosedParen
 };
-
+enum class OtherToken {
+  Eof, Sof, Error
+};
 typedef std::variant<
-  int, std::string, Operator, Keyword, Punctuation
+  int, std::string, Operator, Keyword, Punctuation, OtherToken
 > TokenValue;
 
 enum class TokenType {
-  Literal, Identifier, Operator, Keyword, Punctuation
+  Literal, Identifier, Operator, Keyword, Punctuation, OtherToken
 };
 
 struct Token {
@@ -43,8 +45,12 @@ class Scanner {
   public:
     Scanner(std::string &programText);
 
-    std::optional<Token> getToken();
+    Token currentToken();
+    void nextToken();
+    std::optional<Token> scanToken();
+  
   private: 
+    Token current;
     ProgramIterator program;
     std::string scanString();
     std::string scanIdentifier();
