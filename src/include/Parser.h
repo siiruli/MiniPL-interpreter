@@ -24,7 +24,8 @@ class Parser {
     void nextToken();
 
     AstNode makeAstNode();
-
-    Token match(TokenType expected);
+    VarIdent matchIdent();
+    Literal matchLiteral();
+    
     void match(TokenValue expected);
 };

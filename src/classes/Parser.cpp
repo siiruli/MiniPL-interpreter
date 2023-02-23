@@ -68,15 +68,6 @@ AstNode Parser::statement(){
 }
 
 
-Token Parser::match(TokenType expected){
-  if(currentToken.type == expected){
-    auto value = currentToken;
-    nextToken();
-    return value;
-  }else{
-    // ERROR
-  }
-}
 void Parser::match(TokenValue expected){
   if(currentToken.value == expected){
     nextToken();

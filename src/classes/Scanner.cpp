@@ -30,7 +30,7 @@ std::optional<Token> Scanner::scanToken(){
 
   // scan a token  
   Position startPos = program.currentPosition();
-  std::optional<std::pair<TokenType, TokenValue>> token = std::nullopt;
+  std::optional<TokenValue> token = std::nullopt;
 
   if(auto curChar = program.currentChar()){
     unsigned char c = static_cast<unsigned char>(*curChar);
@@ -38,24 +38,23 @@ std::optional<Token> Scanner::scanToken(){
       std::string id = scanIdentifier();
       // if id is a keyword, return the keyword
       if(auto keyword = isKeyword(id)){
-        token  = {TokenType::Keyword, *keyword};
+        token  = *keyword;
       }else{
-        token = {TokenType::Identifier, id};
+        token = id;
       }
     }
-    if(isdigit(c)) token = {TokenType::Literal, scanInteger()};
-    if(c == '"') token = {TokenType::Literal, scanString()};
+    if(isdigit(c)) token = Literal{scanInteger()};
+    if(c == '"') token = Literal{scanString()};
   }
   else{
-    token = {TokenType::Punctuation, Punctuation::Eof};
+    token = Punctuation::Eof;
   }
 
   Position endPos = program.currentPosition();
   program.move();
 
-  if(token.has_value()) {
-    auto [type, value] = token.value();
-    return Token{type, startPos, endPos, value};
+  if(auto value = token) {
+    return Token{startPos, endPos, *value};
   }else {
     return {};
   }

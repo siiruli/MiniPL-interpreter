@@ -83,8 +83,8 @@ TEST_F(ScannerTest, scanString) {
   EXPECT_TRUE(tokenOpt.has_value());
   Token token = tokenOpt.value();
 
-  EXPECT_TRUE(std::holds_alternative<std::string>(token.value));
-  EXPECT_EQ(std::get<std::string>(token.value), correctValue);
+  EXPECT_TRUE(std::holds_alternative<Literal>(token.value));
+  EXPECT_EQ(std::get<Literal>(token.value), Literal{correctValue});
   
 }
 
@@ -101,7 +101,7 @@ TEST_F(ScannerTest, scanInt) {
     EXPECT_TRUE(tokenOpt.has_value());
     Token token = tokenOpt.value();
 
-    EXPECT_TRUE(std::holds_alternative<int>(token.value));
-    EXPECT_EQ(std::get<int>(token.value), correct);
+    EXPECT_TRUE(std::holds_alternative<Literal>(token.value));
+    EXPECT_EQ(std::get<Literal>(token.value), Literal{correct});
   }  
 }

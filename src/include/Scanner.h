@@ -21,16 +21,23 @@ constexpr const char *keywords[] = {
 enum class Punctuation {
   Assign, Semicolon, Colon, Range, OpenParen, ClosedParen, Eof
 };
-typedef std::variant<
-  int, std::string, Operator, Keyword, Punctuation
-> TokenValue;
 
-enum class TokenType {
-  Literal, Identifier, Operator, Keyword, Punctuation
+struct Literal {
+  std::variant<int, std::string> value;
+  inline bool operator==(const Literal &other) const {
+    return value == other.value;
+  }
+  inline bool operator!=(const Literal &other) const {
+    return !operator==(other);
+  }
 };
 
+typedef std::string VarIdent;
+typedef std::variant<
+  Literal, VarIdent, Operator, Keyword, Punctuation
+> TokenValue;
+
 struct Token {
-  TokenType type;
   Position startPos;
   Position endPos;
   TokenValue value;
