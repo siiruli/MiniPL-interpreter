@@ -80,7 +80,7 @@ void Scanner::scanComment(){
 }
 std::optional<Keyword> Scanner::isKeyword(std::string &ident){
   for(int i = 0; i<n_keywords; ++i) {
-    if(ident == std::string(keywords[i])) 
+    if(ident == keywords[i]) 
       return static_cast<Keyword>(i);
   }
   return {};
