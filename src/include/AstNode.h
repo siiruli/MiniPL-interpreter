@@ -2,13 +2,16 @@
 #include <vector>
 #include "Visitor.h"
 #include "Value.h"
+// #include "Scanner.h"
 
 enum Type {Int, Bool, String};
+enum class Operator2 {Add = 0, Sub, Mul, Div, Less, Equal, And, Not};
 
 
 class ExprAstNode {
   public: 
     Value value;
+    Operator2 op;
 };
 
 
@@ -37,6 +40,10 @@ class PrintAstNode {
     ExprAstNode expr;
 };
 
+class ErrorAstNode {
+
+};
+
 class StatementsAstNode;
 class ForAstNode;
 class IfAstNode;
@@ -49,7 +56,8 @@ typedef std::variant<
   IfAstNode, 
   ReadAstNode, 
   PrintAstNode,
-  StatementsAstNode> AstNode;
+  StatementsAstNode,
+  ErrorAstNode> AstNode;
 
 class StatementsAstNode {
   public:

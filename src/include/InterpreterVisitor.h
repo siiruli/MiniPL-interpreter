@@ -16,6 +16,7 @@ class InterpreterVisitor : Visitor {
     void visit(ReadAstNode &node);
     void visit(ExprAstNode &node);
     void visit(StatementsAstNode &node);
+    void visit(ErrorAstNode &node);
   private:
   
     std::map<std::string, Value> variables; 

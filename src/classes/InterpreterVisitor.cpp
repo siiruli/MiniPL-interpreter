@@ -68,3 +68,7 @@ void InterpreterVisitor::setVar(std::string varId, Value val){
 Value &InterpreterVisitor::getVar(std::string varId){
   return variables[varId];
 }
+
+void InterpreterVisitor::visit(ErrorAstNode &node){
+  
+}

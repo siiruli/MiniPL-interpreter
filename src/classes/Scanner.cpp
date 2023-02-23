@@ -5,21 +5,12 @@
 #include <vector>
 
 Scanner::Scanner(std::string &programText) : program(programText) {
-  current = Token{
-    TokenType::OtherToken, 
-    program.currentPosition(),
-    program.currentPosition(),
-    OtherToken::Sof
-  };
 } 
 
-Token Scanner::currentToken(){
-  return current;
-}
-void Scanner::nextToken(){
+Token Scanner::getToken(){
   auto token = scanToken();
   while(!token.has_value()) token = scanToken();
-  current = token.value();
+  return token.value();
 }
 
 std::optional<Token> Scanner::scanToken(){
@@ -56,7 +47,7 @@ std::optional<Token> Scanner::scanToken(){
     if(c == '"') token = {TokenType::Literal, scanString()};
   }
   else{
-    token = {TokenType::OtherToken, OtherToken::Eof};
+    token = {TokenType::Punctuation, Punctuation::Eof};
   }
 
   Position endPos = program.currentPosition();

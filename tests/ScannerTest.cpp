@@ -16,11 +16,11 @@ TEST_F(ScannerTest, comment) {
   for(std::string program : programs){
     Scanner scanner(program);
     auto tokenOpt = scanner.scanToken();
-    
+
     EXPECT_TRUE(tokenOpt.has_value());
     EXPECT_EQ(
-      std::get<OtherToken>(tokenOpt.value().value), 
-      OtherToken::Eof
+      std::get<Punctuation>(tokenOpt.value().value), 
+      Punctuation::Eof
     );
   }
   
@@ -37,8 +37,8 @@ TEST_F(ScannerTest, space) {
     auto tokenOpt = scanner.scanToken();
     EXPECT_TRUE(tokenOpt.has_value());
     EXPECT_EQ(
-      std::get<OtherToken>(tokenOpt.value().value), 
-      OtherToken::Eof
+      std::get<Punctuation>(tokenOpt.value().value), 
+      Punctuation::Eof
     );
   }
   
