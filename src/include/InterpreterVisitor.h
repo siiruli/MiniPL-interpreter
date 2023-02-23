@@ -1,5 +1,5 @@
 #include <map>
-#include "Value.h"
+#include "Util.h"
 #include "Visitor.h"
 #include "AstNode.h"
 
@@ -19,12 +19,12 @@ class InterpreterVisitor : Visitor {
     void visit(ErrorAstNode &node);
   private:
   
-    std::map<std::string, Value> variables; 
+    std::map<std::string, ExprValue> variables; 
 
     // use unique_ptr
 
     void initVar(Type type, std::string varId);
-    void setVar(std::string varId, Value val);
-    Value &getVar(std::string varId);
+    void setVar(std::string varId, ExprValue val);
+    ExprValue &getVar(std::string varId);
     
 };

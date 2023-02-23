@@ -54,7 +54,7 @@ void InterpreterVisitor::visit(ReadAstNode & node){
 } 
 
 void InterpreterVisitor::initVar(Type type, std::string varId){
-  Value val;
+  ExprValue val;
   switch (type)  {
     case Int: val = 0;
     case Bool: val = false;
@@ -62,13 +62,13 @@ void InterpreterVisitor::initVar(Type type, std::string varId){
   }
   variables[varId] = val;
 }
-void InterpreterVisitor::setVar(std::string varId, Value val){
+void InterpreterVisitor::setVar(std::string varId, ExprValue val){
   variables[varId] = val;
 }
-Value &InterpreterVisitor::getVar(std::string varId){
+ExprValue &InterpreterVisitor::getVar(std::string varId){
   return variables[varId];
 }
 
 void InterpreterVisitor::visit(ErrorAstNode &node){
-  
+
 }

@@ -1,9 +1,8 @@
 #include <string>
 #include <optional>
 #include <variant>
+#include "Util.h"
 #include "Program.h"
-
-enum class Operator {Add = 0, Sub, Mul, Div, Less, Equal, And, Not};
 constexpr const char operators[] = {
   '+', '-', '*', '/', '<', '=', '&', '!'
 };

@@ -1,17 +1,15 @@
 #include <string>
 #include <vector>
+#include "Util.h"
 #include "Visitor.h"
-#include "Value.h"
-// #include "Scanner.h"
 
 enum Type {Int, Bool, String};
-enum class Operator2 {Add = 0, Sub, Mul, Div, Less, Equal, And, Not};
 
 
 class ExprAstNode {
   public: 
-    Value value;
-    Operator2 op;
+    ExprValue value;
+    Operator op;
 };
 
 
