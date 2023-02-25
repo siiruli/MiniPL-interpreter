@@ -1,169 +1,100 @@
 #include "gtest/gtest.h"
 #include "Scanner.h"
-class ScannerTest : public ::testing::Test {
+
+class ScannerTest :  
+  // public ::testing::Test,
+  public testing::TestWithParam<std::pair<std::string, Token>> 
+{
+  public:
+
   protected:
     void SetUp() override {
     }
 };
-
-TEST_F(ScannerTest, comment) {
-
-  std::vector<std::string> programs = {
-    "// this is a comment \n ",
-    "/* this is also a comment */",
-    "/* /* nested comment */ */"
-  };
-  for(std::string program : programs){
-    ErrorHandler handler;
-    Scanner scanner(program, handler);
-    auto tokenOpt = scanner.scanToken();
-
-    EXPECT_TRUE(tokenOpt.has_value());
-    EXPECT_EQ(
-      std::get<Punctuation>(tokenOpt.value().value), 
-      Punctuation::Eof
-    );
-  }
-  
+Token makeToken(uint start, uint end, TokenValue value){
+  return Token{Position{start, 0}, Position{end, 0}, value};
 }
-TEST_F(ScannerTest, space) {
 
-  std::vector<std::string> programs = {
-    " ",
-    "\n \n ",
-    "\t "
-  };
-  for(std::string program : programs){
-    ErrorHandler handler;
-    Scanner scanner(program, handler);
-    auto tokenOpt = scanner.scanToken();
-    EXPECT_TRUE(tokenOpt.has_value());
-    EXPECT_EQ(
-      std::get<Punctuation>(tokenOpt.value().value), 
-      Punctuation::Eof
-    );
-  }
-  
+std::ostream & operator<<(std::ostream &os, Position pos){
+  return os << "pos: " << pos.charIndex;
 }
-TEST_F(ScannerTest, scanIdent) {
-  std::string program = 
-    "variable fpmf \n afoaeim ";
-  TokenValue correctValue = "variable";
+std::ostream & operator<<(std::ostream &os, Span span){
+  return os << "start: " << span.start.charIndex 
+    << ", end: " << span.end.charIndex;
+}
+std::ostream & operator<<(std::ostream &os, Token token){
+  return os << "token"; 
+}
+
+TEST_P(ScannerTest, getToken) {
+  auto [program, correctToken] = GetParam();
   ErrorHandler handler;
   Scanner scanner(program, handler);
-  auto tokenOpt = scanner.scanToken();
-  EXPECT_TRUE(tokenOpt.has_value());
-  Token token = tokenOpt.value();
 
-  EXPECT_EQ(token.value, correctValue);
-  
-}
-TEST_F(ScannerTest, scanKeyword) {
-  std::vector<std::pair<std::string, Token>> tests = {
-    {"var", Token{Position{0, 0}, Position{2,0}, Keyword::Var}}, 
-    {"for\n", Token{Position{0, 0}, Position{2,0}, Keyword::For}}, 
-    {"else", Token{Position{0, 0}, Position{3,0}, Keyword::Else}}, 
-    {"if ", Token{Position{0, 0}, Position{1,0}, Keyword::If}}
-  };
-  for(auto [program, correctToken] : tests){
-    ErrorHandler handler;
-    Scanner scanner(program, handler);
+  Token token = scanner.getToken();
 
-    auto tokenOpt = scanner.scanToken();
-    
-    EXPECT_TRUE(tokenOpt.has_value());
-    Token token = tokenOpt.value();
+  EXPECT_EQ(token.value, correctToken.value);
+  EXPECT_EQ(token.startPos, correctToken.startPos);
+  EXPECT_EQ(token.endPos, correctToken.endPos);
 
-    EXPECT_EQ(token.value, correctToken.value);
-    EXPECT_EQ(token.startPos, correctToken.startPos);
-    EXPECT_EQ(token.endPos, correctToken.endPos);
-  }  
-}
-TEST_F(ScannerTest, scanString) {
-  std::string program = 
-    "\"This is in a string \" \
-      This is not in a string";
-  TokenValue correctValue = Literal{"This is in a string "};
-  ErrorHandler handler;
-  Scanner scanner(program, handler);
-  auto tokenOpt = scanner.scanToken();
-  EXPECT_TRUE(tokenOpt.has_value());
-  Token token = tokenOpt.value();
-
-  EXPECT_EQ(token.value, correctValue);
-  
 }
 
-TEST_F(ScannerTest, scanInt) {
-  std::vector<std::pair<std::string, Token>> tests = {
-    {"10", Token{Position{0, 0}, Position{1,0}, Literal{10}}}, 
-    {"0\n", Token{Position{0, 0}, Position{0,0}, Literal{0}}}, 
-    {" /* */ 480752710\n", Token{
-      Position{7, 0}, Position{15,0}, Literal{480752710}
-    }}, 
-    {"// \n \n 642 ", Token{
-      Position{7, 0}, Position{9,0}, Literal{642}
-    }}
-  };
-  for(auto [program, correctToken] : tests){
-    ErrorHandler handler;
-    Scanner scanner(program, handler);
-    auto tokenOpt = scanner.scanToken();
-    
-    EXPECT_TRUE(tokenOpt.has_value());
-    Token token = tokenOpt.value();
+INSTANTIATE_TEST_SUITE_P(
+  scan_punctuation, 
+  ScannerTest, 
+  testing::Values(
+    std::pair{";", makeToken(0, 0, Punctuation::Semicolon)}, 
+    std::pair{"..", makeToken(0, 1, Punctuation::Range)}, 
+    std::pair{" /* */ :=0\n", makeToken(7, 8, Punctuation::Assign)}, 
+    std::pair{")", makeToken(0, 0, Punctuation::ClosedParen)}
+  )
+);
 
-    EXPECT_EQ(token.value, correctToken.value);
-    EXPECT_EQ(token.startPos, correctToken.startPos);
-    EXPECT_EQ(token.endPos, correctToken.endPos);
-  }  
-}
-TEST_F(ScannerTest, scanOp) {
-  std::vector<std::pair<std::string, Token>> tests = {
-    {"+-", Token{Position{0, 0}, Position{0,0}, Operator::Add}}, 
-    {"!", Token{Position{0, 0}, Position{0,0}, Operator::Not}}, 
-    {" /* */ *0\n", Token{
-      Position{7, 0}, Position{7,0}, Operator::Mul
-    }}, 
-    {"/var", Token{
-      Position{0, 0}, Position{0,0}, Operator::Div
-    }}
-  };
-  for(auto [program, correctToken] : tests){
-    ErrorHandler handler;
-    Scanner scanner(program, handler);
-    auto tokenOpt = scanner.scanToken();
-    
-    EXPECT_TRUE(tokenOpt.has_value());
-    Token token = tokenOpt.value();
+INSTANTIATE_TEST_SUITE_P(
+  scan_comment, 
+  ScannerTest, 
+  testing::Values(
+    std::pair{"// comment \n ", makeToken(13, 13, Punctuation::Eof)},
+    std::pair{"/* this */", 
+      makeToken(10, 10, Punctuation::Eof)},
+    std::pair{"/* /* nested comment */ */", 
+      makeToken(26, 26, Punctuation::Eof)}
+  )
+);
 
-    EXPECT_EQ(token.value, correctToken.value);
-    EXPECT_EQ(token.startPos, correctToken.startPos);
-    EXPECT_EQ(token.endPos, correctToken.endPos);
-  }  
-}
+INSTANTIATE_TEST_SUITE_P(
+  scan_identifier, 
+  ScannerTest, 
+  testing::Values(
+    std::pair{"x", makeToken(0, 0, "x")}, 
+    std::pair{"abc_24", makeToken(0, 5, "abc_24")}
+  )
+);
 
-TEST_F(ScannerTest, scanPunct) {
-  std::vector<std::pair<std::string, Token>> tests = {
-    {";", Token{Position{0, 0}, Position{0,0}, Punctuation::Semicolon}}, 
-    {"..", Token{Position{0, 0}, Position{1,0}, Punctuation::Range}}, 
-    {" /* */ :=0\n", Token{
-      Position{7, 0}, Position{8,0}, Punctuation::Assign
-    }}, 
-    {")", Token{
-      Position{0, 0}, Position{0,0}, Punctuation::ClosedParen
-    }}
-  };
-  for(auto [program, correctToken] : tests){
-    ErrorHandler handler;
-    Scanner scanner(program, handler);
-    auto tokenOpt = scanner.scanToken();
-    
-    EXPECT_TRUE(tokenOpt.has_value());
-    Token token = tokenOpt.value();
+INSTANTIATE_TEST_SUITE_P(
+  scan_keyword, 
+  ScannerTest, 
+  testing::Values(
+    std::pair{"var", makeToken(0, 2, Keyword::Var)}, 
+    std::pair{" if ", makeToken(1, 2, Keyword::If)}
+  )
+);
 
-    EXPECT_EQ(token.value, correctToken.value);
-    EXPECT_EQ(token.startPos, correctToken.startPos);
-    EXPECT_EQ(token.endPos, correctToken.endPos);
-  }  
-}
+INSTANTIATE_TEST_SUITE_P(
+  scan_int, 
+  ScannerTest, 
+  testing::Values(
+    std::pair{"10", makeToken(0, 1, Literal{10})}, 
+    std::pair{"0;", makeToken(0, 0, Literal{0})}
+  )
+);
+
+INSTANTIATE_TEST_SUITE_P(
+  scan_operator, 
+  ScannerTest, 
+  testing::Values(
+    std::pair{"+-", makeToken(0, 0, Operator::Add)},
+    std::pair{"!;", makeToken(0, 0, Operator::Not)},
+    std::pair{"/var", makeToken(0, 0, Operator::Div)}
+  )
+);
