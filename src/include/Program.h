@@ -13,7 +13,10 @@ struct Position
 
 struct Span
 {
-  Position start, end;  
+  Position start, end;
+  inline bool operator==(const Span &other) const {
+    return this->start == other.start && this->end == other.end;
+  }  
 };
 
 class ProgramIterator {

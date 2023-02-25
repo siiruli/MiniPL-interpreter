@@ -35,8 +35,7 @@ typedef std::variant<
 > TokenValue;
 
 struct Token {
-  Position startPos;
-  Position endPos;
+  Span span;
   TokenValue value;
 };
 

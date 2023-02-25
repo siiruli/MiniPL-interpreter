@@ -34,8 +34,7 @@ TEST_P(ScannerTest, getToken) {
   Token token = scanner.getToken();
 
   EXPECT_EQ(token.value, correctToken.value);
-  EXPECT_EQ(token.startPos, correctToken.startPos);
-  EXPECT_EQ(token.endPos, correctToken.endPos);
+  EXPECT_EQ(token.span, correctToken.span);
 
 }
 
