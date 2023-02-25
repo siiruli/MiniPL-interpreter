@@ -55,8 +55,8 @@ class Scanner {
     
     void scanComment();
     std::optional<VarIdent> scanIdentifier();
-    std::optional<int> scanInteger();
-    std::optional<std::string> scanString();
+    std::optional<Literal> scanInteger();
+    std::optional<Literal> scanString();
     std::optional<Operator> scanOperator();
     std::optional<Punctuation> scanPunctuation();
 

@@ -61,10 +61,13 @@ std::optional<Token> Scanner::scanToken(){
         token = id;
       }
     }
-    if(isdigit(c)) token = Literal{scanInteger().value()};
-    if(c == '"') token = Literal{scanString().value()};
-    if(isPunctChar(c)) token = scanPunctuation();
-    if(isOperatorChar(c)) token = scanOperator();
+    else if(isdigit(c)) token = scanInteger();
+    else if(c == '"') token = scanString();
+    else if(isPunctChar(c)) token = scanPunctuation();
+    else if(isOperatorChar(c)) token = scanOperator();
+    else {
+      // Unexpected character
+    }
   }
   else{
     token = Punctuation::Eof;
@@ -127,7 +130,7 @@ std::optional<VarIdent> Scanner::scanIdentifier(){
   return ident;
 }
 
-std::optional<int> Scanner::scanInteger(){
+std::optional<Literal> Scanner::scanInteger(){
   std::string lexeme = "";
   lexeme += program.currentChar().value();
   while(auto c = program.peekChar()){
@@ -135,10 +138,10 @@ std::optional<int> Scanner::scanInteger(){
     lexeme += *c;
     program.move();
   }
-  return std::stoi(lexeme);
+  return Literal{std::stoi(lexeme)};
 }
 
-std::optional<std::string> Scanner::scanString(){
+std::optional<Literal> Scanner::scanString(){
   std::string lexeme = "";
   std::string error = "";
 
@@ -168,7 +171,8 @@ std::optional<std::string> Scanner::scanString(){
 
     program.move();
   }
-  return lexeme;
+  
+  return Literal{lexeme};
 }
 
 std::optional<Punctuation> Scanner::scanPunctuation(){
