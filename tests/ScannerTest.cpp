@@ -14,7 +14,8 @@ TEST_F(ScannerTest, comment) {
     "/* /* nested comment */ */"
   };
   for(std::string program : programs){
-    Scanner scanner(program);
+    ErrorHandler handler;
+    Scanner scanner(program, handler);
     auto tokenOpt = scanner.scanToken();
 
     EXPECT_TRUE(tokenOpt.has_value());
@@ -33,7 +34,8 @@ TEST_F(ScannerTest, space) {
     "\t "
   };
   for(std::string program : programs){
-    Scanner scanner(program);
+    ErrorHandler handler;
+    Scanner scanner(program, handler);
     auto tokenOpt = scanner.scanToken();
     EXPECT_TRUE(tokenOpt.has_value());
     EXPECT_EQ(
@@ -47,7 +49,8 @@ TEST_F(ScannerTest, scanIdent) {
   std::string program = 
     "variable fpmf \n afoaeim ";
   TokenValue correctValue = "variable";
-  Scanner scanner(program);
+  ErrorHandler handler;
+  Scanner scanner(program, handler);
   auto tokenOpt = scanner.scanToken();
   EXPECT_TRUE(tokenOpt.has_value());
   Token token = tokenOpt.value();
@@ -63,7 +66,9 @@ TEST_F(ScannerTest, scanKeyword) {
     {"if ", Token{Position{0, 0}, Position{1,0}, Keyword::If}}
   };
   for(auto [program, correctToken] : tests){
-    Scanner scanner(program);
+    ErrorHandler handler;
+    Scanner scanner(program, handler);
+
     auto tokenOpt = scanner.scanToken();
     
     EXPECT_TRUE(tokenOpt.has_value());
@@ -79,7 +84,8 @@ TEST_F(ScannerTest, scanString) {
     "\"This is in a string \" \
       This is not in a string";
   TokenValue correctValue = Literal{"This is in a string "};
-  Scanner scanner(program);
+  ErrorHandler handler;
+  Scanner scanner(program, handler);
   auto tokenOpt = scanner.scanToken();
   EXPECT_TRUE(tokenOpt.has_value());
   Token token = tokenOpt.value();
@@ -100,7 +106,8 @@ TEST_F(ScannerTest, scanInt) {
     }}
   };
   for(auto [program, correctToken] : tests){
-    Scanner scanner(program);
+    ErrorHandler handler;
+    Scanner scanner(program, handler);
     auto tokenOpt = scanner.scanToken();
     
     EXPECT_TRUE(tokenOpt.has_value());
@@ -123,7 +130,8 @@ TEST_F(ScannerTest, scanOp) {
     }}
   };
   for(auto [program, correctToken] : tests){
-    Scanner scanner(program);
+    ErrorHandler handler;
+    Scanner scanner(program, handler);
     auto tokenOpt = scanner.scanToken();
     
     EXPECT_TRUE(tokenOpt.has_value());
@@ -147,7 +155,8 @@ TEST_F(ScannerTest, scanPunct) {
     }}
   };
   for(auto [program, correctToken] : tests){
-    Scanner scanner(program);
+    ErrorHandler handler;
+    Scanner scanner(program, handler);
     auto tokenOpt = scanner.scanToken();
     
     EXPECT_TRUE(tokenOpt.has_value());

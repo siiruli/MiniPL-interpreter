@@ -3,7 +3,7 @@
 #include <variant>
 #include "Util.h"
 #include "Program.h"
-
+#include "Error.h"
 // These must be in the same order
 enum class Keyword {
   Var = 0, For, End, In, Do, Read, Print, Int, String, Bool, 
@@ -44,7 +44,7 @@ struct Token {
 
 class Scanner {
   public:
-    Scanner(std::string &programText);
+    Scanner(std::string &programText, ErrorHandler &handler);
 
     Token getToken();
     std::optional<Token> scanToken();
@@ -52,6 +52,7 @@ class Scanner {
   private: 
     Token current;
     ProgramIterator program;
+    ErrorHandler &errorHandler;
     
     void scanComment();
     std::optional<VarIdent> scanIdentifier();

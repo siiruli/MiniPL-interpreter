@@ -4,7 +4,8 @@
 #include <iostream>
 #include <vector>
 
-Scanner::Scanner(std::string &programText) : program(programText) {
+Scanner::Scanner(std::string &programText, ErrorHandler &handler) : 
+  program(programText), errorHandler(handler) {
 } 
 
 Token Scanner::getToken(){
