@@ -1,0 +1,46 @@
+\documentclass[a4paper]{article}
+\usepackage{listings}
+
+\newcommand*{\code}[1]{\lstinline{#1}}
+
+\begin{document}
+
+\section{Components}
+
+The program consists of the following components:
+
+\paragraph*{Scanner:} The scanner has one public method: \code{getToken}, 
+which scans and returns the next token from the program. The 
+constructor takes references to the program string and an 
+\code{ErrorHandler}, to which it passes any lexical errors it finds.
+A \code{Token} is a data structure that contains the a \code{value} and 
+a \code{span}: which positions of the code it covers.
+The value of a token can be an integer/string literal, 
+identifier, keyword, operator or punctuation.
+
+\paragraph*{Parser:}
+
+\paragraph*{ErrorHandler:}
+
+\paragraph*{Visitors:}
+
+\section{Token patterns}
+
+\begin{itemize}
+  \item Identifiers and reserved keywords
+  \item String literals
+  \item Integer constants
+  \item Operators
+  \item Comments
+  \item Other
+\end{itemize}
+
+\section{Parsing}
+
+\section{Abstract Syntax Trees}
+
+\section{Error handling}
+
+\section{Testing}
+
+\end{document}
