@@ -52,8 +52,10 @@ class Scanner {
   private: 
     Token current;
     ProgramIterator program;
+    Position startOfToken;
     ErrorHandler &errorHandler;
-    
+    void raiseError(ScanningError errortype, std::string message);    
+
     void scanComment();
     std::optional<VarIdent> scanIdentifier();
     std::optional<Literal> scanInteger();

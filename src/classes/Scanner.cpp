@@ -32,6 +32,15 @@ bool Scanner::isPunctChar(char c){
   }
   return false;
 }
+void Scanner::raiseError(ScanningError errorType, std::string msg){
+  Error error{
+    Span{startOfToken, program.currentPosition()},
+    errorType,
+    msg
+  };
+  errorHandler.raiseError(error);
+}
+
 std::optional<Token> Scanner::scanToken(){
   // Skip whitespace and comments
   while(auto c = program.currentChar()){
@@ -48,7 +57,7 @@ std::optional<Token> Scanner::scanToken(){
   }
 
   // scan a token  
-  Position startPos = program.currentPosition();
+  startOfToken = program.currentPosition();
   std::optional<TokenValue> token = std::nullopt;
 
   if(auto curChar = program.currentChar()){
@@ -68,17 +77,20 @@ std::optional<Token> Scanner::scanToken(){
     else if(isOperatorChar(c)) token = scanOperator();
     else {
       // Unexpected character
+      std::string msg = "character " + std::string(1, *curChar) 
+        + " is not the start of any token";
+      raiseError(ScanningError::UnexpChar, msg);
     }
   }
   else{
     token = Punctuation::Eof;
   }
 
-  Position endPos = program.currentPosition();
+  Position endOfToken = program.currentPosition();
   program.move();
 
   if(auto value = token) {
-    return Token{startPos, endPos, *value};
+    return Token{startOfToken, endOfToken, *value};
   }else {
     return {};
   }
@@ -91,7 +103,10 @@ void Scanner::scanComment(){
   program.move();
 
   if(c1 == '/' && c2 == '/'){
-    while(program.currentChar() != '\n'){
+    while(
+      program.currentChar().has_value() && 
+      program.currentChar() != '\n'
+    ){
       program.move();
     }
     program.move();
@@ -108,6 +123,9 @@ void Scanner::scanComment(){
         program.move();
       }
       program.move();
+    }
+    if(nestingLevel != 0){
+      raiseError(ScanningError::Eof, "EoF while scanning comment");
     }
   }
 }
@@ -144,27 +162,39 @@ std::optional<Literal> Scanner::scanInteger(){
 
 std::optional<Literal> Scanner::scanString(){
   std::string lexeme = "";
-  std::string error = "";
 
   if( auto c = program.currentChar(); *c == '"'){
     program.move();
+  }else{
+    std::string msg = "Expected '\"' at start of string literal";
+    raiseError(ScanningError::UnexpChar, msg);
+    return {};
   }
 
   while(program.currentChar() != '"'){
     if(!program.currentChar().has_value()){
       // error
+      raiseError(ScanningError::Eof, "EoF while scanning string");
     }
     char c = program.currentChar().value();
     if(c == '\n'){
       // ERROR
+      raiseError(ScanningError::UnexpChar, "String contains newline");
     }
     
     if(c == '\\'){
       // escape characters
       if(auto c = program.peekChar()){
-        lexeme += *c;
-      }else{
-        // ERRROR
+        switch (*c)
+        {
+        case 'n': lexeme += '\n'; break;
+        case 't': lexeme += '\t'; break;
+        case '\n': break;
+        default:
+          lexeme += *c;
+          break;
+        }
+        program.move();
       }
     }else{
       lexeme += c;
@@ -204,7 +234,9 @@ std::optional<Punctuation> Scanner::scanPunctuation(){
       }
       else {
         // ERROR
-        lexeme = std::nullopt;
+        std::string msg = "Expected '.' in range operator";
+        raiseError(ScanningError::UnexpChar, msg);
+        lexeme = Punctuation::Range;
       } 
       break; 
     default:
