@@ -3,9 +3,7 @@
 #include <variant>
 #include "Util.h"
 #include "Program.h"
-constexpr const char operators[] = {
-  '+', '-', '*', '/', '<', '=', '&', '!'
-};
+
 // These must be in the same order
 enum class Keyword {
   Var = 0, For, End, In, Do, Read, Print, Int, String, Bool, 
@@ -54,15 +52,21 @@ class Scanner {
   private: 
     Token current;
     ProgramIterator program;
-    std::string scanString();
-    std::string scanIdentifier();
-    int scanInteger();
+    
     void scanComment();
-    Operator scanOperator();
-    Punctuation scanPunctuation();
+    std::optional<VarIdent> scanIdentifier();
+    std::optional<int> scanInteger();
+    std::optional<std::string> scanString();
+    std::optional<Operator> scanOperator();
+    std::optional<Punctuation> scanPunctuation();
 
     std::optional<Keyword> isKeyword(std::string &id);    
 
+    bool isOperatorChar(char c);
+    bool isPunctChar(char c);
+    bool isAlpha(char c);
+    bool isDigit(char c);
+    bool isSpace(char c);    
   
 
 };

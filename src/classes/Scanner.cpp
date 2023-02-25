@@ -13,6 +13,24 @@ Token Scanner::getToken(){
   return token.value();
 }
 
+bool Scanner::isOperatorChar(char c){
+  const char operatorChars[] = {
+  '+', '-', '*', '/', '<', '=', '&', '!'
+  };
+  for(char a : operatorChars){
+    if(c == a) return true;
+  }
+  return false;
+}
+bool Scanner::isPunctChar(char c){
+  const char punctChars[] = {
+  ';', ':', '.', '(', ')'
+  };
+  for(char a : punctChars){
+    if(c == a) return true;
+  }
+  return false;
+}
 std::optional<Token> Scanner::scanToken(){
   // Skip whitespace and comments
   while(auto c = program.currentChar()){
@@ -35,16 +53,18 @@ std::optional<Token> Scanner::scanToken(){
   if(auto curChar = program.currentChar()){
     unsigned char c = static_cast<unsigned char>(*curChar);
     if(isalpha(c)){
-      std::string id = scanIdentifier();
+      auto id = scanIdentifier();
       // if id is a keyword, return the keyword
-      if(auto keyword = isKeyword(id)){
+      if(auto keyword = isKeyword(id.value())){
         token  = *keyword;
       }else{
         token = id;
       }
     }
-    if(isdigit(c)) token = Literal{scanInteger()};
-    if(c == '"') token = Literal{scanString()};
+    if(isdigit(c)) token = Literal{scanInteger().value()};
+    if(c == '"') token = Literal{scanString().value()};
+    if(isPunctChar(c)) token = scanPunctuation();
+    if(isOperatorChar(c)) token = scanOperator();
   }
   else{
     token = Punctuation::Eof;
@@ -87,6 +107,7 @@ void Scanner::scanComment(){
     }
   }
 }
+
 std::optional<Keyword> Scanner::isKeyword(std::string &ident){
   for(int i = 0; i<n_keywords; ++i) {
     if(ident == keywords[i]) 
@@ -95,17 +116,18 @@ std::optional<Keyword> Scanner::isKeyword(std::string &ident){
   return {};
 }
 
-std::string Scanner::scanIdentifier(){
+std::optional<VarIdent> Scanner::scanIdentifier(){
   std::string ident = "";
   ident += program.currentChar().value();
   while(auto c = program.peekChar()){
-    if(!isalnum(static_cast<unsigned char>(*c))) break;
+    if(c != '_' && !isalnum(static_cast<unsigned char>(*c))) break;
     ident += *c;
     program.move();
   }
   return ident;
 }
-int Scanner::scanInteger(){
+
+std::optional<int> Scanner::scanInteger(){
   std::string lexeme = "";
   lexeme += program.currentChar().value();
   while(auto c = program.peekChar()){
@@ -116,7 +138,7 @@ int Scanner::scanInteger(){
   return std::stoi(lexeme);
 }
 
-std::string Scanner::scanString(){
+std::optional<std::string> Scanner::scanString(){
   std::string lexeme = "";
   std::string error = "";
 
@@ -149,3 +171,57 @@ std::string Scanner::scanString(){
   return lexeme;
 }
 
+std::optional<Punctuation> Scanner::scanPunctuation(){
+  std::optional<Punctuation> lexeme;
+  if(auto c = program.currentChar()){
+    switch (*c)
+    {
+    case ':':
+      if(program.peekChar() == '=') {
+        lexeme = Punctuation::Assign;
+        program.move();
+      }
+      else lexeme = Punctuation::Colon;
+      break;
+    case ';':
+      lexeme = Punctuation::Semicolon;
+      break;
+    case '(':
+      lexeme = Punctuation::OpenParen;
+      break;
+    case ')':
+      lexeme = Punctuation::ClosedParen;
+      break;
+    case '.':
+      if(program.peekChar() == '.') lexeme = Punctuation::Range;
+      else {
+        // ERROR
+        lexeme = std::nullopt;
+      } 
+      break; 
+    default:
+      lexeme = std::nullopt;
+      break;
+    }
+  }
+  return lexeme;
+}
+
+std::optional<Operator> Scanner::scanOperator(){
+  std::optional<Operator> lexeme = std::nullopt;
+  if(auto c = program.currentChar()){
+    switch (*c)
+    {
+    case '+': lexeme = Operator::Add;
+    case '-': lexeme = Operator::Sub;
+    case '*': lexeme = Operator::Mul;
+    case '/': lexeme = Operator::Div;
+    case '<': lexeme = Operator::Less;
+    case '=': lexeme = Operator::Equal;
+    case '!': lexeme = Operator::Not;
+    default:
+      break;
+    }
+  }
+  return lexeme;
+}
