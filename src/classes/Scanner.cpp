@@ -38,7 +38,7 @@ std::optional<Token> Scanner::scanToken(){
     if(*c == '/'){
       auto next = program.peekChar();
       if(next == '/' || next == '*') scanComment();
-    
+      else break;
     }
     // end if c is not whitespace
     else if(!isspace(static_cast<unsigned char>(*c))) break;
@@ -197,7 +197,10 @@ std::optional<Punctuation> Scanner::scanPunctuation(){
       lexeme = Punctuation::ClosedParen;
       break;
     case '.':
-      if(program.peekChar() == '.') lexeme = Punctuation::Range;
+      if(program.peekChar() == '.') {
+        lexeme = Punctuation::Range;
+        program.move();
+      }
       else {
         // ERROR
         lexeme = std::nullopt;
@@ -216,14 +219,16 @@ std::optional<Operator> Scanner::scanOperator(){
   if(auto c = program.currentChar()){
     switch (*c)
     {
-    case '+': lexeme = Operator::Add;
-    case '-': lexeme = Operator::Sub;
-    case '*': lexeme = Operator::Mul;
-    case '/': lexeme = Operator::Div;
-    case '<': lexeme = Operator::Less;
-    case '=': lexeme = Operator::Equal;
-    case '!': lexeme = Operator::Not;
+    case '+': lexeme = Operator::Add; break;
+    case '-': lexeme = Operator::Sub; break;
+    case '*': lexeme = Operator::Mul; break;
+    case '/': lexeme = Operator::Div; break;
+    case '<': lexeme = Operator::Less; break;
+    case '=': lexeme = Operator::Equal; break;
+    case '!': lexeme = Operator::Not; break;
     default:
+      // error
+      lexeme = std::nullopt;
       break;
     }
   }

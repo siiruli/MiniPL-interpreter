@@ -4,6 +4,10 @@ struct Position
 {
   unsigned int charIndex;
   unsigned int lineNumber;
+  inline bool operator==(const Position &other) const {
+    return charIndex == other.charIndex ;
+      // && lineNumber == other.lineNumber;
+  }
 };
 
 
