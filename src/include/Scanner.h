@@ -40,15 +40,17 @@ struct Token {
 };
 
 
-
+/* Scans the program for lexical elements, producing tokens one by one. 
+Gives lexical error to the error handler. */
 class Scanner {
   public:
     Scanner(std::string &programText, ErrorHandler &handler);
 
+    // Scans the next token from the program.
     Token getToken();
-    std::optional<Token> scanToken();
   
   private: 
+    std::optional<Token> scanToken();
     Token current;
     ProgramIterator program;
     Position startOfToken;
@@ -66,9 +68,5 @@ class Scanner {
 
     bool isOperatorChar(char c);
     bool isPunctChar(char c);
-    bool isAlpha(char c);
-    bool isDigit(char c);
-    bool isSpace(char c);    
-  
 
 };
