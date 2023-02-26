@@ -1,6 +1,6 @@
 \documentclass[a4paper]{article}
 \usepackage{listings}
-
+\usepackage{amsmath}
 \newcommand*{\code}[1]{\lstinline{#1}}
 
 \begin{document}
@@ -36,6 +36,54 @@ identifier, keyword, operator or punctuation.
 \end{itemize}
 
 \section{Parsing}
+
+\subsection{Context-free grammar}
+
+
+\newcommand{\cfgvar}[1]{$<$#1$>$}
+\newcommand{\cfgrule}[2]{\text{\cfgvar{#1}} &\rightarrow \text{#2}}
+\newcommand{\cfgterm}[1]{\textbf{#1}}
+The terminals are \cfgvar{literal}, \cfgvar{op}, \cfgvar{ident}, 
+\cfgvar{unary$\_$op}, the end-of-file symbol \$\$, punctuation 
+and the bolded keywords.
+\begin{align*}
+  \cfgrule{prog}{\cfgvar{stmts} \$\$} \\
+  \cfgrule{stmts}{\cfgvar{stmt} \cfgvar{stmts} $\mid$ $\varepsilon$} \\
+  \cfgrule{stmt}{\cfgvar{decl} $\mid$ 
+                 \cfgvar{assign} $\mid$
+                 \cfgvar{for} $\mid$ 
+                 \cfgvar{read} $\mid$ 
+                 \cfgvar{print} $\mid$ 
+                 \cfgvar{if} } \\
+  \cfgrule{decl}{
+    \cfgterm{var} \cfgvar{ident} : \cfgvar{type} [ := \cfgvar{expr} ]
+  } \\
+  \cfgrule{assign}{
+    \cfgvar{ident} := \cfgvar{expr}
+  } \\
+  \cfgrule{for}{
+    \cfgterm{for} \cfgvar{ident} \cfgterm{in} 
+    \cfgvar{expr}..\cfgvar{expr} \cfgterm{do} \cfgvar{stmts} 
+    \cfgterm{end for}
+  } \\
+  \cfgrule{read}{\cfgterm{read} \cfgvar{ident}} \\
+  \cfgrule{print}{\cfgterm{print} \cfgvar{expr}} \\ 
+  \cfgrule{if}{
+    \cfgterm{if} \cfgvar{expr} \cfgterm{do} \cfgvar{stmts}
+    [\cfgterm{else do} \cfgvar{stmts}] \cfgterm{end if}
+  } \\
+  \cfgrule{expr}{ 
+    \cfgvar{opnd} \cfgvar{expr$\_$tail} 
+    $\mid$ \cfgvar{unary$\_$op} \cfgvar{opnd}
+  } \\
+  \cfgrule{expr$\_$tail}{
+    \cfgvar{op} \cfgvar{opnd} $\mid$ $\varepsilon$
+  } \\
+  \cfgrule{opnd}{
+    \cfgvar{literal} $\mid$ \cfgvar{ident} 
+    $\mid$ \cfgterm{(} \cfgvar{expr} \cfgterm{)}
+  } \\
+\end{align*}
 
 \section{Abstract Syntax Trees}
 
