@@ -37,7 +37,7 @@ std::optional<AstNode> Parser::statement(){
   Token token = it.currentToken();
   std::visit( overloaded {
     [&](std::string &arg){
-      // node = assignment();
+      node = assignment();
     },
     [&](Keyword &arg){
       switch (arg)
@@ -71,11 +71,43 @@ std::optional<AstNode> Parser::statement(){
   return node;
 }
 
+AstNode Parser::assignment(){
+  Token var = matchIdent();
+  match(Punctuation::Assign);
+  AstNode expr; // = expression();
+
+  AssignAstNode node;
+  return node;
+}
+
+
 
 void Parser::match(TokenValue expected){
   if(it.currentToken().value == expected){
     it.nextToken();
   }else{
     // ERROR
+  }
+}
+
+Token Parser::matchLiteral(){
+  if(std::holds_alternative<Literal>(it.currentToken().value)){
+    Token token = it.currentToken();
+    it.nextToken();
+    return token;
+  }else{
+    // Error
+    return it.currentToken();
+  }
+}
+
+Token Parser::matchIdent(){
+  if(std::holds_alternative<VarIdent>(it.currentToken().value)){
+    Token token = it.currentToken();
+    it.nextToken();
+    return token;
+  }else{
+    // Error
+    return it.currentToken();
   }
 }

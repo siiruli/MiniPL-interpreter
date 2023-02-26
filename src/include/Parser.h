@@ -18,21 +18,22 @@ class Parser {
     AstNode program();
     StatementsAstNode statements();
     std::optional<AstNode> statement();
-    // ExprAstNode expression();
-    // AstNode assignment();
+    AstNode assignment();
     // AstNode declaration();
     // AstNode forStatement();
     // AstNode ifStatement();
     // AstNode readStatement();
     // AstNode printStatement();
+    // ExprAstNode expression();
     
   private:
     AstNode astRoot;
     TokenIterator it;
 
     AstNode makeAstNode();
-    VarIdent matchIdent();
-    Literal matchLiteral();
+    
+    Token matchIdent();
+    Token matchLiteral();
     
     void match(TokenValue expected);
 };
