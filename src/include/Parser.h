@@ -1,13 +1,23 @@
 #include "Scanner.h"
 #include "AstNode.h"
 
+class TokenIterator {
+  public: 
+    TokenIterator(Scanner &scanner);
+    Token currentToken();
+    Token nextToken();
+  private:
+    Scanner &scanner;
+    Token token;
+};
+
 class Parser {
   public:
     Parser(Scanner &scanner);
 
     AstNode program();
     StatementsAstNode statements();
-    AstNode statement();
+    std::optional<AstNode> statement();
     // ExprAstNode expression();
     // AstNode assignment();
     // AstNode declaration();
@@ -17,11 +27,8 @@ class Parser {
     // AstNode printStatement();
     
   private:
-    Scanner &scanner;
     AstNode astRoot;
-
-    Token currentToken;
-    void nextToken();
+    TokenIterator it;
 
     AstNode makeAstNode();
     VarIdent matchIdent();

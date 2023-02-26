@@ -1,32 +1,40 @@
 #include <variant>
 #include <type_traits>
 #include "Parser.h"
-Parser::Parser(Scanner &scanner) : scanner(scanner)
-{
-};
 
-void Parser::nextToken(){
-  currentToken = scanner.getToken();
+TokenIterator::TokenIterator(Scanner &scanner) : scanner(scanner) {}
+
+Token TokenIterator::nextToken(){
+  token = scanner.getToken();
+  return token;
 }
+Token TokenIterator::currentToken(){
+  return token;
+}
+
+Parser::Parser(Scanner &scanner) : it(scanner) {};
+
+
 AstNode Parser::program(){
-  nextToken();
-  return statements();
+  it.nextToken();
+  AstNode stmts = statements();
+  match(Punctuation::Eof);
+  return stmts;
 }
 
 StatementsAstNode Parser::statements(){
   std::vector<AstNode> stmts;
-  while(
-    currentToken.value != static_cast<TokenValue>(Punctuation::Eof)
-  ){
-    stmts.push_back(statement());  
+  while(auto node = statement()){
+    stmts.push_back(*node);  
   }
   StatementsAstNode node;
   node.statements = stmts;
   return node;
 }
 
-AstNode Parser::statement(){
-  AstNode node; 
+std::optional<AstNode> Parser::statement(){
+  std::optional<AstNode> node; 
+  Token token = it.currentToken();
   std::visit( overloaded {
     [&](std::string &arg){
       // node = assignment();
@@ -50,22 +58,23 @@ AstNode Parser::statement(){
           // node = readStatement();
           break;
         default:
-          node = ErrorAstNode();
+          // epsilon rule
+          node = std::nullopt;
       }
     },
     [&](auto &arg){
-      node = ErrorAstNode();
-      // ERROR
+      // epsilon rule
+      node = std::nullopt;
     }
-  }, currentToken.value);
+  }, token.value);
 
   return node;
 }
 
 
 void Parser::match(TokenValue expected){
-  if(currentToken.value == expected){
-    nextToken();
+  if(it.currentToken().value == expected){
+    it.nextToken();
   }else{
     // ERROR
   }
