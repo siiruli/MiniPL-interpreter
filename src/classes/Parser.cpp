@@ -18,7 +18,7 @@ Parser::Parser(Scanner &scanner) : it(scanner) {};
 AstNode Parser::program(){
   it.nextToken();
   AstNode stmts = statements();
-  match(Punctuation::Eof);
+  match(Delimiter::Eof);
   return stmts;
 }
 
@@ -73,7 +73,7 @@ std::optional<AstNode> Parser::statement(){
 
 AstNode Parser::assignment(){
   Token var = matchIdent();
-  match(Punctuation::Assign);
+  match(Delimiter::Assign);
   AstNode expr; // = expression();
 
   AssignAstNode node;

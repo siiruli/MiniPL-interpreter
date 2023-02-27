@@ -83,7 +83,7 @@ std::optional<Token> Scanner::scanToken(){
     }
   }
   else{
-    token = Punctuation::Eof;
+    token = Delimiter::Eof;
   }
 
   Position endOfToken = program.currentPosition();
@@ -206,37 +206,37 @@ std::optional<Literal> Scanner::scanString(){
   return Literal{lexeme};
 }
 
-std::optional<Punctuation> Scanner::scanPunctuation(){
-  std::optional<Punctuation> lexeme;
+std::optional<Delimiter> Scanner::scanPunctuation(){
+  std::optional<Delimiter> lexeme;
   if(auto c = program.currentChar()){
     switch (*c)
     {
     case ':':
       if(program.peekChar() == '=') {
-        lexeme = Punctuation::Assign;
+        lexeme = Delimiter::Assign;
         program.move();
       }
-      else lexeme = Punctuation::Colon;
+      else lexeme = Delimiter::Colon;
       break;
     case ';':
-      lexeme = Punctuation::Semicolon;
+      lexeme = Delimiter::Semicolon;
       break;
     case '(':
-      lexeme = Punctuation::OpenParen;
+      lexeme = Delimiter::OpenParen;
       break;
     case ')':
-      lexeme = Punctuation::ClosedParen;
+      lexeme = Delimiter::ClosedParen;
       break;
     case '.':
       if(program.peekChar() == '.') {
-        lexeme = Punctuation::Range;
+        lexeme = Delimiter::Range;
         program.move();
       }
       else {
         // ERROR
         std::string msg = "Expected '.' in range operator";
         raiseError(ScanningError::UnexpChar, msg);
-        lexeme = Punctuation::Range;
+        lexeme = Delimiter::Range;
       } 
       break; 
     default:

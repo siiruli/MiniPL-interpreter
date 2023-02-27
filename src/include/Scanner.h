@@ -15,7 +15,7 @@ constexpr const char *keywords[] = {
   "int" , "string" , "bool" , "assert" , "if" , "else"
 };
 
-enum class Punctuation {
+enum class Delimiter {
   Assign, Semicolon, Colon, Range, OpenParen, ClosedParen, Eof
 };
 
@@ -31,7 +31,7 @@ struct Literal {
 
 typedef std::string VarIdent;
 typedef std::variant<
-  Literal, VarIdent, Operator, Keyword, Punctuation
+  Literal, VarIdent, Operator, Keyword, Delimiter
 > TokenValue;
 
 struct Token {
@@ -62,7 +62,7 @@ class Scanner {
     std::optional<Literal> scanInteger();
     std::optional<Literal> scanString();
     std::optional<Operator> scanOperator();
-    std::optional<Punctuation> scanPunctuation();
+    std::optional<Delimiter> scanPunctuation();
 
     std::optional<Keyword> isKeyword(std::string &id);    
 

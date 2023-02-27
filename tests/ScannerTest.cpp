@@ -42,10 +42,10 @@ INSTANTIATE_TEST_SUITE_P(
   scan_punctuation, 
   ScannerTest, 
   testing::Values(
-    std::pair{";", makeToken(0, 0, Punctuation::Semicolon)}, 
-    std::pair{"..", makeToken(0, 1, Punctuation::Range)}, 
-    std::pair{" /* */ :=0\n", makeToken(7, 8, Punctuation::Assign)}, 
-    std::pair{")", makeToken(0, 0, Punctuation::ClosedParen)}
+    std::pair{";", makeToken(0, 0, Delimiter::Semicolon)}, 
+    std::pair{"..", makeToken(0, 1, Delimiter::Range)}, 
+    std::pair{" /* */ :=0\n", makeToken(7, 8, Delimiter::Assign)}, 
+    std::pair{")", makeToken(0, 0, Delimiter::ClosedParen)}
   )
 );
 
@@ -53,11 +53,11 @@ INSTANTIATE_TEST_SUITE_P(
   scan_comment, 
   ScannerTest, 
   testing::Values(
-    std::pair{"// comment \n ", makeToken(13, 13, Punctuation::Eof)},
+    std::pair{"// comment \n ", makeToken(13, 13, Delimiter::Eof)},
     std::pair{"/* this */", 
-      makeToken(10, 10, Punctuation::Eof)},
+      makeToken(10, 10, Delimiter::Eof)},
     std::pair{"/* /* nested comment */ */", 
-      makeToken(26, 26, Punctuation::Eof)}
+      makeToken(26, 26, Delimiter::Eof)}
   )
 );
 
