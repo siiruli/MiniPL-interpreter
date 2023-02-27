@@ -30,10 +30,18 @@ class Parser {
     AstNode astRoot;
     TokenIterator it;
 
-    AstNode makeAstNode();
+    template<class NodeType>
+    VarIdent matchIdent(NodeType &node);
+
+    template<class NodeType>
+    Literal matchLiteral(NodeType &node);
     
-    Token matchIdent();
-    Token matchLiteral();
-    
-    void match(TokenValue expected);
+    template<class NodeType>
+    void match(TokenValue expected, NodeType &node);
+
+    template<class NodeType>
+    void addMeta(NodeType &node, Token token);
+
+    template<class NodeType>
+    void addMeta(NodeType &node, AstNode &childNode);
 };
