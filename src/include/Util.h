@@ -13,6 +13,19 @@ template<class... Ts> struct overloaded : Ts... {
 template<class... Ts> overloaded(Ts...) -> overloaded<Ts...>;
  
 
+struct Literal {
+  std::variant<int, std::string> value;
+  inline bool operator==(const Literal &other) const {
+    return value == other.value;
+  }
+  inline bool operator!=(const Literal &other) const {
+    return !operator==(other);
+  }
+};
+
+typedef std::string VarIdent;
+
+
 // struct Value {
 //   Type type;
 //   union {

@@ -19,17 +19,7 @@ enum class Delimiter {
   Assign, Semicolon, Colon, Range, OpenParen, ClosedParen, Eof
 };
 
-struct Literal {
-  std::variant<int, std::string> value;
-  inline bool operator==(const Literal &other) const {
-    return value == other.value;
-  }
-  inline bool operator!=(const Literal &other) const {
-    return !operator==(other);
-  }
-};
 
-typedef std::string VarIdent;
 typedef std::variant<
   Literal, VarIdent, Operator, Keyword, Delimiter
 > TokenValue;
