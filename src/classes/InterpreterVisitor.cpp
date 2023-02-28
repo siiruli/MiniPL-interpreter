@@ -4,6 +4,10 @@
 void InterpreterVisitor::visit(ExprAstNode &node){
 
 }
+
+void InterpreterVisitor::visit(OpndAstNode &node){
+
+}
 void InterpreterVisitor::visit(StatementsAstNode &node){
 
 }

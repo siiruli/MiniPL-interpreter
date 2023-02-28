@@ -2,6 +2,7 @@
 #include "Parser.h"
 
 typedef std::vector<Token> TokenList;
+typedef std::vector<TokenValue> ValueList;
 
 class TestIterator : public TokenIterator {
   public: 
@@ -32,16 +33,31 @@ class ParserTest :
     Token makeToken(TokenValue value){
       return Token{0,0,0,0, value};
     }
+    TokenList makeTokens(ValueList &vals){
+      TokenList tokens(vals.size());
+      for(uint i=0; i<vals.size(); ++i) tokens[i] = makeToken(vals[i]);
+      return tokens;
+    }
   protected:
     void SetUp() override {
     }
 };
 
-TEST_F(ParserTest, statements) {
-  TokenList list = {};
-  TestIterator it(list);
+TEST_F(ParserTest, assignment) {
+  VarIdent x = "x";
+  ValueList list = {x, Delimiter::Assign, Literal{0}};
+  TestIterator it(makeTokens(list));
+
   Parser parser(it);
   AstNode node = parser.program();
-  EXPECT_TRUE(std::holds_alternative<StatementsAstNode>(node));
+  ASSERT_TRUE(std::holds_alternative<StatementsAstNode>(node));
+  auto &stmts = std::get<StatementsAstNode>(node);
+
+  ASSERT_EQ(stmts.statements.size(), 1);
+  auto &stmt = stmts.statements[0];
+  ASSERT_TRUE(std::holds_alternative<AssignAstNode>(stmt));
+  auto &assign = std::get<AssignAstNode>(stmt);
   
+  EXPECT_EQ(assign.varId, x);
+  // EXPECT_EQ(assign.expr.opnd1.get()->operand, Operand{Literal{0}});
 }

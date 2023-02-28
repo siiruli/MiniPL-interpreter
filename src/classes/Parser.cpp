@@ -24,7 +24,7 @@ AstNode Parser::program(){
 StatementsAstNode Parser::statements(){
   StatementsAstNode node;
   while(auto stmt = statement()){
-    node.statements.push_back(*stmt);  
+    node.statements.push_back(std::move(*stmt));
     addMeta(node, stmt.value());
   }
   return node;
@@ -34,7 +34,7 @@ std::optional<AstNode> Parser::statement(){
   std::optional<AstNode> node; 
   Token token = it.currentToken();
   std::visit( overloaded {
-    [&](std::string &arg){
+    [&](VarIdent &arg){
       node = assignment();
     },
     [&](Keyword &arg){
@@ -71,13 +71,44 @@ std::optional<AstNode> Parser::statement(){
 
 AstNode Parser::assignment(){
   AssignAstNode node;
-  VarIdent var = matchIdent(node);
+  node.varId = matchIdent(node);
   match(Delimiter::Assign, node);
-  AstNode expr; // = expression();
+  node.expr = expression();
 
   return node;
 }
 
+ExprAstNode Parser::expression(){
+  ExprAstNode node;
+  Token token = it.currentToken();
+  node.opnd1 = std::make_unique<OpndAstNode>(operand());
+  return node;
+}
+OpndAstNode Parser::operand(){
+  OpndAstNode node;
+  Token token = it.currentToken();
+  std::visit( overloaded {
+    [&](VarIdent &arg){
+      // VarIdent
+      node.operand = matchIdent(node);
+    },
+    [&](Literal &arg){
+      // Literal
+      node.operand = matchLiteral(node);
+    },
+    [&](Delimiter &arg){
+      // (
+      match(Delimiter::OpenParen, node);
+      node.operand = expression();
+      match(Delimiter::ClosedParen, node);
+    },
+    [&](auto &arg){
+      // epsilon rule
+      throw std::exception();
+    }
+  }, token.value);
+  return node;
+}
 // Add metadata from a token to an AST node
 template<class NodeType>
 void Parser::addMeta(NodeType &node, Token token){
@@ -91,41 +122,48 @@ void Parser::addMeta(NodeType &node, AstNode &childNode){
   AstNodeBase &childBase = getBaseReference(childNode);
   node.span += childBase.span;
 }
+
 template<class NodeType>
 void Parser::match(TokenValue expected, NodeType &node){
-  if(it.currentToken().value == expected){
+  Token token = it.currentToken();
+  if(token.value == expected){
     addMeta(node, it.currentToken());
     it.nextToken();
   }else{
     // ERROR
-    exit(1);
+    throw std::exception();
+
+    // exit(1);
   }
 }
 
 template<class NodeType>
 Literal Parser::matchLiteral(NodeType &node){
-  if(std::holds_alternative<Literal>(it.currentToken().value)){
-    Token token = it.currentToken();
-    addMeta(node, it.currentToken());
+  Token token = it.currentToken();
+  if(std::holds_alternative<Literal>(token.value)){
+    addMeta(node, token);
     it.nextToken();
     return std::get<Literal>(token.value);
   }else{
     // Error
     // return it.currentToken();
-    exit(1);
+    throw std::exception();
+
+    // exit(1);
   }
 }
 
 template<class NodeType>
 VarIdent Parser::matchIdent(NodeType &node){
-  if(std::holds_alternative<VarIdent>(it.currentToken().value)){
-    Token token = it.currentToken();
+  Token token = it.currentToken();
+  if(std::holds_alternative<VarIdent>(token.value)){
     addMeta(node, token);
     it.nextToken();
     return std::get<VarIdent>(token.value);
   }else{
     // Error
     // return it.currentToken();
-    exit(1);
+    throw std::exception();
+    // exit(1);
   }
 }

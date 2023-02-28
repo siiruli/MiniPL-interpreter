@@ -1,5 +1,6 @@
 #include <string>
 #include <vector>
+#include <memory>
 #include "Util.h"
 #include "Program.h"
 #include "Visitor.h"
@@ -20,9 +21,9 @@ class ReadAstNode;
 class PrintAstNode;
 class StatementsAstNode;
 class ErrorAstNode;
+class OpndAstNode;
 
 typedef std::variant<
-  ExprAstNode,
   DeclAstNode, 
   AssignAstNode, 
   ForAstNode, 
@@ -30,8 +31,9 @@ typedef std::variant<
   ReadAstNode, 
   PrintAstNode,
   StatementsAstNode,
-  ErrorAstNode> AstNode;
-
+  ErrorAstNode,
+  ExprAstNode,
+  OpndAstNode> AstNode;
 
 
 
@@ -39,10 +41,29 @@ typedef std::variant<
 class ExprAstNode : public AstNodeBase {
   public: 
     ExprValue value;
+    std::unique_ptr<OpndAstNode> opnd1;
     Operator op;
+    inline bool operator==(const ExprAstNode &other) const {
+      return this->op == other.op &&
+        opnd1 == other.opnd1;
+    }
+    // std::optional<OpndAstNode> opnd2;
 
 };
+typedef std::variant<
+  Literal, 
+  VarIdent, 
+  ExprAstNode> Operand;
+class OpndAstNode : public AstNodeBase {
+  public: 
+    Operand operand; 
 
+    inline bool operator==(const OpndAstNode &other) const {
+      return this->operand == other.operand;
+    }
+
+
+};
 
 
 class DeclAstNode : public AstNodeBase {
@@ -91,7 +112,7 @@ class IfAstNode : public AstNodeBase {
     StatementsAstNode ifStatements, elseStatements;
 };
 
-inline AstNodeBase & getBaseReference(AstNode node){
+inline AstNodeBase & getBaseReference(AstNode &node){
   AstNodeBase &base = std::visit([](auto &node) -> AstNodeBase& {
     return static_cast<AstNodeBase&>(node);
   }, node);

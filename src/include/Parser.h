@@ -31,7 +31,8 @@ class Parser {
     // AstNode ifStatement();
     // AstNode readStatement();
     // AstNode printStatement();
-    // ExprAstNode expression();
+    ExprAstNode expression();
+    OpndAstNode operand();
     
   private:
     AstNode astRoot;
