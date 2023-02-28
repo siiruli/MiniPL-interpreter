@@ -3,17 +3,24 @@
 
 class TokenIterator {
   public: 
-    TokenIterator(Scanner &scanner);
-    Token currentToken();
-    Token nextToken();
+    virtual Token currentToken() = 0;
+    virtual Token nextToken() = 0;
+};
+
+class ScannerIterator : public TokenIterator {
+  public: 
+    ScannerIterator(Scanner &scanner);
+    virtual Token currentToken() override;
+    virtual Token nextToken() override;
   private:
     Scanner &scanner;
     Token token;
+
 };
 
 class Parser {
   public:
-    Parser(Scanner &scanner);
+    Parser(TokenIterator &iterator);
 
     AstNode program();
     StatementsAstNode statements();
@@ -28,7 +35,7 @@ class Parser {
     
   private:
     AstNode astRoot;
-    TokenIterator it;
+    TokenIterator &it;
 
     template<class NodeType>
     VarIdent matchIdent(NodeType &node);

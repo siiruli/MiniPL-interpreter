@@ -2,21 +2,20 @@
 #include <type_traits>
 #include "Parser.h"
 
-TokenIterator::TokenIterator(Scanner &scanner) : scanner(scanner) {}
+ScannerIterator::ScannerIterator(Scanner &scanner) : scanner(scanner) {}
 
-Token TokenIterator::nextToken(){
+Token ScannerIterator::nextToken(){
   token = scanner.getToken();
   return token;
 }
-Token TokenIterator::currentToken(){
+Token ScannerIterator::currentToken(){
   return token;
 }
 
-Parser::Parser(Scanner &scanner) : it(scanner) {};
+Parser::Parser(TokenIterator &it) : it(it) {};
 
 
 AstNode Parser::program(){
-  it.nextToken();
   StatementsAstNode stmts = statements();
   match(Delimiter::Eof, stmts);
   return stmts;
