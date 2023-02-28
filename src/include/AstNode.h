@@ -47,7 +47,7 @@ class ExprAstNode : public AstNodeBase {
       return this->op == other.op &&
         opnd1 == other.opnd1;
     }
-    // std::optional<OpndAstNode> opnd2;
+    std::optional<std::unique_ptr<OpndAstNode>> opnd2;
 
 };
 typedef std::variant<

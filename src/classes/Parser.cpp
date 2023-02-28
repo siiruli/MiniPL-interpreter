@@ -71,7 +71,7 @@ std::optional<AstNode> Parser::statement(){
 
 AstNode Parser::assignment(){
   AssignAstNode node;
-  node.varId = matchIdent(node);
+  matchType(node.varId, node);
   match(Delimiter::Assign, node);
   node.expr = expression();
 
@@ -81,7 +81,18 @@ AstNode Parser::assignment(){
 ExprAstNode Parser::expression(){
   ExprAstNode node;
   Token token = it.currentToken();
-  node.opnd1 = std::make_unique<OpndAstNode>(operand());
+  if(token.value == TokenValue{Operator::Not}){
+    matchType(node.op, node);
+    node.opnd1 = std::make_unique<OpndAstNode>(operand());
+  }else{
+    
+    node.opnd1 = std::make_unique<OpndAstNode>(operand());
+
+    if(std::holds_alternative<Operator>(it.currentToken().value)){
+      matchType(node.op, node);
+      node.opnd2 = std::make_unique<OpndAstNode>(operand());
+    }
+  }
   return node;
 }
 OpndAstNode Parser::operand(){
@@ -90,11 +101,15 @@ OpndAstNode Parser::operand(){
   std::visit( overloaded {
     [&](VarIdent &arg){
       // VarIdent
-      node.operand = matchIdent(node);
+      VarIdent ident;
+      matchType(ident, node);
+      node.operand = ident;
     },
     [&](Literal &arg){
       // Literal
-      node.operand = matchLiteral(node);
+      Literal literal;
+      matchType(literal, node);
+      node.operand = literal;
     },
     [&](Delimiter &arg){
       // (
@@ -122,7 +137,9 @@ void Parser::addMeta(NodeType &node, AstNode &childNode){
   AstNodeBase &childBase = getBaseReference(childNode);
   node.span += childBase.span;
 }
-
+// Check that current token has the expected value, 
+// and move to next token.
+// Also add metadata from token to node.
 template<class NodeType>
 void Parser::match(TokenValue expected, NodeType &node){
   Token token = it.currentToken();
@@ -137,33 +154,21 @@ void Parser::match(TokenValue expected, NodeType &node){
   }
 }
 
-template<class NodeType>
-Literal Parser::matchLiteral(NodeType &node){
+// Check thet current token has the expected type, 
+// store the value to param &value, and move to next token.
+// Also add metadata from token to node.
+template<class NodeType, class ExpectedType>
+void Parser::matchType(ExpectedType &value, NodeType &node){
   Token token = it.currentToken();
-  if(std::holds_alternative<Literal>(token.value)){
+  if(std::holds_alternative<ExpectedType>(token.value)){
     addMeta(node, token);
     it.nextToken();
-    return std::get<Literal>(token.value);
+    value = std::get<ExpectedType>(token.value);
   }else{
     // Error
     // return it.currentToken();
     throw std::exception();
 
-    // exit(1);
-  }
-}
-
-template<class NodeType>
-VarIdent Parser::matchIdent(NodeType &node){
-  Token token = it.currentToken();
-  if(std::holds_alternative<VarIdent>(token.value)){
-    addMeta(node, token);
-    it.nextToken();
-    return std::get<VarIdent>(token.value);
-  }else{
-    // Error
-    // return it.currentToken();
-    throw std::exception();
     // exit(1);
   }
 }
