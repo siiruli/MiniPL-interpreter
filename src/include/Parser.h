@@ -39,8 +39,8 @@ class Parser {
     TokenIterator &it;
 
 
-    template<class NodeType, class ExpectedType>
-    void matchType(ExpectedType &value, NodeType &node);
+    template<class ExpectedType, class NodeType>
+    ExpectedType match(NodeType &node);
     
     template<class NodeType>
     void match(const TokenValue expected, NodeType &node);

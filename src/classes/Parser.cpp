@@ -71,7 +71,7 @@ std::optional<AstNode> Parser::statement(){
 
 AstNode Parser::assignment(){
   AssignAstNode node;
-  matchType(node.varId, node);
+  node.varId = match<VarIdent>(node);
   match(Delimiter::Assign, node);
   node.expr = expression();
 
@@ -82,14 +82,14 @@ ExprAstNode Parser::expression(){
   ExprAstNode node;
   Token token = it.currentToken();
   if(token.value == TokenValue{Operator::Not}){
-    matchType(node.op, node);
+    node.op = match<Operator>(node);
     node.opnd1 = std::make_unique<OpndAstNode>(operand());
   }else{
     
     node.opnd1 = std::make_unique<OpndAstNode>(operand());
 
     if(std::holds_alternative<Operator>(it.currentToken().value)){
-      matchType(node.op, node);
+      node.op = match<Operator>(node);
       node.opnd2 = std::make_unique<OpndAstNode>(operand());
     }
   }
@@ -102,13 +102,13 @@ OpndAstNode Parser::operand(){
     [&](VarIdent &arg){
       // VarIdent
       VarIdent ident;
-      matchType(ident, node);
+      node.operand = match<VarIdent>(node);
       node.operand = ident;
     },
     [&](Literal &arg){
       // Literal
       Literal literal;
-      matchType(literal, node);
+      node.operand = match<Literal>(node);
       node.operand = literal;
     },
     [&](Delimiter &arg){
@@ -155,15 +155,15 @@ void Parser::match(TokenValue expected, NodeType &node){
 }
 
 // Check thet current token has the expected type, 
-// store the value to param &value, and move to next token.
+// return the value, and move to next token.
 // Also add metadata from token to node.
-template<class NodeType, class ExpectedType>
-void Parser::matchType(ExpectedType &value, NodeType &node){
+template<class ExpectedType, class NodeType>
+ExpectedType Parser::match(NodeType &node){
   Token token = it.currentToken();
   if(std::holds_alternative<ExpectedType>(token.value)){
     addMeta(node, token);
     it.nextToken();
-    value = std::get<ExpectedType>(token.value);
+    return std::get<ExpectedType>(token.value);
   }else{
     // Error
     // return it.currentToken();
