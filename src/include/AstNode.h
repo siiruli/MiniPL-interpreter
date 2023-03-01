@@ -70,6 +70,7 @@ class DeclAstNode : public AstNodeBase {
   public: 
     std::string varId;
     Type type;
+    std::optional<ExprAstNode> value;
 };
 
 class AssignAstNode : public AstNodeBase {

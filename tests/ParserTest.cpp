@@ -45,7 +45,9 @@ class ParserTest :
 
 TEST_F(ParserTest, assignment) {
   VarIdent x = "x";
-  ValueList list = {x, Delimiter::Assign, Literal{0}};
+  ValueList list = {
+    x, Delimiter::Assign, Literal{0}, Delimiter::Semicolon
+  };
   TestIterator it(makeTokens(list));
 
   Parser parser(it);

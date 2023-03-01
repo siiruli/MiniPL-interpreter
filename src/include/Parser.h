@@ -26,11 +26,11 @@ class Parser {
     StatementsAstNode statements();
     std::optional<AstNode> statement();
     AstNode assignment();
-    // AstNode declaration();
-    // AstNode forStatement();
-    // AstNode ifStatement();
-    // AstNode readStatement();
-    // AstNode printStatement();
+    AstNode declaration();
+    AstNode forStatement();
+    AstNode ifStatement();
+    AstNode readStatement();
+    AstNode printStatement();
     ExprAstNode expression();
     OpndAstNode operand();
     

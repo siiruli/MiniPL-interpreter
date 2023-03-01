@@ -41,7 +41,7 @@ std::optional<AstNode> Parser::statement(){
       switch (arg)
       {
         case Keyword::Var:
-          // node = declaration();
+          node = declaration();
           break;
         case Keyword::For:
           // node = forStatement();
@@ -65,7 +65,12 @@ std::optional<AstNode> Parser::statement(){
       node = std::nullopt;
     }
   }, token.value);
-  
+  if(node.has_value()){
+    std::visit([&](auto &node){
+      match(Delimiter::Semicolon, node);
+    }, node.value());
+  }
+
   return node;
 }
 
@@ -75,6 +80,71 @@ AstNode Parser::assignment(){
   match(Delimiter::Assign, node);
   node.expr = expression();
 
+  return node;
+}
+
+AstNode Parser::declaration(){
+  DeclAstNode node;
+  match(Keyword::Var, node);
+  node.varId = match<VarIdent>(node);
+  match(Delimiter::Colon, node);
+  Keyword kw = match<Keyword>(node);
+  switch (kw)
+  {
+  case Keyword::Int: node.type = Type::Int; break;
+  case Keyword::Bool: node.type = Type::Bool; break;
+  case Keyword::String: node.type = Type::String; break;  
+  default:
+    // Error
+    break;
+  }
+  if(it.currentToken().value == TokenValue{Delimiter::Assign}){
+    match(Delimiter::Assign, node);
+    node.value = expression();
+  }
+  return node;
+}
+
+AstNode Parser::forStatement(){
+  ForAstNode node;
+  match(Keyword::For, node);
+  node.varId = match<VarIdent>(node);
+  match(Keyword::In, node);
+  node.startExpr = expression();
+  match(Delimiter::Range, node);
+  node.endExpr = expression();
+  match(Keyword::Do, node);
+  node.statements = statements();
+  match(Keyword::End, node);
+  match(Keyword::For, node);
+  return node;
+}
+AstNode Parser::ifStatement(){
+  IfAstNode node;
+  match(Keyword::If, node);
+  node.expr = expression();
+  match(Keyword::Do, node);
+  node.ifStatements = statements();
+  if(it.currentToken().value == TokenValue{Keyword::Else}){
+    match(Keyword::Else, node);
+    match(Keyword::Do, node);
+    node.elseStatements = statements();
+  }
+  match(Keyword::End, node);
+  match(Keyword::If, node);
+
+  return node;
+}
+AstNode Parser::readStatement(){
+  ReadAstNode node;
+  match(Keyword::Read, node);
+  node.varId = match<VarIdent>(node);
+  return node;
+}
+AstNode Parser::printStatement(){
+  PrintAstNode node;
+  match(Keyword::Print, node);
+  node.expr = expression();
   return node;
 }
 
