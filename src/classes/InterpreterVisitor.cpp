@@ -102,7 +102,7 @@ void InterpreterVisitor::visit(ForAstNode & node){
 void InterpreterVisitor::visit(PrintAstNode & node){
   visit(node.expr);
   std::visit([](auto& value) {
-    std::cout << value << std::endl;
+    std::cout << value;
   }, node.expr.value);
 }
 void InterpreterVisitor::visit(ReadAstNode & node){
