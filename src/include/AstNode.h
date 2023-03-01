@@ -5,6 +5,8 @@
 #include "Program.h"
 #include "Visitor.h"
 
+#pragma once
+
 enum Type {Int, Bool, String};
 
 class AstNodeBase {
@@ -56,6 +58,7 @@ typedef std::variant<
   ExprAstNode> Operand;
 class OpndAstNode : public AstNodeBase {
   public: 
+    ExprValue value;
     Operand operand; 
 
     inline bool operator==(const OpndAstNode &other) const {

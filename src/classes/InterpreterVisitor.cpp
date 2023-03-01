@@ -2,14 +2,36 @@
 #include "InterpreterVisitor.h"
 
 void InterpreterVisitor::visit(ExprAstNode &node){
-
+  visit(node.opnd1.get());
+  node.value = node.opnd1.get()->value;
 }
-
 void InterpreterVisitor::visit(OpndAstNode &node){
 
 }
-void InterpreterVisitor::visit(StatementsAstNode &node){
 
+void InterpreterVisitor::visit(OpndAstNode *node){
+
+  std::visit( overloaded {
+    [&](Literal &arg){
+      // node.value = Literal.
+      std::visit([&](auto &arg){
+        node->value = arg;
+      }, arg.value);
+    },
+    [&](VarIdent &arg){
+      node->value = 0;
+    },
+    [&](ExprAstNode &arg){
+      visit(arg);
+      node->value = arg.value;
+    }
+  }, node->operand);
+  
+}
+void InterpreterVisitor::visit(StatementsAstNode &node){
+  for(auto &child : node.statements){
+    visit(child);
+  }
 }
 
 void InterpreterVisitor::visit(AstNode &node){
@@ -72,7 +94,9 @@ void InterpreterVisitor::setVar(std::string varId, ExprValue val){
 ExprValue &InterpreterVisitor::getVar(std::string varId){
   return variables[varId];
 }
-
+ExprValue InterpreterVisitor::getVal(std::string varId){
+  return variables[varId];
+}
 void InterpreterVisitor::visit(ErrorAstNode &node){
 
 }

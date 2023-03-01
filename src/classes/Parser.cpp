@@ -2,14 +2,18 @@
 #include <type_traits>
 #include "Parser.h"
 
-ScannerIterator::ScannerIterator(Scanner &scanner) : scanner(scanner) {}
+ScannerIterator::ScannerIterator(Scanner &scanner) 
+  : scanner(scanner) 
+{
+}
 
 Token ScannerIterator::nextToken(){
   token = scanner.getToken();
-  return token;
+  return token.value();
 }
 Token ScannerIterator::currentToken(){
-  return token;
+  if(!token.has_value()) token = scanner.getToken();
+  return token.value();
 }
 
 Parser::Parser(TokenIterator &it) : it(it) {};
@@ -44,16 +48,16 @@ std::optional<AstNode> Parser::statement(){
           node = declaration();
           break;
         case Keyword::For:
-          // node = forStatement();
+          node = forStatement();
           break;
         case Keyword::If:
-          // node = ifStatement();
+          node = ifStatement();
           break;
         case Keyword::Print:
-          // node = printStatement();
+          node = printStatement();
           break;
         case Keyword::Read:
-          // node = readStatement();
+          node = readStatement();
           break;
         default:
           // epsilon rule
@@ -171,15 +175,11 @@ OpndAstNode Parser::operand(){
   std::visit( overloaded {
     [&](VarIdent &arg){
       // VarIdent
-      VarIdent ident;
       node.operand = match<VarIdent>(node);
-      node.operand = ident;
     },
     [&](Literal &arg){
       // Literal
-      Literal literal;
       node.operand = match<Literal>(node);
-      node.operand = literal;
     },
     [&](Delimiter &arg){
       // (

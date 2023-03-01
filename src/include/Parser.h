@@ -14,7 +14,7 @@ class ScannerIterator : public TokenIterator {
     virtual Token nextToken() override;
   private:
     Scanner &scanner;
-    Token token;
+    std::optional<Token> token;
 
 };
 

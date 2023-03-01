@@ -17,6 +17,7 @@ class InterpreterVisitor : Visitor {
     void visit(StatementsAstNode &node);
     void visit(ErrorAstNode &node);
     void visit(ExprAstNode &node);
+    void visit(OpndAstNode *node);
     void visit(OpndAstNode &node);
   private:
   
@@ -27,5 +28,6 @@ class InterpreterVisitor : Visitor {
     void initVar(Type type, std::string varId);
     void setVar(std::string varId, ExprValue val);
     ExprValue &getVar(std::string varId);
+    ExprValue getVal(std::string varId);
     
 };

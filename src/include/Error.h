@@ -2,6 +2,8 @@
 #include <vector>
 #include "Program.h"
 
+#pragma once
+
 enum class ScanningError {UnexpChar, Eof};
 
 typedef std::variant<ScanningError> ErrorType;
