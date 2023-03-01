@@ -1,12 +1,24 @@
 #include <iostream>
+#include <assert.h>
 #include "InterpreterVisitor.h"
 
 void InterpreterVisitor::visit(ExprAstNode &node){
   visit(node.opnd1.get());
-  node.value = node.opnd1.get()->value;
+  ExprValue opnd1 = node.opnd1.get()->value;
+  ExprValue opnd2 = 0;  
+  if(node.opnd2) {
+    visit(node.opnd2.get());
+    opnd2 = node.opnd2.get()->value;
+  }
+  ExprValue val;
+  if(node.op == Operator::Identity) val = opnd1;
+  if(node.op == Operator::Mul) {
+    val = std::get<int>(opnd1) * std::get<int>(opnd2); 
+  }
+  node.value = val;
 }
 void InterpreterVisitor::visit(OpndAstNode &node){
-
+  visit(&node);
 }
 
 void InterpreterVisitor::visit(OpndAstNode *node){
@@ -19,7 +31,7 @@ void InterpreterVisitor::visit(OpndAstNode *node){
       }, arg.value);
     },
     [&](VarIdent &arg){
-      node->value = 0;
+      node->value = getVal(arg);
     },
     [&](ExprAstNode &arg){
       visit(arg);
@@ -51,6 +63,10 @@ void InterpreterVisitor::visit(IfAstNode &node){
 void InterpreterVisitor::visit(DeclAstNode &node){
   // initialize variable
   initVar(node.type, node.varId);
+  if(auto &expr = node.value){
+    visit(*expr);
+    setVar(node.varId, (*expr).value);
+  }
 }
 void InterpreterVisitor::visit(AssignAstNode &node){
   visit(node.expr);
@@ -60,7 +76,9 @@ void InterpreterVisitor::visit(AssignAstNode &node){
 void InterpreterVisitor::visit(ForAstNode & node){
   visit(node.startExpr);
   visit(node.endExpr);
+  assert(std::holds_alternative<int>(node.startExpr.value));
   int start = std::get<int>(node.startExpr.value);
+  assert(std::holds_alternative<int>(node.endExpr.value));
   int end = std::get<int>(node.endExpr.value);
   for(int i= start; i<= end; ++i){
     this->setVar(node.varId, i);
@@ -82,9 +100,9 @@ void InterpreterVisitor::visit(ReadAstNode & node){
 void InterpreterVisitor::initVar(Type type, std::string varId){
   ExprValue val;
   switch (type)  {
-    case Int: val = 0;
-    case Bool: val = false;
-    case String: val = "";
+    case Int: val = int(0); break;
+    case Bool: val = bool(false); break;
+    case String: val = ""; break;
   }
   variables[varId] = val;
 }

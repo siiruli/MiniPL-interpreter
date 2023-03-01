@@ -2,7 +2,9 @@
 #include <string>
 #include <variant>
 
-enum class Operator {Add = 0, Sub, Mul, Div, Less, Equal, And, Not};
+enum class Operator {
+  Add = 0, Sub, Mul, Div, Less, Equal, And, Not, Identity
+};
 
 typedef std::variant<int, bool, std::string> ExprValue;
 

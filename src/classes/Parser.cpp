@@ -165,6 +165,8 @@ ExprAstNode Parser::expression(){
     if(std::holds_alternative<Operator>(it.currentToken().value)){
       node.op = match<Operator>(node);
       node.opnd2 = std::make_unique<OpndAstNode>(operand());
+    }else{
+      node.op = Operator::Identity;
     }
   }
   return node;
