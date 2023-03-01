@@ -29,5 +29,56 @@ class InterpreterVisitor : Visitor {
     void setVar(std::string varId, ExprValue val);
     ExprValue &getVar(std::string varId);
     ExprValue getVal(std::string varId);
-    
+
+
 };
+
+
+auto funcVisitor = 
+  [](auto func, ExprValue a, ExprValue b) -> ExprValue 
+{
+  return std::visit( overloaded {
+    [&](int arg1, int arg2) -> ExprValue {
+      return func(arg1, arg2); 
+    },
+    [&](std::string arg1, std::string arg2) -> ExprValue {
+      return func(arg1, arg2);
+    },
+    [&](bool arg1, bool arg2) -> ExprValue {
+      return func(arg1, arg2); 
+    },
+    [&](auto arg1, auto arg2)  -> ExprValue {
+      return false;
+    }
+  }, a, b);
+};
+
+namespace Op {
+  auto add = overloaded {
+    [](auto a, auto b){return a+b;},
+    [](bool a, bool b){return false;}
+  };
+  auto sub = overloaded {
+    [](auto a, auto b){return false;},
+    [](int a, int b){return a-b;}
+  };
+  auto mul = overloaded {
+    [](auto a, auto b){return false;},
+    [](int a, int b){return a*b;}
+  };
+  auto div = overloaded {
+    [](auto a, auto b){return false;},
+    [](int a, int b){return a/b;}
+  };
+  auto eq = [](auto a, auto b){return a == b;};
+  auto less = [](auto a, auto b){return a < b;};  
+  auto logAnd = overloaded {
+    [](auto a, auto b){return false;},
+    [](bool a, bool b){return a && b;}
+  };
+  auto logNot = overloaded {
+    [](auto a){return false;},
+    [](bool a){return !a;}
+  };
+
+}

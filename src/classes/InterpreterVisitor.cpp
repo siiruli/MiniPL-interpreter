@@ -2,6 +2,8 @@
 #include <assert.h>
 #include "InterpreterVisitor.h"
 
+
+
 void InterpreterVisitor::visit(ExprAstNode &node){
   visit(node.opnd1.get());
   ExprValue opnd1 = node.opnd1.get()->value;
@@ -11,12 +13,24 @@ void InterpreterVisitor::visit(ExprAstNode &node){
     opnd2 = node.opnd2.get()->value;
   }
   ExprValue val;
-  if(node.op == Operator::Identity) val = opnd1;
-  if(node.op == Operator::Mul) {
-    val = std::get<int>(opnd1) * std::get<int>(opnd2); 
+  
+  switch (node.op)
+  {
+    case Operator::Identity: val = opnd1; break;
+    case Operator::Not: val = Op::logNot(opnd1); break;
+    case Operator::And: val = funcVisitor(Op::logAnd, opnd1, opnd2); break;
+    case Operator::Equal: val = funcVisitor(Op::eq, opnd1, opnd2); break;
+    case Operator::Less: val = funcVisitor(Op::less, opnd1, opnd2); break;
+    case Operator::Add: val = funcVisitor(Op::add, opnd1, opnd2); break;
+    case Operator::Sub: val = funcVisitor(Op::sub, opnd1, opnd2); break;
+    case Operator::Mul: val = funcVisitor(Op::mul, opnd1, opnd2); break;
+    case Operator::Div: val = funcVisitor(Op::div, opnd1, opnd2); break;
   }
   node.value = val;
 }
+
+
+
 void InterpreterVisitor::visit(OpndAstNode &node){
   visit(&node);
 }

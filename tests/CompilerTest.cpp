@@ -21,3 +21,12 @@ TEST_F(CompilerTest, test1) {
 
   miniPl.run(program);
 }
+
+TEST_F(CompilerTest, test2) {
+  MiniPL miniPl;
+  std::string program = 
+    "var X : int := 4 - (6 / 2);\n"
+    "print X;";
+
+  miniPl.run(program);
+}
