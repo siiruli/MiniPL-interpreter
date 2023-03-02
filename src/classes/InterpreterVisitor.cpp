@@ -5,11 +5,11 @@
 
 
 void InterpreterVisitor::visit(ExprAstNode &node){
-  visit(node.opnd1.get());
+  visit(*node.opnd1);
   ExprValue opnd1 = node.opnd1.get()->value;
   ExprValue opnd2 = 0;  
   if(node.opnd2) {
-    visit(node.opnd2.get());
+    visit(*node.opnd2);
     opnd2 = node.opnd2.get()->value;
   }
   ExprValue val;
@@ -31,27 +31,24 @@ void InterpreterVisitor::visit(ExprAstNode &node){
 
 
 
-void InterpreterVisitor::visit(OpndAstNode &node){
-  visit(&node);
-}
 
-void InterpreterVisitor::visit(OpndAstNode *node){
+void InterpreterVisitor::visit(OpndAstNode &node){
 
   std::visit( overloaded {
     [&](Literal &arg){
       // node.value = Literal.
       std::visit([&](auto &arg){
-        node->value = arg;
+        node.value = arg;
       }, arg.value);
     },
     [&](VarIdent &arg){
-      node->value = getVal(arg);
+      node.value = getVal(arg);
     },
     [&](ExprAstNode &arg){
       visit(arg);
-      node->value = arg.value;
+      node.value = arg.value;
     }
-  }, node->operand);
+  }, node.operand);
   
 }
 void InterpreterVisitor::visit(StatementsAstNode &node){

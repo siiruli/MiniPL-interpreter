@@ -19,7 +19,7 @@ TEST_F(InterpreterTest, operandTest){
   OpndAstNode node;
   node.operand = Literal{5};
   ExprValue correct = 5;
-  visitor.visit(&node);
+  visitor.visit(node);
   EXPECT_EQ(node.value, correct);
 }
 
