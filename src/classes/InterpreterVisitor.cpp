@@ -98,13 +98,13 @@ void InterpreterVisitor::visit(ForAstNode & node){
 }
 void InterpreterVisitor::visit(PrintAstNode & node){
   visit(node.expr);
-  std::visit([](auto& value) {
-    std::cout << value;
+  std::visit([&](auto& value) {
+    output << value;
   }, node.expr.value);
 }
 void InterpreterVisitor::visit(ReadAstNode & node){
-  std::visit([](auto &value) {
-    std::cin >> value;
+  std::visit([&](auto &value) {
+    input >> value;
   }, getVar(node.varId));
 } 
 

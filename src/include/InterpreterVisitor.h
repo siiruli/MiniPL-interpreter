@@ -7,6 +7,10 @@
 
 class InterpreterVisitor : Visitor {
   public:
+    InterpreterVisitor(std::istream &in, std::ostream &out) :
+      input(in), output(out) {}
+    std::istream &input;
+    std::ostream &output;
     void visit(AstNode &node);
     void visit(IfAstNode &node);
     void visit(DeclAstNode &node);

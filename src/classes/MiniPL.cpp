@@ -14,6 +14,6 @@ void MiniPL::run(std::string program){
     return;
   }
 
-  InterpreterVisitor visitor;
+  InterpreterVisitor visitor{input, output};
   visitor.visit(ast);
 }

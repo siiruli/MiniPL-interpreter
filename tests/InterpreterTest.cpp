@@ -12,7 +12,8 @@ class InterpreterTest :
     void SetUp() override {
 
     }
-    InterpreterVisitor visitor;
+    std::stringstream input, output;
+    InterpreterVisitor visitor{input, output};
 };
 
 TEST_F(InterpreterTest, operandTest){
