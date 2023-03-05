@@ -131,7 +131,6 @@ AstNode Parser::ifStatement(){
   node.ifStatements = statements();
   if(it.currentToken().value == TokenValue{Keyword::Else}){
     match(Keyword::Else, node);
-    match(Keyword::Do, node);
     node.elseStatements = statements();
   }
   match(Keyword::End, node);
