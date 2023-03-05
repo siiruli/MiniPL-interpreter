@@ -30,27 +30,27 @@ class InterpreterVisitor : Visitor {
     ExprValue getVal(std::string varId);
 
 
+    template<class T>
+    ExprValue funcVisitor(T func, ExprValue a, ExprValue b) 
+    {
+      return std::visit( overloaded {
+        [&](int arg1, int arg2) -> ExprValue {
+          return func(arg1, arg2); 
+        },
+        [&](std::string arg1, std::string arg2) -> ExprValue {
+          return func(arg1, arg2);
+        },
+        [&](bool arg1, bool arg2) -> ExprValue {
+          return func(arg1, arg2); 
+        },
+        [&](auto arg1, auto arg2)  -> ExprValue {
+          return false;
+        }
+      }, a, b);
+    };
+
 };
 
-
-auto funcVisitor = 
-  [](auto func, ExprValue a, ExprValue b) -> ExprValue 
-{
-  return std::visit( overloaded {
-    [&](int arg1, int arg2) -> ExprValue {
-      return func(arg1, arg2); 
-    },
-    [&](std::string arg1, std::string arg2) -> ExprValue {
-      return func(arg1, arg2);
-    },
-    [&](bool arg1, bool arg2) -> ExprValue {
-      return func(arg1, arg2); 
-    },
-    [&](auto arg1, auto arg2)  -> ExprValue {
-      return false;
-    }
-  }, a, b);
-};
 
 namespace Op {
   auto add = overloaded {
