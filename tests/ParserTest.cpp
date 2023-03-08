@@ -23,6 +23,7 @@ class TestIterator : public TokenIterator {
     Token token;
     Token eof = Token{0, 0,0,0, Delimiter::Eof};
 
+
 };
 
 class ParserTest :  
@@ -39,6 +40,7 @@ class ParserTest :
       return tokens;
     }
   protected:
+    ErrorHandler handler;
     void SetUp() override {
     }
 };
@@ -50,7 +52,7 @@ TEST_F(ParserTest, assignment) {
   };
   TestIterator it(makeTokens(list));
 
-  Parser parser(it);
+  Parser parser(it, handler);
   AstNode node = parser.program();
   ASSERT_TRUE(std::holds_alternative<StatementsAstNode>(node));
   auto &stmts = std::get<StatementsAstNode>(node);

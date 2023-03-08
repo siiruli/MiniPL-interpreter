@@ -3,11 +3,13 @@
 ProgramIterator::ProgramIterator(std::string &program) :
   program(program) 
 {
-  pos = Position{0, 0};
+  pos = Position{0, 0, 0};
 }
 
 void ProgramIterator::move(){
-  if(currentChar() == '\n') ++pos.lineNumber;
+  if(currentChar() == '\n') {
+    ++pos.lineNumber; pos.linePos = 0;
+  }else ++pos.linePos;
   if(pos.charIndex < program.size()) ++pos.charIndex;
 }
 

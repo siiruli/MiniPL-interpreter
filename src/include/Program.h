@@ -1,9 +1,11 @@
 #include <optional>
+#include <ostream>
 #pragma once
 struct Position
 {
   unsigned int charIndex;
   unsigned int lineNumber;
+  unsigned int linePos;
   inline bool operator==(const Position &other) const {
     return charIndex == other.charIndex ;
       // && lineNumber == other.lineNumber;
@@ -11,8 +13,14 @@ struct Position
   inline bool operator<(const Position &other) const {
     return this->charIndex < other.charIndex;
   }
-};
 
+  // inline std::ostream & operator<<(std::ostream &os){
+  //   return os << this.charIndex;
+  // }
+};
+inline std::ostream & operator<<(std::ostream &os, Position pos){
+  return os << pos.lineNumber << ":" << pos.linePos;
+}
 
 struct Span
 {
@@ -31,6 +39,10 @@ struct Span
     this->end = std::max(this->start, other.end);
   }
 };
+
+inline std::ostream & operator<<(std::ostream &os, Span span){
+  return os << span.start << "-" << span.end;
+}
 
 class ProgramIterator {
   public:

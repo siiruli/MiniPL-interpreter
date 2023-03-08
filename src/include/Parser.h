@@ -20,7 +20,7 @@ class ScannerIterator : public TokenIterator {
 
 class Parser {
   public:
-    Parser(TokenIterator &iterator);
+    Parser(TokenIterator &iterator, ErrorHandler &handler);
 
     AstNode program();
     StatementsAstNode statements();
@@ -37,6 +37,7 @@ class Parser {
   private:
     AstNode astRoot;
     TokenIterator &it;
+    ErrorHandler &handler;
 
 
     template<class ExpectedType, class NodeType>
@@ -44,6 +45,15 @@ class Parser {
     
     template<class NodeType>
     void match(const TokenValue expected, NodeType &node);
+
+    std::vector<TokenValue> expectedVals;
+
+    template<class ExpectedType, class NodeType>
+    std::optional<ExpectedType> expect(NodeType &node);
+    
+    template<class NodeType>
+    bool expect(const TokenValue expected, NodeType &node);
+
 
     template<class NodeType>
     void addMeta(NodeType &node, Token token);

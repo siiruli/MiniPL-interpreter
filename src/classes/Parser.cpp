@@ -1,9 +1,10 @@
 #include <variant>
 #include <type_traits>
+#include <exception>
 #include "Parser.h"
 
 ScannerIterator::ScannerIterator(Scanner &scanner) 
-  : scanner(scanner) 
+  : scanner(scanner)
 {
 }
 
@@ -16,20 +17,32 @@ Token ScannerIterator::currentToken(){
   return token.value();
 }
 
-Parser::Parser(TokenIterator &it) : it(it) {};
+struct ParserException : public std::exception {
+   const char * what () const throw () {
+      return "Unexpected token";
+   }
+};
+
+Parser::Parser(TokenIterator &it, ErrorHandler &handler) 
+  : it(it), handler(handler) {};
 
 
 AstNode Parser::program(){
-  StatementsAstNode stmts = statements();
-  match(Delimiter::Eof, stmts);
+  StatementsAstNode stmts;
+  try {
+    stmts = statements();
+    match(Delimiter::Eof, stmts);
+  }catch(ParserException &e){
+    std::cout << "Exception caught\n"; 
+  }    
   return stmts;
 }
 
 StatementsAstNode Parser::statements(){
   StatementsAstNode node;
   while(auto stmt = statement()){
-    node.statements.push_back(std::move(*stmt));
-    addMeta(node, stmt.value());
+      node.statements.push_back(std::move(*stmt));
+      addMeta(node, stmt.value());
   }
   return node;
 }
@@ -69,6 +82,7 @@ std::optional<AstNode> Parser::statement(){
       node = std::nullopt;
     }
   }, token.value);
+  
   if(node.has_value()){
     std::visit([&](auto &node){
       match(Delimiter::Semicolon, node);
@@ -190,7 +204,9 @@ OpndAstNode Parser::operand(){
     },
     [&](auto &arg){
       // epsilon rule
-      throw std::exception();
+      // throw std::exception();
+      Error error{token.span, ParsingError{}, ""};
+      handler.raiseError(error);
     }
   }, token.value);
   return node;
@@ -219,8 +235,9 @@ void Parser::match(TokenValue expected, NodeType &node){
     it.nextToken();
   }else{
     // ERROR
-    throw std::exception();
-
+    Error error{token.span, ParsingError{"Unexpected token"}, ""};
+    handler.raiseError(error);
+    throw ParserException();
     // exit(1);
   }
 }
@@ -238,8 +255,44 @@ ExpectedType Parser::match(NodeType &node){
   }else{
     // Error
     // return it.currentToken();
-    throw std::exception();
+    
+    Error error{token.span, ParsingError{"Unexpected token"}, ""};
+    handler.raiseError(error);
+    throw ParserException();
 
     // exit(1);
+  }
+}
+
+template<class ExpectedType, class NodeType>
+std::optional<ExpectedType> Parser::expect(NodeType &node){
+  Token token = it.currentToken();
+  if(std::holds_alternative<ExpectedType>(token.value)){
+    addMeta(node, token);
+    it.nextToken();
+    return std::get<ExpectedType>(token.value);
+  }else{
+    // Error
+    // return it.currentToken();
+    
+    // Error error{token.span, ParsingError::UnexpectedToken, ""};
+    // handler.raiseError(error);
+    return {};
+    // exit(1);
+  }
+}
+
+template<class NodeType>
+bool Parser::expect(const TokenValue expected, NodeType &node){
+  Token token = it.currentToken();
+  if(token.value == expected){
+    addMeta(node, it.currentToken());
+    it.nextToken();
+    return true;
+  }else{
+    // ERROR
+
+    // exit(1);
+    return false;
   }
 }
