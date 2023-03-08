@@ -12,16 +12,10 @@ class ScannerTest :
     }
 };
 Token makeToken(uint start, uint end, TokenValue value){
-  return Token{Position{start, 0}, Position{end, 0}, value};
+  return Token{Position{start}, Position{end}, value};
 }
 
-std::ostream & operator<<(std::ostream &os, Position pos){
-  return os << "pos: " << pos.charIndex;
-}
-std::ostream & operator<<(std::ostream &os, Span span){
-  return os << "start: " << span.start.charIndex 
-    << ", end: " << span.end.charIndex;
-}
+
 std::ostream & operator<<(std::ostream &os, Token token){
   return os << "token"; 
 }

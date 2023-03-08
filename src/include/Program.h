@@ -3,6 +3,14 @@
 #pragma once
 struct Position
 {
+  inline Position() : 
+    charIndex(0), lineNumber(0), linePos(0) {}
+  
+  inline Position(uint charIndex) : 
+    charIndex(charIndex), lineNumber(0), linePos(0) {}
+  inline Position(uint charIndex, uint lineNumber, uint linePos) : 
+    charIndex(charIndex), lineNumber(lineNumber), linePos(linePos) {}
+
   unsigned int charIndex;
   unsigned int lineNumber;
   unsigned int linePos;

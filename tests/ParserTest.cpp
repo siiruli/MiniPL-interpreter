@@ -21,7 +21,7 @@ class TestIterator : public TokenIterator {
     std::vector<Token> tokenList;
     uint idx = 0;
     Token token;
-    Token eof = Token{0, 0,0,0, Delimiter::Eof};
+    Token eof = Token{Position{0}, Position{0}, Delimiter::Eof};
 
 
 };
@@ -32,7 +32,7 @@ class ParserTest :
 {
   public:
     Token makeToken(TokenValue value){
-      return Token{0,0,0,0, value};
+      return Token{0,0, value};
     }
     TokenList makeTokens(ValueList &vals){
       TokenList tokens(vals.size());
