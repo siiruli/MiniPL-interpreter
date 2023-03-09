@@ -4,7 +4,7 @@
 
 
 void MiniPL::runProgram(std::string &program){
-  
+
 }
 void MiniPL::runFile(std::string filename){
   std::ifstream file(filename);
@@ -20,7 +20,7 @@ void MiniPL::runFile(std::string filename){
   run(program);
 }
 void MiniPL::run(std::vector<std::string> &program){
-  ErrorHandler handler;
+  ErrorHandler handler(program);
   Scanner scanner(program, handler);
   ScannerIterator it(scanner); 
   Parser parser(it, handler);

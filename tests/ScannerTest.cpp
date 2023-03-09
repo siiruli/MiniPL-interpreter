@@ -22,7 +22,7 @@ std::ostream & operator<<(std::ostream &os, Token token){
 
 TEST_P(ScannerTest, getToken) {
   auto [program, correctToken] = GetParam();
-  ErrorHandler handler;
+  ErrorHandler handler{program};
   Scanner scanner(program, handler);
 
   Token token = scanner.getToken();

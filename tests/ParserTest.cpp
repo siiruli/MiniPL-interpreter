@@ -40,7 +40,8 @@ class ParserTest :
       return tokens;
     }
   protected:
-    ErrorHandler handler;
+    Program program;
+    ErrorHandler handler{program};
     void SetUp() override {
     }
 };

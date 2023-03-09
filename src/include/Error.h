@@ -35,13 +35,19 @@ struct Error {
 
 class ErrorMessager {
   public:
+    inline ErrorMessager(Program &program) : program(program) {}
+
     void printError(Error error);
 
     std::ostream &output = std::cout;
+  private:
+    Program &program;
 };
 
 class ErrorHandler {
   public:
+    inline ErrorHandler(Program &program) : messager(program) {}
+
     void raiseError(Error error);
     bool hasErrors();
   private:

@@ -12,4 +12,7 @@ bool ErrorHandler::hasErrors(){
 
 void ErrorMessager::printError(Error error){
   output << error.type << " at " << error.programPosition << std::endl;
+  auto [startLine, startPos] = error.programPosition.start;
+  output << startLine+1 << ": " << program[startLine];
+
 }
