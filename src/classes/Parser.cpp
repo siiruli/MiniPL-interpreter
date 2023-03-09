@@ -29,20 +29,33 @@ Parser::Parser(TokenIterator &it, ErrorHandler &handler)
 
 AstNode Parser::program(){
   StatementsAstNode stmts;
-  try {
+  // try {
     stmts = statements();
+  try{
     match(Delimiter::Eof, stmts);
   }catch(ParserException &e){
-    std::cout << "Exception caught\n"; 
+    std::cout << "Expected EoF, got " << it.currentToken().value << "\n"; 
   }    
   return stmts;
 }
 
 StatementsAstNode Parser::statements(){
   StatementsAstNode node;
-  while(auto stmt = statement()){
-      node.statements.push_back(std::move(*stmt));
-      addMeta(node, stmt.value());
+  while(true){
+    try {
+      if(auto stmt = statement()){
+        node.statements.push_back(std::move(*stmt));
+        addMeta(node, stmt.value());
+      }else{
+        break;
+      }
+    } catch(ParserException &e){
+      while(it.currentToken().value != TokenValue{Delimiter::Eof} &&
+        it.currentToken().value != TokenValue{Delimiter::Semicolon}){
+        it.nextToken();
+      }
+      it.nextToken();
+    }
   }
   return node;
 }
