@@ -29,7 +29,7 @@ constexpr const char *delims[] = {
   ":=", ";", ":", "..", "(", ")", "EoF"
 };
 inline std::ostream & operator<<(std::ostream &os, Delimiter d){
-  return os << "delimiter '" << keywords[static_cast<int>(d)] << "'";
+  return os << "delimiter '" << delims[static_cast<int>(d)] << "'";
 }
 
 
@@ -41,7 +41,7 @@ constexpr const char *operators[] = {
   "+", "-", "*", "/", "<", "=", "&", "!", ""
 };
 inline std::ostream & operator<<(std::ostream &os, Operator op){
-  return os << "operator '" << keywords[static_cast<int>(op)] << "'";
+  return os << "operator '" << operators[static_cast<int>(op)] << "'";
 }
 
 struct Literal {
