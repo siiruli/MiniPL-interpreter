@@ -37,7 +37,7 @@ struct Token {
 Gives lexical error to the error handler. */
 class Scanner {
   public:
-    Scanner(std::string &programText, ErrorHandler &handler);
+    Scanner(Program &program, ErrorHandler &handler);
 
     // Scans the next token from the program.
     Token getToken();

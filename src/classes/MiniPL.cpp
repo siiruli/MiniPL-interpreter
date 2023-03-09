@@ -1,8 +1,25 @@
 #include <iostream>
+#include <fstream>
 #include "MiniPL.h"
 
 
-void MiniPL::run(std::string program){
+void MiniPL::runProgram(std::string &program){
+  
+}
+void MiniPL::runFile(std::string filename){
+  std::ifstream file(filename);
+  std::vector<std::string> program;
+  if(!file.is_open()){
+    std::cout << "Unable to open file: " << filename << std::endl;
+    return;
+  }
+  std::string line;
+  while(std::getline(file, line)){
+    program.push_back(line + "\n");
+  }
+  run(program);
+}
+void MiniPL::run(std::vector<std::string> &program){
   ErrorHandler handler;
   Scanner scanner(program, handler);
   ScannerIterator it(scanner); 

@@ -1,25 +1,24 @@
 #include <optional>
 #include <ostream>
+#include <vector>
 #pragma once
+
 struct Position
 {
-  inline Position() : 
-    charIndex(0), lineNumber(0), linePos(0) {}
+  inline Position() : lineNumber(0), linePos(0) {}
   
-  inline Position(uint charIndex) : 
-    charIndex(charIndex), lineNumber(0), linePos(0) {}
-  inline Position(uint charIndex, uint lineNumber, uint linePos) : 
-    charIndex(charIndex), lineNumber(lineNumber), linePos(linePos) {}
+  inline Position(uint lineNumber, uint linePos) : 
+    lineNumber(lineNumber), linePos(linePos) {}
 
-  unsigned int charIndex;
   unsigned int lineNumber;
   unsigned int linePos;
   inline bool operator==(const Position &other) const {
-    return charIndex == other.charIndex ;
-      // && lineNumber == other.lineNumber;
+    return lineNumber == other.lineNumber
+            && linePos == other.linePos ;
   }
   inline bool operator<(const Position &other) const {
-    return this->charIndex < other.charIndex;
+    return std::pair{lineNumber, linePos} < 
+           std::pair{other.lineNumber, other.linePos};
   }
 
   // inline std::ostream & operator<<(std::ostream &os){
@@ -52,14 +51,18 @@ inline std::ostream & operator<<(std::ostream &os, Span span){
   return os << span.start << "-" << span.end;
 }
 
+typedef std::vector<std::string> Program;
+
 class ProgramIterator {
   public:
-    ProgramIterator(std::string &program);
+    ProgramIterator(Program &program);
     void move();    
     const std::optional<char> currentChar();
     const std::optional<char> peekChar();
     Position currentPosition();
   private:
-    std::string &program;
+    const Position nextPos(Position pos);
+    const std::optional<char> getChar(Position pos);
+    Program &program;
     Position pos;
 };

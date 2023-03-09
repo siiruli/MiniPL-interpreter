@@ -4,7 +4,7 @@
 
 class InterpreterTest :  
   // public ::testing::Test
-  public testing::TestWithParam<std::tuple<std::string, std::string, std::string>> 
+  public testing::TestWithParam<std::tuple<Program, std::string, std::string>> 
 {
   public:
     
@@ -28,13 +28,13 @@ INSTANTIATE_TEST_SUITE_P(
   InterpreterTest, 
   testing::Values(
     std::tuple{
-      "var X : int := ((1 - (6 / 2)));\n"
-      "print X;",
+      Program{"var X : int := ((1 - (6 / 2)));\n",
+      "print X;"},
       "", "-2"
     },
     std::tuple{
-      "var X : int := 4 + (6 * 2);\n"
-      "print X;",
+      Program{"var X : int := 4 + (6 * 2);\n",
+      "print X;"},
       "", "16"
     }
   )
@@ -45,19 +45,19 @@ INSTANTIATE_TEST_SUITE_P(
   InterpreterTest, 
   testing::Values(
     std::tuple{
-      "var X : int;\n"
-      "read X; \n"
-      "if X = 1 do print \"one\";\n "
-      "else print \"not one\"; print \".\";"
-      "end if;",
+      Program{"var X : int;\n",
+      "read X; \n",
+      "if X = 1 do print \"one\";\n ",
+      "else print \"not one\"; print \".\";\n",
+      "end if;"},
       "1 ", "one"
     },
     std::tuple{
-      "var X : int;\n"
-      "read X; \n"
-      "if X = 1 do print \"one\";\n "
+      Program{"var X : int;\n",
+      "read X; \n",
+      "if X = 1 do print \"one\";\n ",
       "else print \"not one\"; print \".\";"
-      "end if;",
+      "end if;"},
       "2 ", "not one."
     }
   )
@@ -67,9 +67,9 @@ INSTANTIATE_TEST_SUITE_P(
   InterpreterTest, 
   testing::Values(
     std::tuple{
-      "var X : int;\n"
-      "for X in 0-2..1*2 do \n"
-      "print X; print \" \"; end for;",
+      Program{"var X : int;\n",
+      "for X in 0-2..1*2 do \n",
+      "print X; print \" \"; end for;"},
       "nothing", "-2 -1 0 1 2 "
     }
   )

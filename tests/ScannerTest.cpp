@@ -3,7 +3,7 @@
 
 class ScannerTest :  
   // public ::testing::Test,
-  public testing::TestWithParam<std::pair<std::string, Token>> 
+  public testing::TestWithParam<std::pair<Program, Token>> 
 {
   public:
 
@@ -12,7 +12,7 @@ class ScannerTest :
     }
 };
 Token makeToken(uint start, uint end, TokenValue value){
-  return Token{Position{start}, Position{end}, value};
+  return Token{Position{0, start}, Position{0, end}, value};
 }
 
 
@@ -36,10 +36,10 @@ INSTANTIATE_TEST_SUITE_P(
   scan_punctuation, 
   ScannerTest, 
   testing::Values(
-    std::pair{";", makeToken(0, 0, Delimiter::Semicolon)}, 
-    std::pair{"..", makeToken(0, 1, Delimiter::Range)}, 
-    std::pair{" /* */ :=0\n", makeToken(7, 8, Delimiter::Assign)}, 
-    std::pair{")", makeToken(0, 0, Delimiter::ClosedParen)}
+    std::pair{Program{";"}, makeToken(0, 0, Delimiter::Semicolon)}, 
+    std::pair{Program{".."}, makeToken(0, 1, Delimiter::Range)}, 
+    std::pair{Program{" /* */ :=0\n"}, makeToken(7, 8, Delimiter::Assign)}, 
+    std::pair{Program{")"}, makeToken(0, 0, Delimiter::ClosedParen)}
   )
 );
 
@@ -47,10 +47,11 @@ INSTANTIATE_TEST_SUITE_P(
   scan_comment, 
   ScannerTest, 
   testing::Values(
-    std::pair{"// comment \n ", makeToken(13, 13, Delimiter::Eof)},
-    std::pair{"/* this */", 
+    std::pair{Program{"// comment \n"}, 
+      Token{Position{1,0},Position{1,0}, Delimiter::Eof}},
+    std::pair{Program{"/* this */"}, 
       makeToken(10, 10, Delimiter::Eof)},
-    std::pair{"/* /* nested comment */ */", 
+    std::pair{Program{"/* /* nested comment */ */"}, 
       makeToken(26, 26, Delimiter::Eof)}
   )
 );
@@ -59,8 +60,8 @@ INSTANTIATE_TEST_SUITE_P(
   scan_identifier, 
   ScannerTest, 
   testing::Values(
-    std::pair{"x", makeToken(0, 0, "x")}, 
-    std::pair{"abc_24", makeToken(0, 5, "abc_24")}
+    std::pair{Program{"x"}, makeToken(0, 0, "x")}, 
+    std::pair{Program{"abc_24"}, makeToken(0, 5, "abc_24")}
   )
 );
 
@@ -68,8 +69,8 @@ INSTANTIATE_TEST_SUITE_P(
   scan_keyword, 
   ScannerTest, 
   testing::Values(
-    std::pair{"var", makeToken(0, 2, Keyword::Var)}, 
-    std::pair{" if ", makeToken(1, 2, Keyword::If)}
+    std::pair{Program{"var"}, makeToken(0, 2, Keyword::Var)}, 
+    std::pair{Program{" if "}, makeToken(1, 2, Keyword::If)}
   )
 );
 
@@ -77,8 +78,8 @@ INSTANTIATE_TEST_SUITE_P(
   scan_int, 
   ScannerTest, 
   testing::Values(
-    std::pair{"10", makeToken(0, 1, Literal{10})}, 
-    std::pair{"0;", makeToken(0, 0, Literal{0})}
+    std::pair{Program{"10"}, makeToken(0, 1, Literal{10})}, 
+    std::pair{Program{"0;"}, makeToken(0, 0, Literal{0})}
   )
 );
 
@@ -86,8 +87,8 @@ INSTANTIATE_TEST_SUITE_P(
   scan_operator, 
   ScannerTest, 
   testing::Values(
-    std::pair{"+-", makeToken(0, 0, Operator::Add)},
-    std::pair{"!;", makeToken(0, 0, Operator::Not)},
-    std::pair{"/var", makeToken(0, 0, Operator::Div)}
+    std::pair{Program{"+-"}, makeToken(0, 0, Operator::Add)},
+    std::pair{Program{"!;"}, makeToken(0, 0, Operator::Not)},
+    std::pair{Program{"/var"}, makeToken(0, 0, Operator::Div)}
   )
 );
