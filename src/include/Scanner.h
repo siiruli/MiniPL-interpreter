@@ -48,7 +48,7 @@ class Scanner {
     ProgramIterator program;
     Position startOfToken;
     ErrorHandler &errorHandler;
-    void raiseError(ScanningError errortype, std::string message);    
+    void raiseError(ScanningErrorType errortype, std::string context);    
 
     void scanComment();
     std::optional<VarIdent> scanIdentifier();

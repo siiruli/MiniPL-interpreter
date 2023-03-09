@@ -205,8 +205,7 @@ OpndAstNode Parser::operand(){
     [&](auto &arg){
       // epsilon rule
       // throw std::exception();
-      Error error{token.span, ParsingError{}, ""};
-      handler.raiseError(error);
+      raiseError();
     }
   }, token.value);
   return node;
@@ -235,8 +234,7 @@ void Parser::match(TokenValue expected, NodeType &node){
     it.nextToken();
   }else{
     // ERROR
-    Error error{token.span, ParsingError{"Unexpected token"}, ""};
-    handler.raiseError(error);
+    raiseError();
     throw ParserException();
     // exit(1);
   }
@@ -256,12 +254,16 @@ ExpectedType Parser::match(NodeType &node){
     // Error
     // return it.currentToken();
     
-    Error error{token.span, ParsingError{"Unexpected token"}, ""};
-    handler.raiseError(error);
+    raiseError();
     throw ParserException();
 
     // exit(1);
   }
+}
+void Parser::raiseError(){
+  ParsingError error;
+  error.span = it.currentToken().span;
+  handler.raiseError(error);
 }
 
 template<class ExpectedType, class NodeType>

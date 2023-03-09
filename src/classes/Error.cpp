@@ -10,9 +10,17 @@ bool ErrorHandler::hasErrors(){
   return !errors.empty();
 }
 
-void ErrorMessager::printError(Error error){
-  output << error.type << " at " << error.programPosition << std::endl;
-  auto [startLine, startPos] = error.programPosition.start;
-  output << startLine+1 << ": " << program[startLine];
+void ErrorMessager::printError(Error &error){
+  ErrorBase &base = std::visit([](auto &arg) -> ErrorBase& {
+    return static_cast<ErrorBase&>(arg);
+  }, error);
+  printError(base);
+}
+
+
+void ErrorMessager::printError(ErrorBase &error){
+  output << error.description() << std::endl;
+  // auto [startLine, startPos] = error.span.start;
+  // output << startLine+1 << ": " << program[startLine];
 
 }

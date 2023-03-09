@@ -32,12 +32,15 @@ bool Scanner::isPunctChar(char c){
   }
   return false;
 }
-void Scanner::raiseError(ScanningError errorType, std::string msg){
-  Error error{
-    Span{startOfToken, program.currentPosition()},
-    errorType,
-    msg
-  };
+void Scanner::raiseError(ScanningErrorType errorType, std::string context){
+  ScanningError error;
+
+  error.span = Span{startOfToken, program.currentPosition()};
+  error.context = context;
+  error.type = errorType;
+  error.ch = program.currentChar();
+  error.pos = program.currentPosition();
+
   errorHandler.raiseError(error);
 }
 
@@ -77,9 +80,8 @@ std::optional<Token> Scanner::scanToken(){
     else if(isOperatorChar(c)) token = scanOperator();
     else {
       // Unexpected character
-      std::string msg = "character " + std::string(1, *curChar) 
-        + " is not the start of any token";
-      raiseError(ScanningError::UnexpChar, msg);
+      std::string context = "start of token";
+      raiseError(ScanningErrorType::UnexpChar, context);
     }
   }
   else{
@@ -125,7 +127,7 @@ void Scanner::scanComment(){
       program.move();
     }
     if(nestingLevel != 0){
-      raiseError(ScanningError::Eof, "EoF while scanning comment");
+      raiseError(ScanningErrorType::Eof, " comment");
     }
   }
 }
@@ -166,20 +168,20 @@ std::optional<Literal> Scanner::scanString(){
   if( auto c = program.currentChar(); *c == '"'){
     program.move();
   }else{
-    std::string msg = "Expected '\"' at start of string literal";
-    raiseError(ScanningError::UnexpChar, msg);
+    // std::string msg = "Expected '\"' at start of string literal";
+    raiseError(ScanningErrorType::UnexpChar, "start of string literal");
     return {};
   }
 
   while(program.currentChar() != '"'){
     if(!program.currentChar().has_value()){
       // error
-      raiseError(ScanningError::Eof, "EoF while scanning string");
+      raiseError(ScanningErrorType::Eof, "string literal");
     }
     char c = program.currentChar().value();
     if(c == '\n'){
       // ERROR
-      raiseError(ScanningError::UnexpChar, "String contains newline");
+      raiseError(ScanningErrorType::UnexpChar, "string literal");
     }
     
     if(c == '\\'){
@@ -234,8 +236,7 @@ std::optional<Delimiter> Scanner::scanPunctuation(){
       }
       else {
         // ERROR
-        std::string msg = "Expected '.' in range operator";
-        raiseError(ScanningError::UnexpChar, msg);
+        raiseError(ScanningErrorType::UnexpChar, "range operator");
         lexeme = Delimiter::Range;
       } 
       break; 
