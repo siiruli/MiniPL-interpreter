@@ -263,6 +263,7 @@ ExpectedType Parser::match(NodeType &node){
 void Parser::raiseError(){
   ParsingError error;
   error.span = it.currentToken().span;
+  error.token = it.currentToken();
   handler.raiseError(error);
 }
 

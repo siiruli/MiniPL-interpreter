@@ -1,36 +1,12 @@
 #include <string>
 #include <optional>
 #include <variant>
+#include "Token.h"
 #include "Util.h"
 #include "Program.h"
 #include "Error.h"
 
 #pragma once
-
-// These must be in the same order
-enum class Keyword {
-  Var = 0, For, End, In, Do, Read, Print, Int, String, Bool, 
-  Assert, If, Else
-};
-constexpr int n_keywords = 13;
-constexpr const char *keywords[] = {
-  "var", "for" , "end" , "in" , "do" , "read" , "print" , 
-  "int" , "string" , "bool" , "assert" , "if" , "else"
-};
-
-enum class Delimiter {
-  Assign, Semicolon, Colon, Range, OpenParen, ClosedParen, Eof
-};
-
-
-typedef std::variant<
-  Literal, VarIdent, Operator, Keyword, Delimiter
-> TokenValue;
-
-struct Token {
-  Span span;
-  TokenValue value;
-};
 
 
 /* Scans the program for lexical elements, producing tokens one by one. 

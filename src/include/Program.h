@@ -26,7 +26,7 @@ struct Position
   // }
 };
 inline std::ostream & operator<<(std::ostream &os, Position pos){
-  return os << pos.lineNumber << ":" << pos.linePos;
+  return os << pos.lineNumber+1 << ":" << pos.linePos+1;
 }
 
 struct Span

@@ -4,6 +4,7 @@
 #include <ostream>
 #include <sstream>
 #include "Program.h"
+#include "Token.h"
 
 #pragma once
 
@@ -36,11 +37,13 @@ struct ScanningError : ErrorBase {
   
 };
 struct ParsingError : ErrorBase {
+  Token token;
   std::string data;
 
   inline virtual std::string description() {
     std::stringstream desc;
-    desc << "Syntax error: ";
+    desc << "Syntax error: Unexpected " << token.value;
+    desc << " at " << token.span;
     return desc.str();
   }
 };
