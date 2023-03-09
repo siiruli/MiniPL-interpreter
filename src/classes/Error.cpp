@@ -21,7 +21,11 @@ void ErrorMessager::printError(Error &error){
 void ErrorMessager::printError(ErrorBase &error){
   output << error.description() << std::endl;
   auto [startLine, startPos] = error.span.start;
+  auto [endLine, endPos] = error.span.end;
   output << startLine+1 << ": " << program[startLine];
+  if(endLine > startLine + 1) output << "...\n";
+  if(endLine > startLine) output << endLine+1 << ": " << program[endLine];
+
   output << std::endl;
 
 }

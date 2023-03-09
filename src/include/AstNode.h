@@ -12,6 +12,7 @@ enum Type {Int, Bool, String};
 class AstNodeBase {
   public:
     Span span;
+    inline AstNodeBase() : span{Position(-1,-1), Position(0,0)} {}
 };
 
 class ExprAstNode;

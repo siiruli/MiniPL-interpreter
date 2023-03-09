@@ -61,5 +61,6 @@ class Parser {
     template<class NodeType>
     void addMeta(NodeType &node, AstNode &childNode);
 
-    void raiseError();
+    template<class NodeType>
+    void raiseError(NodeType &node);
 };

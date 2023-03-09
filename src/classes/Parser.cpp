@@ -218,7 +218,7 @@ OpndAstNode Parser::operand(){
     [&](auto &arg){
       // epsilon rule
       // throw std::exception();
-      raiseError();
+      raiseError(node);
     }
   }, token.value);
   return node;
@@ -247,7 +247,7 @@ void Parser::match(TokenValue expected, NodeType &node){
     it.nextToken();
   }else{
     // ERROR
-    raiseError();
+    raiseError(node);
     throw ParserException();
     // exit(1);
   }
@@ -267,16 +267,19 @@ ExpectedType Parser::match(NodeType &node){
     // Error
     // return it.currentToken();
     
-    raiseError();
+    raiseError(node);
     throw ParserException();
 
     // exit(1);
   }
 }
-void Parser::raiseError(){
+
+template<class NodeType>
+void Parser::raiseError(NodeType &node){
   ParsingError error;
-  error.span = it.currentToken().span;
+  error.span = node.span;
   error.token = it.currentToken();
+  error.span+=error.token.span;
   handler.raiseError(error);
 }
 
