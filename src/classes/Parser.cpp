@@ -50,14 +50,54 @@ StatementsAstNode Parser::statements(){
         break;
       }
     } catch(ParserException &e){
-      while(it.currentToken().value != TokenValue{Delimiter::Eof} &&
-        it.currentToken().value != TokenValue{Delimiter::Semicolon}){
+      while(classify(it.currentToken()) == TokenClass::Unimportant){
         it.nextToken();
       }
-      it.nextToken();
+      auto c = classify(it.currentToken());
+      if(c == TokenClass::EndOfStmt) it.nextToken();
+
     }
   }
   return node;
+}
+
+TokenClass Parser::classify(Token token){
+  TokenClass c;
+  std::visit(overloaded {
+    [&](VarIdent &arg){
+      c = TokenClass::Unimportant;
+    },
+    [&](Keyword &arg){
+      switch (arg)
+      {
+        case Keyword::Var:
+        case Keyword::For:
+        case Keyword::If:
+        case Keyword::Print:
+        case Keyword::Read:
+          c = TokenClass::StartOfStmt;
+          break;
+        case Keyword::End:
+          // c = TokenClass::EndKeyword; 
+        default:
+          c = TokenClass::Unimportant;
+          break;
+      }
+    },
+    [&](Delimiter &arg){
+      switch (arg)
+      {
+        case Delimiter::Eof: c = TokenClass::Eof; break;
+        case Delimiter::Semicolon: c = TokenClass::EndOfStmt; break;
+        default: c = TokenClass::Unimportant;
+      }
+    },
+    [&](auto &arg){
+      // epsilon rule
+      c = TokenClass::Unimportant;
+    }
+  }, token.value);
+  return c;
 }
 
 std::optional<AstNode> Parser::statement(){

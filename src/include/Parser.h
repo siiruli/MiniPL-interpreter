@@ -18,6 +18,8 @@ class ScannerIterator : public TokenIterator {
 
 };
 
+enum class TokenClass {StartOfStmt, EndOfStmt, EndKeyword, Eof, Unimportant};
+
 class Parser {
   public:
     Parser(TokenIterator &iterator, ErrorHandler &handler);
@@ -63,4 +65,7 @@ class Parser {
 
     template<class NodeType>
     void raiseError(NodeType &node);
+
+    TokenClass classify(Token token);  
+    
 };
