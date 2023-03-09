@@ -181,7 +181,8 @@ std::optional<Literal> Scanner::scanString(){
     char c = program.currentChar().value();
     if(c == '\n'){
       // ERROR
-      raiseError(ScanningErrorType::UnexpChar, "string literal");
+      raiseError(ScanningErrorType::UnexpNewline, "string literal");
+      break;
     }
     
     if(c == '\\'){
@@ -204,7 +205,6 @@ std::optional<Literal> Scanner::scanString(){
 
     program.move();
   }
-  
   return Literal{lexeme};
 }
 

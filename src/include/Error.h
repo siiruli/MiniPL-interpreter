@@ -14,7 +14,7 @@ struct ErrorBase {
   Span span;
   std::string context;
 };
-enum class ScanningErrorType {Eof, UnexpChar};
+enum class ScanningErrorType {Eof, UnexpNewline, UnexpChar};
 struct ScanningError : ErrorBase {
   ScanningErrorType type;
   std::optional<char> ch;
@@ -23,14 +23,17 @@ struct ScanningError : ErrorBase {
   inline virtual std::string description() {
     std::stringstream desc;
     desc << "Lexical error: ";
+    desc << "Unexpected ";
     if(type == ScanningErrorType::UnexpChar){
-      desc << "Unexpected character " << ch.value_or(' ');
-      desc << " at " << pos;
-      desc << " while scanning " << context;
+      desc << " character " << ch.value_or(' ');
     }else if(type == ScanningErrorType::Eof){
-      desc << "Unexpected end-of-file at " << pos; 
-      desc << " while scanning " << context;
+      desc << "end-of-file"; 
+    }else if(type == ScanningErrorType::UnexpNewline){
+      desc << "newline"; 
     }
+    desc << " at " << pos;
+    desc << " while scanning " << context;
+
     return desc.str();
   }
   

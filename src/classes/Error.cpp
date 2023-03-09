@@ -22,5 +22,6 @@ void ErrorMessager::printError(ErrorBase &error){
   output << error.description() << std::endl;
   auto [startLine, startPos] = error.span.start;
   output << startLine+1 << ": " << program[startLine];
+  output << std::endl;
 
 }
