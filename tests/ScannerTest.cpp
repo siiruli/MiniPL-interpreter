@@ -47,10 +47,10 @@ INSTANTIATE_TEST_SUITE_P(
   scan_comment, 
   ScannerTest, 
   testing::Values(
-    std::pair{Program{"// comment \n"}, 
-      Token{Position{1,0},Position{1,0}, Delimiter::Eof}},
-    std::pair{Program{"/* this */"}, 
-      makeToken(10, 10, Delimiter::Eof)},
+    std::pair{Program{"// comment \n", "x"}, 
+      Token{Position{1,0},Position{1,0}, "x"}},
+    std::pair{Program{"/* this */x"}, 
+      makeToken(10, 10, "x")},
     std::pair{Program{"/* /* nested comment */ */"}, 
       makeToken(26, 26, Delimiter::Eof)}
   )

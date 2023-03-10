@@ -54,9 +54,8 @@ std::optional<Token> Scanner::scanToken(){
       else break;
     }
     // end if c is not whitespace
-    else if(!isspace(static_cast<unsigned char>(*c))) break;
-
-    program.move();
+    else if(isspace(static_cast<unsigned char>(*c))) program.move();
+    else break;
   }
 
   // scan a token  

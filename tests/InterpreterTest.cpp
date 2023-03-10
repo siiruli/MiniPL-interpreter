@@ -67,7 +67,7 @@ INSTANTIATE_TEST_SUITE_P(
   InterpreterTest, 
   testing::Values(
     std::tuple{
-      Program{"var X : int;\n",
+      Program{"var X : int; // comment\n",
       "for X in 0-2..1*2 do \n",
       "print X; print \" \"; end for;"},
       "nothing", "-2 -1 0 1 2 "
