@@ -12,35 +12,35 @@ void SemanticAnalyzer::raiseError(NodeType &node){
 }
 
 void SemanticAnalyzer::visit(ExprAstNode &node){
+
+  switch (node.op)
+  {
+    case Operator::Identity:
+    case Operator::Not: 
+      if(node.opnd2) raiseError(node);
+      break;
+    default:
+      if(!node.opnd2) raiseError(node);
+      break;
+  }
+
   visit(*node.opnd1);
   
   if(node.opnd2) {
     visit(*node.opnd2);
   }
 
-  switch (node.op)
-  {
-    case Operator::Identity:
-    case Operator::Not: 
-    case Operator::And:
-    case Operator::Sub: 
-    case Operator::Mul: 
-    case Operator::Div: 
-    case Operator::Add: 
-    case Operator::Equal: 
-    case Operator::Less:
-      break;
-  }
 }
 
 void SemanticAnalyzer::visit(OpndAstNode &node){
   std::visit( overloaded {
     [&](Literal &arg){
-      // node.value = Literal.
     },
     [&](VarIdent &arg){
+      if(!hasVar(arg)) raiseError(node);
     },
     [&](ExprAstNode &arg){
+      visit(arg);
     }
   }, node.operand);
 }
@@ -63,16 +63,20 @@ void SemanticAnalyzer::visit(IfAstNode &node){
 }
 void SemanticAnalyzer::visit(DeclAstNode &node){
   // initialize variable
+  if(hasVar(node.varId)) raiseError(node); // redeclaration
+
   initVar(node.varId);
   if(auto &expr = node.value){
     visit(*expr);
   }
 }
 void SemanticAnalyzer::visit(AssignAstNode &node){
+  if(!hasVar(node.varId)) raiseError(node);
   visit(node.expr);
 }
 
 void SemanticAnalyzer::visit(ForAstNode & node){
+  if(!hasVar(node.varId)) raiseError(node);
   visit(node.startExpr);
   visit(node.endExpr);
   visit(node.statements);
@@ -81,6 +85,7 @@ void SemanticAnalyzer::visit(PrintAstNode & node){
   visit(node.expr);
 }
 void SemanticAnalyzer::visit(ReadAstNode & node){
+  if(!hasVar(node.varId)) raiseError(node);
 } 
 
 void SemanticAnalyzer::initVar(std::string varId){
