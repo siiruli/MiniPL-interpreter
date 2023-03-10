@@ -2,9 +2,13 @@
 #include <assert.h>
 #include "TypeChecker.h"
 
+
 template<class NodeType> 
-void TypeChecker::raiseError(NodeType &node){
+void TypeChecker::raiseError(NodeType &node, 
+    Types exp, Types got){
   TypeError error;
+  error.expected = exp;
+  error.got = got;
   error.span = node.span;
   handler.raiseError(error);
 }
@@ -28,35 +32,40 @@ Type TypeChecker::visit(ExprAstNode &node){
     case Operator::Not: 
       if(type1 == Type::Bool) type = type1;
       else {
-        raiseError(node);
+        raiseError(node, Types{Type::Bool}, Types{type1});
       }
       break;
     case Operator::And:
       if(type1 == Type::Bool && type2 == Type::Bool){
         type = Type::Bool;
       }else{
-        raiseError(node);
+        raiseError(node, {Bool}, {type1, type2});
         break;
       }
     case Operator::Sub: 
     case Operator::Mul: 
     case Operator::Div: 
       if(type1 != Type::Int) {
-        raiseError(node);
+        raiseError(node, {Int}, {type1, type2});
         break;
       }
     case Operator::Add: 
       if(type1 == Type::Bool) {
-        raiseError(node);
+        raiseError(node, {Int, String}, {type1, type2});
         break;
       }
-      if(type1 != type2){
-        raiseError(node);
+      else if(type1 != type2){
+        raiseError(node, {type1}, {type1, type2});
         break;
       }
       type = type1;
+      break;
     case Operator::Equal: 
     case Operator::Less:
+      if(type1 != type2){
+        raiseError(node, {type1}, {type1, type2});
+        break;
+      }
       type = Type::Bool;
       break;
   }
@@ -104,7 +113,8 @@ Type TypeChecker::visit(DeclAstNode &node){
   if(auto &expr = node.value){
     Type exprtype = visit(*expr);
     if(exprtype != Type::Broken && node.type != exprtype){
-      raiseError(node);
+      raiseError(node, {node.type}, {exprtype});
+      std::cout << node.type << " " << exprtype << "\n";
     }
   }
   return Type::Void;
@@ -112,7 +122,7 @@ Type TypeChecker::visit(DeclAstNode &node){
 Type TypeChecker::visit(AssignAstNode &node){
   Type exprtype = visit(node.expr);
   if(exprtype != Type::Broken && getVal(node.varId) != exprtype){
-    raiseError(node);
+    raiseError(node, {getVal(node.varId)}, {exprtype});
   }
   // setVar(node.varId, node.expr.value);
   return Type::Void;

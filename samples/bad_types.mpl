@@ -5,7 +5,6 @@
 
 
 var x : int := "8"; // int can't be initialized to string
-
 var y : string := 5 + "hello"; // Can't add string to int
 
 var z : bool := 1 = 1; // This is correct

@@ -8,6 +8,12 @@
 #pragma once
 
 enum Type {Int, Bool, String, Void, Broken};
+constexpr const char *typenames[] = {
+  "int", "bool", "string", "void", "broken"
+};
+inline std::ostream & operator<<(std::ostream &os, Type arg){
+  return os << "'" << typenames[static_cast<int>(arg)] << "'";
+}
 
 class AstNodeBase {
   public:

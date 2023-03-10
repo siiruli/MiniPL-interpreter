@@ -27,14 +27,14 @@ void MiniPL::run(std::vector<std::string> &program){
 
   AstNode ast = parser.program();
   if(handler.hasErrors()){
-    output << "Errors while scanning/parsing. Ending process.\n";
+    std::cout << "Errors while scanning/parsing. Ending process.\n";
     return;
   }
   TypeChecker typeChecker(handler);
   typeChecker.visit(ast);
-  
+
   if(handler.hasErrors()){
-    output << "Found type errors. Ending process.\n";
+    std::cout << "Found type errors. Ending process.\n";
     return;
   }
 

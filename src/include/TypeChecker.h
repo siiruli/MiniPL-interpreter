@@ -4,10 +4,11 @@
 #include "Error.h"
 
 #pragma once
+typedef std::vector<Type> Types;
 
 class TypeChecker {
   public:
-    TypeChecker(ErrorHandler handler) : handler(handler) {}
+    TypeChecker(ErrorHandler &handler) : handler(handler) {}
 
     Type visit(AstNode &node);
     Type visit(IfAstNode &node);
@@ -20,10 +21,10 @@ class TypeChecker {
     Type visit(ExprAstNode &node);
     Type visit(OpndAstNode &node);
   private:
-    ErrorHandler handler;
+    ErrorHandler &handler;
     
     template<class NodeType> 
-    void raiseError(NodeType &node);
+    void raiseError(NodeType &node, Types exp, Types got);
 
     std::map<std::string, Type> variables; 
 

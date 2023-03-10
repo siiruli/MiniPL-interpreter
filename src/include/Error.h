@@ -5,7 +5,7 @@
 #include <sstream>
 #include "Program.h"
 #include "Token.h"
-
+#include "AstNode.h"
 #pragma once
 
 
@@ -52,11 +52,18 @@ struct ParsingError : ErrorBase {
 };
 
 struct TypeError : ErrorBase {
-inline virtual std::string description() {
-    std::stringstream desc;
-    desc << "Type error";
-    return desc.str();
-  }
+  std::vector<Type> expected;
+  std::vector<Type> got;
+  inline virtual std::string description() {
+      std::stringstream desc;
+      desc << "Type error";
+      desc << " at " << span;
+      desc << ". expected: ";
+      for(auto t : expected) desc << t << " ";
+      desc << ", got: ";
+      for(auto t : got) desc << t << " ";
+      return desc.str();
+    }
 };
 typedef std::variant<ScanningError, ParsingError, TypeError> Error;
 
