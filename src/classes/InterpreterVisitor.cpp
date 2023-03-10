@@ -126,6 +126,3 @@ ExprValue &InterpreterVisitor::getVar(std::string varId){
 ExprValue InterpreterVisitor::getVal(std::string varId){
   return variables[varId];
 }
-void InterpreterVisitor::visit(ErrorAstNode &node){
-
-}

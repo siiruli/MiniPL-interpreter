@@ -50,7 +50,15 @@ struct ParsingError : ErrorBase {
     return desc.str();
   }
 };
-typedef std::variant<ScanningError, ParsingError> Error;
+
+struct TypeError : ErrorBase {
+inline virtual std::string description() {
+    std::stringstream desc;
+    desc << "Type error";
+    return desc.str();
+  }
+};
+typedef std::variant<ScanningError, ParsingError, TypeError> Error;
 
 // typedef std::variant<ScanningError, ParsingError> ErrorType;
 

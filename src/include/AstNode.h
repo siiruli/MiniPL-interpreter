@@ -7,7 +7,7 @@
 #include "Token.h"
 #pragma once
 
-enum Type {Int, Bool, String};
+enum Type {Int, Bool, String, Void, Broken};
 
 class AstNodeBase {
   public:
@@ -23,7 +23,6 @@ class IfAstNode;
 class ReadAstNode;
 class PrintAstNode;
 class StatementsAstNode;
-class ErrorAstNode;
 class OpndAstNode;
 
 typedef std::variant<
@@ -34,7 +33,6 @@ typedef std::variant<
   ReadAstNode, 
   PrintAstNode,
   StatementsAstNode,
-  ErrorAstNode,
   ExprAstNode,
   OpndAstNode> AstNode;
 
@@ -96,9 +94,6 @@ class PrintAstNode : public AstNodeBase {
     ExprAstNode expr;
 };
 
-class ErrorAstNode : public AstNodeBase {
-
-};
 
 class StatementsAstNode : public AstNodeBase {
   public:

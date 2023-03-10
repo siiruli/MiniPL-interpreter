@@ -19,7 +19,6 @@ class InterpreterVisitor : Visitor {
     void visit(PrintAstNode &node);
     void visit(ReadAstNode &node);
     void visit(StatementsAstNode &node);
-    void visit(ErrorAstNode &node);
     void visit(ExprAstNode &node);
     void visit(OpndAstNode &node);
   private:
