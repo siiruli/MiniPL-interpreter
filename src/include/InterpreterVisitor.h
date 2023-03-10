@@ -48,7 +48,7 @@ class InterpreterVisitor : Visitor {
           return func(arg1, arg2); 
         },
         [&](auto arg1, auto arg2)  -> ExprValue {
-          return false;
+          exit(1); return "TypeError";
         }
       }, a, b);
     };
@@ -59,28 +59,28 @@ class InterpreterVisitor : Visitor {
 namespace Op {
   auto add = overloaded {
     [](auto a, auto b){return a+b;},
-    [](bool a, bool b){return false;}
+    [](bool a, bool b){exit(1); return "TypeError";}
   };
   auto sub = overloaded {
-    [](auto a, auto b){return false;},
+    [](auto a, auto b){exit(1); return "TypeError";},
     [](int a, int b){return a-b;}
   };
   auto mul = overloaded {
-    [](auto a, auto b){return false;},
+    [](auto a, auto b){exit(1); return "TypeError";},
     [](int a, int b){return a*b;}
   };
   auto div = overloaded {
-    [](auto a, auto b){return false;},
+    [](auto a, auto b){exit(1); return "TypeError";},
     [](int a, int b){return a/b;}
   };
   auto eq = [](auto a, auto b){return a == b;};
   auto less = [](auto a, auto b){return a < b;};  
   auto logAnd = overloaded {
-    [](auto a, auto b){return false;},
+    [](auto a, auto b){exit(1); return "TypeError";},
     [](bool a, bool b){return a && b;}
   };
   auto logNot = overloaded {
-    [](auto a){return false;},
+    [](auto a){exit(1); return "TypeError";},
     [](bool a){return !a;}
   };
 
