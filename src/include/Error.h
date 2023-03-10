@@ -74,7 +74,7 @@ struct TypeError : SemanticError {
     }
 };
 
-typedef std::variant<ScanningError, ParsingError, TypeError> Error;
+typedef std::variant<ScanningError, ParsingError, SemanticError, TypeError> Error;
 
 // typedef std::variant<ScanningError, ParsingError> ErrorType;
 

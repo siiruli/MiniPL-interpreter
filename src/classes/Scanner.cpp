@@ -91,7 +91,7 @@ std::optional<Token> Scanner::scanToken(){
   program.move();
 
   if(auto value = token) {
-    return Token{startOfToken, endOfToken, *value};
+    return Token{Span{startOfToken, endOfToken}, *value};
   }else {
     return {};
   }

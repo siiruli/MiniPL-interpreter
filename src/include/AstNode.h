@@ -18,7 +18,6 @@ inline std::ostream & operator<<(std::ostream &os, Type arg){
 class AstNodeBase {
   public:
     Span span;
-    inline AstNodeBase() : span{Position(-1,-1), Position(0,0)} {}
 };
 
 class ExprAstNode;

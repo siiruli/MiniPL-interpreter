@@ -31,6 +31,10 @@ inline std::ostream & operator<<(std::ostream &os, Position pos){
 
 struct Span
 {
+  Span() : start(-1, -1), end(0,0) {}
+  Span(Position start, Position end) : start(start), end(end) {}
+  Span(uint a, uint b, uint c, uint d) : start(a, b), end(c,d) {}
+
   Position start, end;
   inline bool operator==(const Span &other) const {
     return this->start == other.start && this->end == other.end;

@@ -5,8 +5,9 @@
 
 template<class NodeType> 
 void SemanticAnalyzer::raiseError(NodeType &node){
-  TypeError error;
+  SemanticError error;
   error.span = node.span;
+  error.context = nodenames[AstNode(std::in_place_type<NodeType>).index()];
   handler.raiseError(error);
 }
 

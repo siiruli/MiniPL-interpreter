@@ -12,7 +12,7 @@ class ScannerTest :
     }
 };
 Token makeToken(uint start, uint end, TokenValue value){
-  return Token{Position{0, start}, Position{0, end}, value};
+  return Token{Span{Position{0, start}, Position{0, end}}, value};
 }
 
 
@@ -48,7 +48,7 @@ INSTANTIATE_TEST_SUITE_P(
   ScannerTest, 
   testing::Values(
     std::pair{Program{"// comment \n", "x"}, 
-      Token{Position{1,0},Position{1,0}, "x"}},
+      Token{Span{Position{1,0},Position{1,0}}, "x"}},
     std::pair{Program{"/* this */x"}, 
       makeToken(10, 10, "x")},
     std::pair{Program{"/* /* nested comment */ */"}, 
