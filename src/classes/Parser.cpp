@@ -148,8 +148,10 @@ std::optional<AstNode> Parser::statement(){
 AstNode Parser::assignment(){
   AssignAstNode node;
   node.varId = match<VarIdent>(node);
+
   match(Delimiter::Assign, node);
   node.expr = expression();
+  addMeta(node, node.expr);
 
   return node;
 }
@@ -196,9 +198,13 @@ AstNode Parser::ifStatement(){
   node.expr = expression();
   match(Keyword::Do, node);
   node.ifStatements = statements();
+  addMeta(node, node.ifStatements);
+
   if(it.currentToken().value == TokenValue{Keyword::Else}){
     match(Keyword::Else, node);
     node.elseStatements = statements();
+    addMeta(node, node.elseStatements);
+
   }
   match(Keyword::End, node);
   match(Keyword::If, node);
@@ -215,6 +221,7 @@ AstNode Parser::printStatement(){
   PrintAstNode node;
   match(Keyword::Print, node);
   node.expr = expression();
+  addMeta(node, node.expr);
   return node;
 }
 
@@ -224,6 +231,7 @@ ExprAstNode Parser::expression(){
   if(token.value == TokenValue{Operator::Not}){
     node.op = match<Operator>(node);
     node.opnd1 = std::make_unique<OpndAstNode>(operand());
+    addMeta(node, *node.opnd1);
   }else{
     
     node.opnd1 = std::make_unique<OpndAstNode>(operand());
@@ -231,6 +239,7 @@ ExprAstNode Parser::expression(){
     if(std::holds_alternative<Operator>(it.currentToken().value)){
       node.op = match<Operator>(node);
       node.opnd2 = std::make_unique<OpndAstNode>(operand());
+      addMeta(node, *node.opnd2);
     }else{
       node.op = Operator::Identity;
     }
@@ -252,7 +261,9 @@ OpndAstNode Parser::operand(){
     [&](Delimiter &arg){
       // (
       match(Delimiter::OpenParen, node);
-      node.operand = expression();
+      ExprAstNode expr = expression();
+      addMeta(node, expr);
+      node.operand = std::move(expr);
       match(Delimiter::ClosedParen, node);
     },
     [&](auto &arg){
@@ -275,6 +286,11 @@ template<class NodeType>
 void Parser::addMeta(NodeType &node, AstNode &childNode){
   AstNodeBase &childBase = getBaseReference(childNode);
   node.span += childBase.span;
+}
+// Add metadata from a child AST node to its parent
+template<class NT1, class NT2>
+void Parser::addMeta(NT1 &node, NT2 &childNode){
+  node.span += childNode.span;
 }
 // Check that current token has the expected value, 
 // and move to next token.
