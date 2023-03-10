@@ -9,6 +9,11 @@ var y : string := 5 + "hello"; // Can't add string to int
 
 var z : bool := 1 = 1; // This is correct
 
+for z in "2"..x do 
+end for;
+
+if y do end if;
+
 print x;
 print "\n";
 print y;

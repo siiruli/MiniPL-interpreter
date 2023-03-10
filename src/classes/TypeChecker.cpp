@@ -103,7 +103,10 @@ Type TypeChecker::visit(AstNode &node){
 }
 
 Type TypeChecker::visit(IfAstNode &node){
-  visit(node.expr);
+  Type type = visit(node.expr);
+  if(type != Bool){
+    raiseError(node, {Bool}, {type});
+  }
   visit(node.ifStatements);
   visit(node.elseStatements);
   return Type::Void;
@@ -115,7 +118,6 @@ Type TypeChecker::visit(DeclAstNode &node){
     Type exprtype = visit(*expr);
     if(exprtype != Type::Broken && node.type != exprtype){
       raiseError(node, {node.type}, {exprtype});
-      std::cout << node.type << " " << exprtype << "\n";
     }
   }
   return Type::Void;
@@ -130,8 +132,14 @@ Type TypeChecker::visit(AssignAstNode &node){
 }
 
 Type TypeChecker::visit(ForAstNode & node){
-  visit(node.startExpr);
-  visit(node.endExpr);
+  if(getVal(node.varId) != Int){
+    raiseError(node, {Int}, {getVal(node.varId)});
+  }
+  Type start = visit(node.startExpr);
+  Type end = visit(node.endExpr);
+  if(start != Int || end != Int){
+    raiseError(node, {Int, Int}, {start, end});
+  }
   visit(node.statements);
   return Type::Void;
 }
