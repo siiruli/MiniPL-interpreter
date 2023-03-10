@@ -7,6 +7,7 @@ template<class NodeType>
 void TypeChecker::raiseError(NodeType &node, 
     Types exp, Types got){
   TypeError error;
+  error.context = typeid(node).name();
   error.expected = exp;
   error.got = got;
   error.span = node.span;

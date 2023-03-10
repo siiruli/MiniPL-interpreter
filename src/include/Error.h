@@ -50,14 +50,22 @@ struct ParsingError : ErrorBase {
     return desc.str();
   }
 };
+struct SemanticError : ErrorBase {
+  
+  inline virtual std::string description() {
+    std::stringstream desc;
+    desc << "Semantic error in " << context;
+    desc << " (" << span << ")";
+    return desc.str();
+  }
 
-struct TypeError : ErrorBase {
+};
+struct TypeError : SemanticError {
   std::vector<Type> expected;
   std::vector<Type> got;
   inline virtual std::string description() {
       std::stringstream desc;
-      desc << "Type error";
-      desc << " at " << span;
+      desc << SemanticError::description();
       desc << ". expected: ";
       for(auto t : expected) desc << t << " ";
       desc << ", got: ";
@@ -65,6 +73,7 @@ struct TypeError : ErrorBase {
       return desc.str();
     }
 };
+
 typedef std::variant<ScanningError, ParsingError, TypeError> Error;
 
 // typedef std::variant<ScanningError, ParsingError> ErrorType;

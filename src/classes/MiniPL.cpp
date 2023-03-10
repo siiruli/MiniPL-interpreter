@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include "MiniPL.h"
+#include "SemanticAnalyzer.h"
 #include "TypeChecker.h"
 
 void MiniPL::runProgram(std::string &program){
@@ -30,6 +31,13 @@ void MiniPL::run(std::vector<std::string> &program){
     std::cout << "Errors while scanning/parsing. Ending process.\n";
     return;
   }
+  SemanticAnalyzer analyzer(handler);
+  analyzer.visit(ast);
+  if(handler.hasErrors()){
+    std::cout << "Found semantic errors. Ending process.\n";
+    return;
+  }
+  
   TypeChecker typeChecker(handler);
   typeChecker.visit(ast);
 

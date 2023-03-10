@@ -41,7 +41,10 @@ typedef std::variant<
   StatementsAstNode,
   ExprAstNode,
   OpndAstNode> AstNode;
-
+constexpr const char *nodenames[] = {
+  "declaration", "assignment", "for", "if", "read", "print", 
+  "statement", "expression", "operand"
+};
 
 
 
