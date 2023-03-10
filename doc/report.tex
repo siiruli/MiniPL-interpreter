@@ -5,7 +5,7 @@
 
 \begin{document}
 
-\section{Components}
+\section{Architecture}
 
 The program consists of the following components:
 
@@ -22,7 +22,11 @@ identifier, keyword, operator or punctuation.
 
 \paragraph*{ErrorHandler:}
 
-\paragraph*{Visitors:}
+\paragraph*{TypeChecker:}
+
+\paragraph*{InterpreterVisitor:}
+
+
 
 \section{Token patterns}
 
@@ -89,6 +93,45 @@ and the bolded keywords.
 
 \section{Error handling}
 
+All components are given a reference to the \code{ErrorHandler}, 
+which they use to raise errors when something unexpected happens.
+The \code{ErrorHandler} prints out error messages and keeps track 
+of whether errors have been encountered. 
+The components then do something component-specific to recover and 
+continue processing the input program. If the \code{ErrorHandler} 
+has errors after the scanning and parsing passes, the interpreter 
+ends the process. Otherwise it continues with semantic analysis 
+and finally runs the program.
+
+The \code{Scanner} always returns a token when asked, whether or 
+not it runs into errors while processing. When a problem is 
+encountered and the current token can not be scanned, the scanner 
+skips it and scans the next token (after raising an error to the 
+handler). In some cases, e.g. when encountering a newline while 
+scanning a string, the \code{Scanner} can return the the token it 
+was scanning while the error happened. When the end of the 
+program has been reached, the Scanner returns an end-of-file token.
+
+The parser has an exception-based racovery approach. When the 
+\code{match}-function can not match the current token, an error 
+is raised and an exception thrown. The exception is caught 
+in the \code{statements} function, and tokens are skipped until
+the current token is a semicolon or one of the keywords 
+\textbf{var}, \textbf{for}, \textbf{read}, \textbf{print}, 
+or \textbf{if}. The parser uses these to find the start of a 
+new statements and resumes parsing from that point.
+
 \section{Testing}
+
+Automated testing of the interpreter was implemented with the 
+googletest framework. The scanner is well tested with unit tests 
+covering all different token types, while other components have 
+only a few limited unit tests. The whole system is tested with 
+integration tests that check whether running the test programs 
+produces the expected behaviour. 
+
+There are no automatic tests for the error handling and recovery 
+functionalities. These were tested by hand, by running the incorrect 
+sample programs and looking at the output.
 
 \end{document}
