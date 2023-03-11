@@ -49,7 +49,7 @@ void ErrorMessager::printSpan(Span span){
   }
   if(end.lineNumber > start.lineNumber){
     output << lineString(end.lineNumber);
-    s = std::string(end.linePos, '-');
+    s = std::string(end.linePos+1, '-');
     output << lineStart() << s << std::endl;
   }
 
