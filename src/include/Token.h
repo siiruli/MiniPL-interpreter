@@ -1,9 +1,9 @@
+#pragma once
 #include <ostream>
 #include <optional>
 #include <variant>
 #include "Program.h"
 #include "Util.h"
-#pragma once
 
 // These must be in the same order
 enum class Keyword {
