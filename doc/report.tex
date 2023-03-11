@@ -60,8 +60,11 @@ and the bolded keywords.
                  \cfgvar{print} $\mid$ 
                  \cfgvar{if} } \\
   \cfgrule{decl}{
-    \cfgterm{var} \cfgvar{ident} : \cfgvar{type} [ := \cfgvar{expr} ]
+    \cfgterm{var} \cfgvar{ident} : \cfgvar{type} \cfgvar{delc\_assign}
   } \\
+  \cfgrule{decl\_assign}{
+     := \cfgvar{expr} $\mid$ $\varepsilon$
+  }\\
   \cfgrule{assign}{
     \cfgvar{ident} := \cfgvar{expr}
   } \\
@@ -70,11 +73,18 @@ and the bolded keywords.
     \cfgvar{expr}..\cfgvar{expr} \cfgterm{do} \cfgvar{stmts} 
     \cfgterm{end for}
   } \\
-  \cfgrule{read}{\cfgterm{read} \cfgvar{ident}} \\
-  \cfgrule{print}{\cfgterm{print} \cfgvar{expr}} \\ 
+  \cfgrule{read}{
+    \cfgterm{read} \cfgvar{ident}
+  } \\
+  \cfgrule{print}{
+    \cfgterm{print} \cfgvar{expr}
+  } \\ 
   \cfgrule{if}{
     \cfgterm{if} \cfgvar{expr} \cfgterm{do} \cfgvar{stmts}
-    [\cfgterm{else do} \cfgvar{stmts}] \cfgterm{end if}
+    \cfgvar{else} \cfgterm{end if}
+  } \\
+  \cfgrule{else}{
+    \cfgterm{else} \cfgvar{stmts} $\mid$ $\varepsilon$
   } \\
   \cfgrule{expr}{ 
     \cfgvar{opnd} \cfgvar{expr$\_$tail} 
