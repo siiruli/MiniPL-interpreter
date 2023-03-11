@@ -16,8 +16,11 @@ end;
 
 var x_2 : bol;
 
+
+
 a := 0 = 0 /* Unterminated comment
 
 if a do 
   a := 0 = 1;
 end if;
+

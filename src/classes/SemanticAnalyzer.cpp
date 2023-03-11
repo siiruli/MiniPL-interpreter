@@ -105,7 +105,7 @@ void SemanticAnalyzer::visit(PrintAstNode & node){
   visit(node.expr);
 }
 void SemanticAnalyzer::visit(ReadAstNode & node){
-  if(!hasVar(node.varId)) raiseError(node, node.varId, SemErrorType::NotDeclared);
+  assignVar(node, node.varId);
 } 
 
 void SemanticAnalyzer::initVar(std::string varId){

@@ -21,3 +21,5 @@ print "\n";
 print y;
 print "\n";
 print (!z) * z; // can't multiply booleans
+
+print (("?" + 1) + 1) + 1;

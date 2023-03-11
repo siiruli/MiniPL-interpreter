@@ -17,6 +17,7 @@ for y in 0..y do
 end for;
 y := 1;
 
-var z : bool := (1=1) ! (0=1);
 
 print x;
+
+
