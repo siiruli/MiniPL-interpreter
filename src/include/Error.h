@@ -57,14 +57,31 @@ struct ParsingError : ErrorBase {
     return desc.str();
   }
 };
+enum class SemErrorType {Other, NotDeclared, ReDeclared, WrongScope, AssignConstant};
 struct SemanticError : ErrorBase {
+  VarIdent identifier;
+  SemErrorType type;
   inline virtual std::string errorClass() { return "Semantic error"; }
   inline virtual std::string shortDescription(){ 
-    return ""; 
+    switch (type)
+    {
+    case SemErrorType::NotDeclared:
+      return "Variable " + identifier + " used without declaration"; 
+    case SemErrorType::ReDeclared:
+      return "Redeclaration of variable " + identifier;
+    case SemErrorType::WrongScope:
+      return "Declaration not allowed inside if or for";
+    case SemErrorType::AssignConstant:
+      return "Variable " + identifier + " is constant inside for-loop";
+      break;
+    default:
+      return "Unkown";
+    }
+    return "";
   }
 
 };
-struct TypeError : SemanticError {
+struct TypeError : ErrorBase {
 
   std::vector<Type> expected;
   std::vector<Type> got;

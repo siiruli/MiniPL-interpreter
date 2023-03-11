@@ -24,8 +24,10 @@ class TypeChecker {
     ErrorHandler &handler;
     
     template<class NodeType> 
-    void raiseError(NodeType &node, Types exp, Types got);
-
+    void raiseError(NodeType &node, Types exp, Types got, Span span);
+    template<class NodeType> 
+    void raiseError(NodeType &node, TypeError error);
+    
     std::map<std::string, Type> variables; 
 
     // use unique_ptr

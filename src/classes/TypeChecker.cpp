@@ -5,13 +5,21 @@
 
 template<class NodeType> 
 void TypeChecker::raiseError(NodeType &node, 
-    Types exp, Types got){
+    Types exp, Types got, Span span){
+  
   TypeError error;
-  error.context = astNodeName<NodeType>();
-  error.span = node.span;
-  error.contextSpan = error.span;
+  
+  error.span = span;
   error.expected = exp;
   error.got = got;
+  raiseError(node, error);
+}
+
+
+template<class NodeType> 
+void TypeChecker::raiseError(NodeType &node, TypeError error){
+  error.contextSpan = node.span;
+  error.context = astNodeName<NodeType>();
   handler.raiseError(error);
 }
 
@@ -34,30 +42,35 @@ Type TypeChecker::visit(ExprAstNode &node){
     case Operator::Not: 
       if(type1 == Type::Bool) type = type1;
       else {
-        raiseError(node, Types{Type::Bool}, Types{type1});
+        raiseError(node, Types{Type::Bool}, Types{type1}, node.opnd1->span);
       }
       break;
     case Operator::And:
-      if(type1 == Type::Bool && type2 == Type::Bool){
-        type = Type::Bool;
-      }else{
-        raiseError(node, {Bool}, {type1, type2});
+      if(type1 != Type::Bool){
+        raiseError(node, {Bool}, {type1}, node.opnd1->span);
         break;
       }
+      if(type2 != Type::Bool){
+        raiseError(node, {Bool}, {type2}, node.opnd2->span);
+        break;
+      }
+      type = Type::Bool;
+      break;
     case Operator::Sub: 
     case Operator::Mul: 
     case Operator::Div: 
       if(type1 != Type::Int) {
-        raiseError(node, {Int}, {type1, type2});
+        raiseError(node, {Int}, {type1}, node.opnd1->span);
         break;
       }
     case Operator::Add: 
       if(type1 == Type::Bool) {
-        raiseError(node, {Int, String}, {type1, type2});
+        raiseError(node, {Int, String}, {type1}, node.opnd1->span);
         break;
       }
-      else if(type1 != type2){
-        raiseError(node, {type1}, {type1, type2});
+      
+      if(type1 != type2){
+        raiseError(node, {type1}, {type2}, node.opnd2->span);
         break;
       }
       type = type1;
@@ -65,7 +78,7 @@ Type TypeChecker::visit(ExprAstNode &node){
     case Operator::Equal: 
     case Operator::Less:
       if(type1 != type2){
-        raiseError(node, {type1}, {type1, type2});
+        raiseError(node, {type1}, {type2}, node.opnd2->span);
         break;
       }
       type = Type::Bool;
@@ -106,7 +119,7 @@ Type TypeChecker::visit(AstNode &node){
 Type TypeChecker::visit(IfAstNode &node){
   Type type = visit(node.expr);
   if(type != Bool){
-    raiseError(node, {Bool}, {type});
+    raiseError(node, {Bool}, {type}, node.expr.span);
   }
   visit(node.ifStatements);
   visit(node.elseStatements);
@@ -118,7 +131,7 @@ Type TypeChecker::visit(DeclAstNode &node){
   if(auto &expr = node.value){
     Type exprtype = visit(*expr);
     if(exprtype != Type::Broken && node.type != exprtype){
-      raiseError(node, {node.type}, {exprtype});
+      raiseError(node, {node.type}, {exprtype}, (*expr).span);
     }
   }
   return Type::Void;
@@ -126,7 +139,7 @@ Type TypeChecker::visit(DeclAstNode &node){
 Type TypeChecker::visit(AssignAstNode &node){
   Type exprtype = visit(node.expr);
   if(exprtype != Type::Broken && getVal(node.varId) != exprtype){
-    raiseError(node, {getVal(node.varId)}, {exprtype});
+    raiseError(node, {getVal(node.varId)}, {exprtype}, node.expr.span);
   }
   // setVar(node.varId, node.expr.value);
   return Type::Void;
@@ -134,13 +147,17 @@ Type TypeChecker::visit(AssignAstNode &node){
 
 Type TypeChecker::visit(ForAstNode & node){
   if(getVal(node.varId) != Int){
-    raiseError(node, {Int}, {getVal(node.varId)});
+    raiseError(node, {Int}, {getVal(node.varId)}, node.span);
   }
   Type start = visit(node.startExpr);
   Type end = visit(node.endExpr);
-  if(start != Int || end != Int){
-    raiseError(node, {Int, Int}, {start, end});
+  if(start != Int){
+    raiseError(node, {Int}, {start}, node.startExpr.span);
   }
+  if(end != Int){
+    raiseError(node, {Int}, {end}, node.endExpr.span);
+  }
+
   visit(node.statements);
   return Type::Void;
 }

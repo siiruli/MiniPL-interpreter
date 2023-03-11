@@ -9,9 +9,12 @@ if 1=1 do
   var x : int;
 end if;
 
+var r : int := r + x;
+
 for y in 0..y do 
   y := 10;
 end for;
+y := 1;
 
 var z : bool := (1=1) ! (0=1);
 

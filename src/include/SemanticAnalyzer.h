@@ -1,9 +1,15 @@
-#include <set>
+#include <map>
 #include "Util.h"
 #include "AstNode.h"
 #include "Error.h"
 
 #pragma once
+
+struct variable {
+  variable() : declared{1} {}
+  bool declared = 0;
+  ForAstNode *forParent;
+};
 
 class SemanticAnalyzer {
   public:
@@ -22,16 +28,33 @@ class SemanticAnalyzer {
   private:
     ErrorHandler &handler;
     
+    std::vector<Span> scopes;
+    
+
     template<class NodeType> 
     void raiseError(NodeType &node);
+    
+    template<class NodeType> 
+    void raiseError(NodeType &node, SemanticError error);
 
-    std::set<VarIdent> variables; 
+    template<class NodeType> 
+    void raiseError(NodeType &node, VarIdent varId, SemErrorType type);
+
+
+    std::map<VarIdent, variable> variables; 
 
     // use unique_ptr
 
     void initVar(VarIdent varId);
     bool hasVar(VarIdent varId);
+    variable & getVar(VarIdent varId);
 
+    template<class NodeType> 
+    void declareVar(NodeType &node, VarIdent varId);
+    template<class NodeType> 
+    void assignVar(NodeType &node, VarIdent varId);
+    template<class NodeType> 
+    void accessVar(NodeType &node, VarIdent varId);
     
 
 };
