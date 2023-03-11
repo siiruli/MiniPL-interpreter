@@ -1,3 +1,4 @@
+#pragma once
 #include <string>
 #include <optional>
 #include <variant>
@@ -6,7 +7,6 @@
 #include "Program.h"
 #include "Error.h"
 
-#pragma once
 
 
 /* Scans the program for lexical elements, producing tokens one by one. 

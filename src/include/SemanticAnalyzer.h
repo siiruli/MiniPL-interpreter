@@ -1,9 +1,9 @@
+#pragma once
 #include <map>
 #include "Util.h"
 #include "AstNode.h"
 #include "Error.h"
 
-#pragma once
 
 struct variable {
   variable() : declared{1} {}

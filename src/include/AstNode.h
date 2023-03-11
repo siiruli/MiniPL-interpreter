@@ -1,3 +1,4 @@
+#pragma once
 #include <string>
 #include <vector>
 #include <memory>
@@ -5,7 +6,6 @@
 #include "Program.h"
 #include "Visitor.h"
 #include "Token.h"
-#pragma once
 
 enum Type {Int, Bool, String, Void, Broken};
 constexpr const char *typenames[] = {

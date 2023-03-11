@@ -1,7 +1,7 @@
+#pragma once
 #include <optional>
 #include <ostream>
 #include <vector>
-#pragma once
 
 struct Position
 {

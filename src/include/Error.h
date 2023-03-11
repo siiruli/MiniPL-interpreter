@@ -1,3 +1,4 @@
+#pragma once
 #include <variant>
 #include <vector>
 #include <iostream>
@@ -6,7 +7,6 @@
 #include "Program.h"
 #include "Token.h"
 #include "AstNode.h"
-#pragma once
 
 
 struct ErrorBase {
