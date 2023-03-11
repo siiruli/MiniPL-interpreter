@@ -4,7 +4,8 @@
   when running this.
 */
 
-var x : int := 1;
+
+var _x : int := 1; // starting variable with _
 var str : string := 5*3;
 x := str + x
 
@@ -12,6 +13,8 @@ for y in 0..x do
   print "This is y: p;
   print y; 
 end;
+
+var x_2 : bol;
 
 a := 0 = 0 /* Unterminated comment
 

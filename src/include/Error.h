@@ -36,7 +36,7 @@ struct ScanningError : ErrorBase {
     std::stringstream desc;
     desc << "Unexpected ";
     if(type == ScanningErrorType::UnexpChar){
-      desc << " character " << ch.value_or(' ');
+      desc << "character '" << ch.value_or(' ') << "'";
     }else if(type == ScanningErrorType::Eof){
       desc << "end-of-file"; 
     }else if(type == ScanningErrorType::UnexpNewline){
@@ -53,7 +53,10 @@ struct ParsingError : ErrorBase {
   inline virtual std::string errorClass() { return "Syntax error"; }
   inline virtual std::string shortDescription(){ 
     std::stringstream desc;
-    desc << "Unexpected " << token.value;
+    desc << "Unexpected ";
+    if(std::holds_alternative<VarIdent>(token.value)) 
+      desc << "identifier '" << token.value << "'";
+    else desc << token.value;
     return desc.str();
   }
 };
