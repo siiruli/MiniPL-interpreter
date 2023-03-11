@@ -99,9 +99,62 @@ and the bolded keywords.
   } \\
 \end{align*}
 
+\clearpage
 \section{Abstract Syntax Trees}
 
+All AST-nodes inherit the \code{AstNodeBase} class, which contains 
+a \code{Span} for error messages. The type \code{AstNode} is a 
+\code{std::variant} which may contain an AST-node of any of the 
+following types:
 
+\begin{itemize}
+  \item \code{DeclAstNode}: a declaration.
+  \begin{itemize}
+    \item[] \code{VarIdent varId}
+    \item[] \code{Type type} 
+    \item[] \code{optional<ExprAstNode> expr}
+  \end{itemize}
+  \item \code{AssignAstNode}: assignment
+  \begin{itemize}
+    \item[] \code{VarIdent varId}
+    \item[] \code{ExprAstNode expr}
+  \end{itemize}
+  \item \code{ForAstNode}: for-statement
+  \begin{itemize}
+    \item[] \code{VarIdent varId}: loop variable
+    \item[] \code{ExprAstNode startExpr, endExpr}: start and end of the range
+    \item[] \code{StatementsAstNode stmts}: the statements inside the loop
+  \end{itemize}
+  \item \code{IfAstNode}: if-statement
+  \begin{itemize}
+    \item[] \code{ExprAstNode expr}
+    \item[] \code{StatementsAstNode ifStatements}
+    \item[] \code{StatementsAstNode elseStatements}
+  \end{itemize}
+  \item \code{ReadAstNode}: read-statement
+  \begin{itemize}
+    \item[] \code{VarIdent varId}
+  \end{itemize}
+  \item \code{PrintAstNode}: print-statement
+  \begin{itemize}
+    \item[] \code{ExprAstNode expr}
+  \end{itemize}
+  \item \code{StatementsAstNode}: a list of statements
+  \begin{itemize}
+    \item[] \code{vector<AstNode> stmts}: list of statements
+  \end{itemize}
+  \item \code{ExprAstNode}: expression
+  \begin{itemize}
+    \item[] \code{Operator op}: enum storing the operator
+    \item[] \code{OpndAstNode *opnd1}
+    \item[] \code{OpndAstNode *opnd2}: null for unary operands.
+  \end{itemize}
+  \item \code{OpndAstNode}: operand
+  \begin{itemize}
+    \item[] \code{Operand opnd}, which is one of 
+    \code{Literal, VarIdent, ExprAstNode}
+  \end{itemize}
+\end{itemize}
 
 
 \section{Error handling}
