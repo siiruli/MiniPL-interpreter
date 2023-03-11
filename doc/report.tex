@@ -27,17 +27,17 @@ identifier, keyword, operator or punctuation.
 \paragraph*{InterpreterVisitor:}
 
 
-
+\clearpage
 \section{Token patterns}
 
 \begin{itemize}
-  \item Identifiers and reserved keywords
-  \item String literals
-  \item Integer constants
-  \item Operators
-  \item Comments
-  \item Other
+  \item identifier: \verb?[A-Za-z][A-Za-z0-9_]*?
+  \item integer literal: \verb_[0-9]+_
+  \item string literal: \verb_"([^\n"]|\\(n|t|\n|.))*"_
+  \item operator: \verb_+|-|*|/|<|=|\&|!_
+  \item delimiter: \verb_:=|;|:|..|(|)_
 \end{itemize}
+
 
 \section{Parsing}
 
