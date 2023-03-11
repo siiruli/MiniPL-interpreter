@@ -46,7 +46,6 @@ constexpr const char *nodenames[] = {
 };
 
 
-
 class ExprAstNode : public AstNodeBase {
   public: 
     ExprValue value;
@@ -126,4 +125,9 @@ inline AstNodeBase & getBaseReference(AstNode &node){
     return static_cast<AstNodeBase&>(node);
   }, node);
   return base;
+}
+
+template<class NodeType>
+std::string astNodeName(){
+  return nodenames[AstNode(std::in_place_type<NodeType>).index()];;
 }

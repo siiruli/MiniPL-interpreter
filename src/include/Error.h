@@ -10,19 +10,30 @@
 
 
 struct ErrorBase {
-  virtual std::string description() = 0;
+  inline virtual std::string description(){
+    std::stringstream desc;
+    desc << errorClass() << ": ";
+    desc << shortDescription();
+    desc << " at " << span;
+    desc << " in " << context << " (" << contextSpan << ")";
+    return desc.str(); 
+  };
   Span span;
+  Span contextSpan;
   std::string context;
+
+  private:
+    virtual std::string errorClass() = 0;
+    virtual std::string shortDescription() = 0;
 };
 enum class ScanningErrorType {Eof, UnexpNewline, UnexpChar};
 struct ScanningError : ErrorBase {
   ScanningErrorType type;
   std::optional<char> ch;
   Position pos;
-
-  inline virtual std::string description() {
+  inline virtual std::string errorClass() { return "Lexical error"; }
+  inline virtual std::string shortDescription(){
     std::stringstream desc;
-    desc << "Lexical error: ";
     desc << "Unexpected ";
     if(type == ScanningErrorType::UnexpChar){
       desc << " character " << ch.value_or(' ');
@@ -31,9 +42,6 @@ struct ScanningError : ErrorBase {
     }else if(type == ScanningErrorType::UnexpNewline){
       desc << "newline"; 
     }
-    desc << " at " << pos;
-    desc << " while scanning " << context;
-
     return desc.str();
   }
   
@@ -42,36 +50,34 @@ struct ScanningError : ErrorBase {
 struct ParsingError : ErrorBase {
   Token token;
   std::string data;
-
-  inline virtual std::string description() {
+  inline virtual std::string errorClass() { return "Syntax error"; }
+  inline virtual std::string shortDescription(){ 
     std::stringstream desc;
-    desc << "Syntax error: Unexpected " << token.value;
-    desc << " at " << token.span;
+    desc << "Unexpected " << token.value;
     return desc.str();
   }
 };
 struct SemanticError : ErrorBase {
-  
-  inline virtual std::string description() {
-    std::stringstream desc;
-    desc << "Semantic error in " << context;
-    desc << " (" << span << ")";
-    return desc.str();
+  inline virtual std::string errorClass() { return "Semantic error"; }
+  inline virtual std::string shortDescription(){ 
+    return ""; 
   }
 
 };
 struct TypeError : SemanticError {
+
   std::vector<Type> expected;
   std::vector<Type> got;
-  inline virtual std::string description() {
-      std::stringstream desc;
-      desc << SemanticError::description();
-      desc << ". expected: ";
-      for(auto t : expected) desc << t << " ";
-      desc << ", got: ";
-      for(auto t : got) desc << t << " ";
-      return desc.str();
-    }
+
+  inline virtual std::string errorClass() { return "Type error"; }
+  inline virtual std::string shortDescription(){
+    std::stringstream desc;
+    desc << "Unexpected types. Expected: ";
+    for(auto t : expected) desc << t << " ";
+    desc << ", got: ";
+    for(auto t : got) desc << t << " ";
+    return desc.str();
+  }
 };
 
 typedef std::variant<ScanningError, ParsingError, SemanticError, TypeError> Error;
@@ -103,6 +109,17 @@ class ErrorMessager {
     std::ostream &output = std::cout;
   private:
     Program &program;
+    std::string lineStart(uint LineNumber);
+    std::string lineString(uint lineNumber);
+    std::string lineStart();
+
+    inline int lineStartLength() {
+      return std::to_string(program.size()).size() + 2;
+    }
+
+    std::string lineSkipped();
+    void printSpan(Span span);
+    
 };
 
 class ErrorHandler {
@@ -114,4 +131,6 @@ class ErrorHandler {
   private:
     std::vector<Error> errors;
     ErrorMessager messager;
+
+
 };

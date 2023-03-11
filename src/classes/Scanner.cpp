@@ -35,7 +35,8 @@ bool Scanner::isPunctChar(char c){
 void Scanner::raiseError(ScanningErrorType errorType, std::string context){
   ScanningError error;
 
-  error.span = Span{startOfToken, program.currentPosition()};
+  error.contextSpan = Span{startOfToken, program.currentPosition()};
+  error.span = Span{program.currentPosition(), program.currentPosition()};
   error.context = context;
   error.type = errorType;
   error.ch = program.currentChar();
@@ -126,7 +127,7 @@ void Scanner::scanComment(){
       program.move();
     }
     if(nestingLevel != 0){
-      raiseError(ScanningErrorType::Eof, " comment");
+      raiseError(ScanningErrorType::Eof, "comment");
     }
   }
 }

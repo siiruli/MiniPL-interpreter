@@ -7,10 +7,11 @@ template<class NodeType>
 void TypeChecker::raiseError(NodeType &node, 
     Types exp, Types got){
   TypeError error;
-  error.context = nodenames[AstNode(std::in_place_type<NodeType>).index()];
+  error.context = astNodeName<NodeType>();
+  error.span = node.span;
+  error.contextSpan = error.span;
   error.expected = exp;
   error.got = got;
-  error.span = node.span;
   handler.raiseError(error);
 }
 

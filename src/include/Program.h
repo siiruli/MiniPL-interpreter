@@ -20,7 +20,10 @@ struct Position
     return std::pair{lineNumber, linePos} < 
            std::pair{other.lineNumber, other.linePos};
   }
-
+  inline bool operator<=(const Position &other) const {
+    return std::pair{lineNumber, linePos} <=
+           std::pair{other.lineNumber, other.linePos};
+  }
   // inline std::ostream & operator<<(std::ostream &os){
   //   return os << this.charIndex;
   // }
