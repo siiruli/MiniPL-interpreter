@@ -43,7 +43,7 @@ std::string ErrorMessager::lineSkipped(){
 }
 void ErrorMessager::printSpan(Span span){
   auto [start, end] = span;
-  assert(start <= end);
+  if(!(start <= end)) return;
   output << lineString(start.lineNumber);
   int n = end.lineNumber == start.lineNumber ? 
     end.linePos - start.linePos : 

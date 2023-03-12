@@ -133,6 +133,7 @@ void InterpreterVisitor::initVar(Type type, std::string varId){
     case Int: val = int(0); break;
     case Bool: val = bool(false); break;
     case String: val = ""; break;
+    default: break;
   }
   variables[varId] = val;
 }
