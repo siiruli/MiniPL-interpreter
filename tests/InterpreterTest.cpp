@@ -2,7 +2,7 @@
 #include "MiniPL.h"
 
 
-class InterpreterTest :  
+class SampleTest :  
   // public ::testing::Test
   public testing::TestWithParam<std::tuple<Program, std::string, std::string>> 
 {
@@ -15,7 +15,7 @@ class InterpreterTest :
     MiniPL miniPl{in, out};
     
 };
-TEST_P(InterpreterTest, program) {
+TEST_P(SampleTest, program) {
   auto [program, input, output] = GetParam();
 
   in << input;
@@ -25,7 +25,7 @@ TEST_P(InterpreterTest, program) {
 
 INSTANTIATE_TEST_SUITE_P(
   arithmetic, 
-  InterpreterTest, 
+  SampleTest, 
   testing::Values(
     std::tuple{
       Program{"var X : int := ((1 - (6 / 2)));\n",
@@ -42,7 +42,7 @@ INSTANTIATE_TEST_SUITE_P(
 
 INSTANTIATE_TEST_SUITE_P(
   if_statement, 
-  InterpreterTest, 
+  SampleTest, 
   testing::Values(
     std::tuple{
       Program{"var X : int;\n",
@@ -64,7 +64,7 @@ INSTANTIATE_TEST_SUITE_P(
 );
 INSTANTIATE_TEST_SUITE_P(
   for_statement, 
-  InterpreterTest, 
+  SampleTest, 
   testing::Values(
     std::tuple{
       Program{"var X : int; // comment\n",

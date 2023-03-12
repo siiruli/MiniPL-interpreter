@@ -4,6 +4,8 @@
 
 
 int main(int argc, char *argv[]){
+  std::cin.exceptions(std::ifstream::failbit | 
+    std::ifstream::badbit | std::ifstream::eofbit);
   std::string filename;
   if(argc >= 2) filename = argv[1];
   else {
