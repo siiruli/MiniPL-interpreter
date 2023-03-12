@@ -2,7 +2,7 @@
 #include "Util.h"
 #include "Visitor.h"
 #include "AstNode.h"
-
+#include "Error.h"
 /** @file */ 
 
 struct RunTimeException : public std::exception {
@@ -15,10 +15,11 @@ struct RunTimeException : public std::exception {
 
 class InterpreterVisitor : Visitor {
   public:
-    InterpreterVisitor(std::istream &in, std::ostream &out) :
-      input(in), output(out) {}
+    InterpreterVisitor(std::istream &in, std::ostream &out, ErrorHandler &handler) :
+      input(in), output(out), handler(handler) {}
     std::istream &input;
     std::ostream &output;
+    ErrorHandler &handler;
     void visit(AstNode &node);
     void visit(IfAstNode &node);
     void visit(DeclAstNode &node);
@@ -30,7 +31,7 @@ class InterpreterVisitor : Visitor {
     void visit(ExprAstNode &node);
     void visit(OpndAstNode &node);
   private:
-  
+
     std::map<std::string, ExprValue> variables; 
 
     // use unique_ptr

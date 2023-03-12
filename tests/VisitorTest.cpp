@@ -13,7 +13,8 @@ class VisitorTest :
 
     }
     std::stringstream input, output;
-    InterpreterVisitor visitor{input, output};
+    ErrorHandler handler;
+    InterpreterVisitor visitor{input, output, handler};
 };
 
 TEST_F(VisitorTest, operandTest){

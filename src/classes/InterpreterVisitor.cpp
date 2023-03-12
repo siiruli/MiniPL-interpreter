@@ -13,20 +13,28 @@ void InterpreterVisitor::visit(ExprAstNode &node){
     opnd2 = node.opnd2.get()->value;
   }
   ExprValue val;
-  
-  switch (node.op)
-  {
-    case Operator::Identity: val = opnd1; break;
-    case Operator::Not: val = Op::logNot(opnd1); break;
-    case Operator::And: val = funcVisitor(Op::logAnd, opnd1, opnd2); break;
-    case Operator::Equal: val = funcVisitor(Op::eq, opnd1, opnd2); break;
-    case Operator::Less: val = funcVisitor(Op::less, opnd1, opnd2); break;
-    case Operator::Add: val = funcVisitor(Op::add, opnd1, opnd2); break;
-    case Operator::Sub: val = funcVisitor(Op::sub, opnd1, opnd2); break;
-    case Operator::Mul: val = funcVisitor(Op::mul, opnd1, opnd2); break;
-    case Operator::Div: 
-      val = funcVisitor(Op::div, opnd1, opnd2); 
-      break;
+  try {
+    switch (node.op)
+    {
+      case Operator::Identity: val = opnd1; break;
+      case Operator::Not: val = Op::logNot(opnd1); break;
+      case Operator::And: val = funcVisitor(Op::logAnd, opnd1, opnd2); break;
+      case Operator::Equal: val = funcVisitor(Op::eq, opnd1, opnd2); break;
+      case Operator::Less: val = funcVisitor(Op::less, opnd1, opnd2); break;
+      case Operator::Add: val = funcVisitor(Op::add, opnd1, opnd2); break;
+      case Operator::Sub: val = funcVisitor(Op::sub, opnd1, opnd2); break;
+      case Operator::Mul: val = funcVisitor(Op::mul, opnd1, opnd2); break;
+      case Operator::Div: 
+        val = funcVisitor(Op::div, opnd1, opnd2); 
+        break;
+    }
+  } catch (RunTimeException &e){
+    RuntimeError error;
+    error.span = node.span;
+    error.data = e.what();
+    addMeta(node, error);
+    handler.raiseError(error);
+    throw RunTimeException(e.what());
   }
   node.value = val;
 }
@@ -105,9 +113,18 @@ void InterpreterVisitor::visit(PrintAstNode & node){
   }, node.expr.value);
 }
 void InterpreterVisitor::visit(ReadAstNode & node){
-  std::visit([&](auto &value) {
-    input >> value;
-  }, getVar(node.varId));
+  try{
+    std::visit([&](auto &value) {
+      input >> value;
+    }, getVar(node.varId));
+  } catch (std::ios_base::failure &e){
+    RuntimeError error;
+    error.data = "Could not read " + node.varId + " from input";
+    addMeta(node, error);
+    error.span = node.span;
+    handler.raiseError(error);
+    throw RunTimeException("IO failure");
+  }
 } 
 
 void InterpreterVisitor::initVar(Type type, std::string varId){

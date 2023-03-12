@@ -10,6 +10,12 @@
 
 /** @file */ 
 
+template<class NodeType, class ErrorType>
+inline void addMeta(NodeType &node, ErrorType &error){
+  error.contextSpan = node.span;
+  error.context = astNodeName<NodeType>();
+}
+
 struct ErrorBase {
   inline virtual std::string description(){
     std::stringstream desc;
@@ -101,7 +107,19 @@ struct TypeError : ErrorBase {
   }
 };
 
-typedef std::variant<ScanningError, ParsingError, SemanticError, TypeError> Error;
+struct RuntimeError : ErrorBase {
+  std::string data;
+  inline virtual std::string errorClass() { return "Runtime error"; }
+  inline virtual std::string shortDescription(){ 
+    std::stringstream desc;
+    desc << data;
+    return desc.str();
+  }
+};
+
+typedef std::variant<
+  ScanningError, ParsingError, SemanticError, TypeError, RuntimeError
+> Error;
 
 // typedef std::variant<ScanningError, ParsingError> ErrorType;
 
