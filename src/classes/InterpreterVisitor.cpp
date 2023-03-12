@@ -110,7 +110,7 @@ void InterpreterVisitor::visit(ForAstNode & node){
   int end = std::get<int>(endVal);
 
   for(int i= start; i<= end; ++i){
-    this->setVar(node.varId, i);
+    this->setVar(node.var.varId, i);
     visit(node.statements);
   }
 }

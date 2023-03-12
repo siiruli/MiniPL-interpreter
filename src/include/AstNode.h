@@ -149,7 +149,7 @@ class StatementsAstNode : public AstNodeBase {
 /*! \ingroup AST */
 class ForAstNode : public AstNodeBase {
   public:
-    std::string varId;
+    VarNode var;
     ExprNode startExpr, endExpr;
     StatementsAstNode statements;
 };

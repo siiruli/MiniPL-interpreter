@@ -181,7 +181,7 @@ AstNode Parser::declaration(){
 AstNode Parser::forStatement(){
   ForAstNode node;
   match(Keyword::For, node);
-  node.varId = match<VarIdent>(node);
+  node.var.varId = match<VarIdent>(node.var);
   match(Keyword::In, node);
   node.startExpr = expression();
   match(Delimiter::Range, node);

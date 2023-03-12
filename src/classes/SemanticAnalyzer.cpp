@@ -77,14 +77,14 @@ void SemanticAnalyzer::visit(AssignAstNode &node){
 }
 
 void SemanticAnalyzer::visit(ForAstNode & node){
-  assignVar(node, node.varId);
+  assignVar(node.var, node.var.varId);
   visit(node.startExpr);
   visit(node.endExpr);
   
   scopes.push_back(node.span);
-  getVar(node.varId).forParent = &node;
+  getVar(node.var.varId).forParent = &node;
   visit(node.statements);
-  getVar(node.varId).forParent = nullptr;
+  getVar(node.var.varId).forParent = nullptr;
   scopes.pop_back();
 }
 void SemanticAnalyzer::visit(PrintAstNode & node){

@@ -118,7 +118,7 @@ Type TypeChecker::visit(AssignAstNode &node){
 }
 
 Type TypeChecker::visit(ForAstNode & node){
-  match(Int, getType(node.varId), node, node.span);
+  match(Int, visit(node.var), node, node.var.span);
 
   Type start = visit(node.startExpr);
   Type end = visit(node.endExpr);
