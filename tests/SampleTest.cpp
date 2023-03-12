@@ -22,11 +22,10 @@ class SampleTest :
 TEST_F(SampleTest, samples) {
 
   std::string path = std::string(ROOT_DIR) + "/samples";
-  // for (const auto & entry : fs::directory_iterator(path)){
-  //   // std::cout << entry.path() << std::endl;
-  //   EXPECT_NO_THROW(miniPl.runFile(entry.path()));
-  // }
-  miniPl.runFile(path+"/0.mpl");
+  for (const auto & entry : fs::directory_iterator(path)){
+    // std::cout << entry.path() << std::endl;
+    EXPECT_NO_THROW(miniPl.runFile(entry.path()));
+  }
 
 }
 

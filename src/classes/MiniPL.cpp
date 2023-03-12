@@ -42,8 +42,8 @@ void MiniPL::run(Program &program, ErrorHandler &handler){
   SemanticAnalyzer analyzer(handler);
   analyzer.visit(ast);
   
-  // TypeChecker typeChecker(handler);
-  // typeChecker.visit(ast);
+  TypeChecker typeChecker(handler);
+  typeChecker.visit(ast);
 
   if(handler.hasErrors()){
     output << "Found semantic errors. Ending process.\n";
