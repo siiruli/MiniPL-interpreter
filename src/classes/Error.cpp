@@ -64,10 +64,10 @@ void ErrorMessager::printSpan(Span span){
 
 void ErrorMessager::printError(ErrorBase &error){
   output << error.description() << std::endl;
-  auto startLine = std::min(error.contextSpan.start, error.contextSpan.end).lineNumber;
-  auto endLine = std::max(error.span.start, error.contextSpan.end).lineNumber;
+  auto startLine = std::min(error.contextSpan.start, error.span.end).lineNumber;
+  auto endLine = std::max(error.span.end, error.contextSpan.end).lineNumber;
   auto span = error.span;
-
+  if(startLine > endLine) return;
 
   if(startLine < span.start.lineNumber) 
     output << lineString(endLine);
