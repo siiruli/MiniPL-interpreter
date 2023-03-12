@@ -234,6 +234,29 @@ and, if no errors are encountered, finally runs the program.
 
 \subsection{Error types}
 
+Errors are stored as structs, that all inherit from the 
+base struct \code{ErrorBase}. The base struct has members 
+\code{context}, \code{contextScope}, and \code{scope}, 
+and a public method \code{description()}, which uses 
+virtual functions of the derived classes to construct an 
+error message. The derived classes and the errors they 
+can represent are listed below:
+\begin{itemize}
+  \item \code{ScanningError}: unexpected character, newline or Eof
+  \item \code{ParsingError}: unexpected token
+  \item \code{SemanticError}: one of the following
+  \begin{itemize}
+    \item variable not declared
+    \item redeclaration
+    \item declaration in inner scope
+    \item assignment to a constant variable
+  \end{itemize}
+  \item \code{TypeError}: wrong type
+  \item \code{RuntimeError}: division by zero or IO failure (could not read input)
+\end{itemize}
+
+\subsection{Error messages}
+
 \subsection{Error recovery}
 
 The \code{Scanner} always returns a token when asked, whether or 
@@ -245,7 +268,7 @@ scanning a string, the \code{Scanner} can return the the token it
 was scanning while the error happened. When the end of the 
 program has been reached, the Scanner returns an end-of-file token.
 
-The parser has an exception-based racovery approach. When the 
+The \code{Parser} has an exception-based racovery approach. When the 
 \code{match}-function can not match the current token, an error 
 is raised and an exception thrown. The exception is caught 
 in the \code{statements} function, and tokens are skipped until
@@ -254,10 +277,31 @@ the current token is a semicolon or one of the Keywords
 or \textbf{if}. The parser uses these to find the start of a 
 new statements and resumes parsing from that point.
 
+
+The \code{TypeChecker} can return a \code{Broken} type from e.g.
+a malformed expression or an undeclared variable. Type checks 
+for broken types are automatically skipped to avoid cascading 
+errors. Thus a long expression with a type error in inner 
+parenthesis only produces one error. In case of multiple 
+declarations of the same variable, the first declaration is 
+assumed to be correct.
+
+When \code{InterpreterVisitor} produces a runtime error, it 
+raises an error to the \code{ErrorHandler} and throws an exception. 
+The exception is caught by \code{MiniPL} which asks the 
+\code{ErrorHandler} to print the error message and stops running the 
+program.
+
 \section{Testing}
 
 Automated testing of the interpreter was implemented with the 
-googletest framework. The scanner is well tested with unit tests 
+googletest framework. All tests and sample programs were written 
+by hand, based on whatever 
+things I thought were important. When encountering a bug, I would 
+fix the bug and write a test for it. 
+
+
+The scanner is well tested with unit tests 
 covering all different token types, while other components have 
 only a few limited unit tests. The whole system is tested with 
 integration tests that check whether running the test programs 
@@ -268,5 +312,6 @@ and (hopefully) checks that the interpreter doesn't crash.
 There are no automatic tests for the error handling and recovery 
 functionalities. These were tested by hand, by running the incorrect 
 sample programs and looking at the output.
+
 
 \end{document}
