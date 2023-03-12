@@ -33,16 +33,12 @@ void MiniPL::run(std::vector<std::string> &program){
   }
   SemanticAnalyzer analyzer(handler);
   analyzer.visit(ast);
-  if(handler.hasErrors()){
-    std::cout << "Found semantic errors. Ending process.\n";
-    return;
-  }
   
   TypeChecker typeChecker(handler);
   typeChecker.visit(ast);
 
   if(handler.hasErrors()){
-    std::cout << "Found type errors. Ending process.\n";
+    std::cout << "Found semantic errors. Ending process.\n";
     return;
   }
 
