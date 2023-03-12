@@ -18,20 +18,19 @@ inline std::ostream & operator<<(std::ostream &os, Type arg){
   return os << "'" << typenames[static_cast<int>(arg)] << "'";
 }
 
-class AstNodeBase {
-  public:
+struct AstNodeBase {
     Span span;
 };
 
-class ExprAstNode;
-class DeclAstNode; 
-class AssignAstNode; 
-class ForAstNode;
-class IfAstNode;
-class ReadAstNode;
-class PrintAstNode;
-class StatementsAstNode;
-class OpndAstNode;
+struct ExprAstNode;
+struct DeclAstNode; 
+struct AssignAstNode; 
+struct ForAstNode;
+struct IfAstNode;
+struct ReadAstNode;
+struct PrintAstNode;
+struct StatementsAstNode;
+struct OpndAstNode;
 
 typedef std::variant<
   DeclAstNode, 
@@ -41,51 +40,43 @@ typedef std::variant<
   ReadAstNode, 
   PrintAstNode,
   StatementsAstNode> AstNode;
-constexpr const char *nodenames[] = {
-  "declaration", "assignment", "for", "if", "read", "print", 
-  "statement", "expression", "operand"
-};
 
-class LiteralNode;
-class VarNode;
-class UnaryOp;
-class BinaryOp;
+struct LiteralNode;
+struct VarNode;
+struct UnaryOp;
+struct BinaryOp;
 typedef std::variant<
   LiteralNode, 
   VarNode,
   UnaryOp,
   BinaryOp> ExprNode;
 
-class LiteralNode : public AstNodeBase {
-  public: Literal literal;
+struct LiteralNode : AstNodeBase { 
+  Literal literal;
 };
-class VarNode : public AstNodeBase {
-  public: VarIdent varId;
-
+struct VarNode : AstNodeBase { 
+  VarIdent varId;
 };
-class UnaryOp : public AstNodeBase {
-  public:
+struct UnaryOp : AstNodeBase {
   Operator op;
   std::unique_ptr<ExprNode> opnd;
 };
-class BinaryOp : public AstNodeBase {
-  public:
+struct BinaryOp : AstNodeBase {
   Operator op;
   std::unique_ptr<ExprNode> opnd1, opnd2;
 };
 
 /*! \ingroup AST */
-class ExprAstNode : public AstNodeBase {
-  public: 
+struct ExprAstNode : AstNodeBase { 
 
-    std::unique_ptr<OpndAstNode> opnd1;
-    Operator op;
-    inline bool operator==(const ExprAstNode &other) const {
-      return this->op == other.op &&
-        opnd1 == other.opnd1;
-    }
-    // std::optional<std::unique_ptr<OpndAstNode>> opnd2;
-    std::unique_ptr<OpndAstNode> opnd2;
+  std::unique_ptr<OpndAstNode> opnd1;
+  Operator op;
+  inline bool operator==(const ExprAstNode &other) const {
+    return this->op == other.op &&
+      opnd1 == other.opnd1;
+  }
+  // std::optional<std::unique_ptr<OpndAstNode>> opnd2;
+  std::unique_ptr<OpndAstNode> opnd2;
 
 };
 typedef std::variant<
@@ -94,67 +85,59 @@ typedef std::variant<
   ExprAstNode> Operand;
 
 /*! \ingroup AST */
-class OpndAstNode : public AstNodeBase {
-  public: 
+struct OpndAstNode : AstNodeBase { 
 
-    Operand operand; 
+  Operand operand; 
 
-    inline bool operator==(const OpndAstNode &other) const {
-      return this->operand == other.operand;
-    }
+  inline bool operator==(const OpndAstNode &other) const {
+    return this->operand == other.operand;
+  }
 
 
 };
 
 
 /*! \ingroup AST */
-class DeclAstNode : public AstNodeBase {
-  public: 
-    std::string varId;
-    Type type;
-    std::optional<ExprNode> value;
+struct DeclAstNode : AstNodeBase { 
+  std::string varId;
+  Type type;
+  std::optional<ExprNode> value;
 };
 
 /*! \ingroup AST */
-class AssignAstNode : public AstNodeBase {
-  public:
-    std::string varId;
-    ExprNode expr;
-};
-
-
-/*! \ingroup AST */
-class ReadAstNode : public AstNodeBase {
-  public: 
-    std::string varId;
-};
-
-/*! \ingroup AST */
-class PrintAstNode : public AstNodeBase {
-  public:
-    ExprNode expr;
+struct AssignAstNode : AstNodeBase {
+  std::string varId;
+  ExprNode expr;
 };
 
 
 /*! \ingroup AST */
-class StatementsAstNode : public AstNodeBase {
-  public:
-    std::vector<AstNode> statements; 
+struct ReadAstNode : AstNodeBase { 
+  std::string varId;
 };
 
 /*! \ingroup AST */
-class ForAstNode : public AstNodeBase {
-  public:
-    VarNode var;
-    ExprNode startExpr, endExpr;
-    StatementsAstNode statements;
+struct PrintAstNode : AstNodeBase {
+  ExprNode expr;
+};
+
+
+/*! \ingroup AST */
+struct StatementsAstNode : AstNodeBase {
+  std::vector<AstNode> statements; 
 };
 
 /*! \ingroup AST */
-class IfAstNode : public AstNodeBase {
-  public:
-    ExprNode expr;
-    StatementsAstNode ifStatements, elseStatements;
+struct ForAstNode : AstNodeBase {
+  VarNode var;
+  ExprNode startExpr, endExpr;
+  StatementsAstNode statements;
+};
+
+/*! \ingroup AST */
+struct IfAstNode : AstNodeBase {
+  ExprNode expr;
+  StatementsAstNode ifStatements, elseStatements;
 };
 
 inline AstNodeBase & getBaseReference(AstNode &node){
