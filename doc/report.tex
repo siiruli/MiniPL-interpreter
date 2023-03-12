@@ -140,6 +140,7 @@ and \code{nextToken()} (which moves to the next token and returns that).
 \newcommand{\cfgvar}[1]{$<$#1$>$}
 \newcommand{\cfgrule}[2]{\text{\cfgvar{#1}} &\rightarrow \text{#2}}
 \newcommand{\cfgterm}[1]{\textbf{#1}}
+The parser implements the LL(1) grammar shown below.
 The terminals are \cfgvar{literal}, \cfgvar{op}, \cfgvar{ident}, 
 \cfgvar{unary$\_$op}, the end-of-file symbol \$\$, punctuation 
 and the bolded Keywords.
@@ -191,6 +192,16 @@ and the bolded Keywords.
     $\mid$ \cfgterm{(} \cfgvar{expr} \cfgterm{)}
   } \\
 \end{align*}
+
+\subsection{Parser}
+The structure of the \code{Parser} differs slightly from this grammar 
+because the parsing of the variables \cfgvar{decl} and \cfgvar{decl\_assign}, as well 
+as \cfgvar{expr} and \cfgvar{expr\_tail} are merged into single 
+methods \code{declaration()} and \code{expression()}.
+
+While parsing, the parser constructs an Abstract Syntax Tree, 
+whose structure closely represents the variables in the grammar 
+above, with some variables merged into one node.
 
 \clearpage
 \label{sect:AST}
