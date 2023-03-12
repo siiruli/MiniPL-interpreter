@@ -17,9 +17,10 @@ class MiniPL {
       output{out} 
     {}
 
-    void runProgram(std::string &program);
-    void runFile(std::string fileName);
-    void run(std::vector<std::string> &program);
+    void runFile(std::string filename);
+    void runFile(std::string filename, ErrorHandler &handler);
+    void run(Program &program);
+    void run(Program &program, ErrorHandler &handler);
 
   private:
     std::istream &input;

@@ -122,14 +122,15 @@ typedef std::variant<ScanningError, ParsingError, SemanticError, TypeError> Erro
 
 class ErrorMessager {
   public:
-    inline ErrorMessager(Program &program) : program(program) {}
+    inline ErrorMessager(Program &program, std::ostream &output) 
+      : program(program), output(output) {}
 
     void printError(Error &error);
     void printError(ErrorBase &error);
 
-    std::ostream &output = std::cout;
   private:
     Program &program;
+    std::ostream &output;
     std::string lineStart(uint LineNumber);
     std::string lineString(uint lineNumber);
     std::string lineStart();
@@ -145,13 +146,15 @@ class ErrorMessager {
 
 class ErrorHandler {
   public:
-    inline ErrorHandler(Program &program) : messager(program) {}
 
     void raiseError(Error error);
     bool hasErrors();
+
+    uint errorNumber();
+    void printErrors(Program &program, std::ostream &ostream);
+
   private:
     std::vector<Error> errors;
-    ErrorMessager messager;
 
 
 };

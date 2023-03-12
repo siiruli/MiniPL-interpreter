@@ -4,10 +4,12 @@
 #include "SemanticAnalyzer.h"
 #include "TypeChecker.h"
 
-void MiniPL::runProgram(std::string &program){
-
-}
 void MiniPL::runFile(std::string filename){
+  ErrorHandler handler{};
+  runFile(filename, handler);
+}
+
+void MiniPL::runFile(std::string filename, ErrorHandler &handler){
   std::ifstream file(filename);
   std::vector<std::string> program;
   if(!file.is_open()){
@@ -18,17 +20,23 @@ void MiniPL::runFile(std::string filename){
   while(std::getline(file, line)){
     program.push_back(line + "\n");
   }
-  run(program);
+  run(program, handler);
 }
-void MiniPL::run(std::vector<std::string> &program){
-  ErrorHandler handler(program);
+
+void MiniPL::run(Program &program){
+  ErrorHandler handler{};
+  run(program, handler);
+}
+
+void MiniPL::run(Program &program, ErrorHandler &handler){
   Scanner scanner(program, handler);
   ScannerIterator it(scanner); 
   Parser parser(it, handler);
 
   AstNode ast = parser.program();
   if(handler.hasErrors()){
-    std::cout << "Errors while scanning/parsing. Ending process.\n";
+    output << "Errors while scanning/parsing. Ending process.\n";
+    handler.printErrors(program, output);
     return;
   }
   SemanticAnalyzer analyzer(handler);
@@ -38,11 +46,20 @@ void MiniPL::run(std::vector<std::string> &program){
   typeChecker.visit(ast);
 
   if(handler.hasErrors()){
-    std::cout << "Found semantic errors. Ending process.\n";
+    output << "Found semantic errors. Ending process.\n";
+    handler.printErrors(program, output);
     return;
   }
 
 
   InterpreterVisitor visitor{input, output};
   visitor.visit(ast);
+
+  if(handler.hasErrors()){
+    output << "Runtime errors:\n";
+    handler.printErrors(program, output);
+    return;
+  }
+
+
 }

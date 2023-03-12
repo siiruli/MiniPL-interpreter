@@ -41,7 +41,7 @@ class ParserTest :
     }
   protected:
     Program program;
-    ErrorHandler handler{program};
+    ErrorHandler handler{};
     void SetUp() override {
     }
 };

@@ -4,13 +4,20 @@
 
 void ErrorHandler::raiseError(Error error){
   errors.push_back(error);
-  messager.printError(error);
 }
 
 bool ErrorHandler::hasErrors(){
   return !errors.empty();
 }
-
+uint ErrorHandler::errorNumber(){
+  return errors.size();
+}
+void ErrorHandler::printErrors(Program &program, std::ostream &output){
+  ErrorMessager messager(program, output);
+  for(uint i=0; i<errors.size(); ++i){
+    messager.printError(errors[i]);
+  }
+}
 void ErrorMessager::printError(Error &error){
   ErrorBase &base = std::visit([](auto &arg) -> ErrorBase& {
     return static_cast<ErrorBase&>(arg);
