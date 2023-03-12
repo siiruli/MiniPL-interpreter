@@ -24,7 +24,9 @@ void InterpreterVisitor::visit(ExprAstNode &node){
     case Operator::Add: val = funcVisitor(Op::add, opnd1, opnd2); break;
     case Operator::Sub: val = funcVisitor(Op::sub, opnd1, opnd2); break;
     case Operator::Mul: val = funcVisitor(Op::mul, opnd1, opnd2); break;
-    case Operator::Div: val = funcVisitor(Op::div, opnd1, opnd2); break;
+    case Operator::Div: 
+      val = funcVisitor(Op::div, opnd1, opnd2); 
+      break;
   }
   node.value = val;
 }

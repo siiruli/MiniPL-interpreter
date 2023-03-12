@@ -1,3 +1,3 @@
 
 
-// var x : int := 1/0;
+var x : int := 1/0;

@@ -5,6 +5,14 @@
 
 /** @file */ 
 
+struct RunTimeException : public std::exception {
+  const char* type;
+  RunTimeException(const char* type) : type(type) {}
+  const char * what () const throw () {
+    return type;
+  }
+};
+
 class InterpreterVisitor : Visitor {
   public:
     InterpreterVisitor(std::istream &in, std::ostream &out) :
@@ -70,7 +78,12 @@ namespace Op {
   };
   auto div = overloaded {
     [](auto a, auto b){exit(1); return "TypeError";},
-    [](int a, int b){return a/b;}
+    [](int a, int b){
+      if(b == 0){
+        throw RunTimeException("Division by zero");
+      }
+      return a/b;
+    }
   };
   auto eq = [](auto a, auto b){return a == b;};
   auto less = [](auto a, auto b){return a < b;};  

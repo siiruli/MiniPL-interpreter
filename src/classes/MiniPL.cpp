@@ -53,13 +53,15 @@ void MiniPL::run(Program &program, ErrorHandler &handler){
 
 
   InterpreterVisitor visitor{input, output};
-  visitor.visit(ast);
-
-  if(handler.hasErrors()){
-    output << "Runtime errors:\n";
-    handler.printErrors(program, output);
-    return;
+  try {
+    visitor.visit(ast);
+  } catch (RunTimeException &e){
+    output << "Runtime error: " << e.what() << std::endl;
+  } catch (std::ios_base::failure &e){
+    output << "IO error: " << e.what() << std::endl;
   }
+
+
 
 
 }
