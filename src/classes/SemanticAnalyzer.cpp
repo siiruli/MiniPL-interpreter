@@ -28,17 +28,6 @@ void SemanticAnalyzer::raiseError(NodeType &node, SemanticError error){
 }
 void SemanticAnalyzer::visit(ExprAstNode &node){
 
-  switch (node.op)
-  {
-    case Operator::Identity:
-    case Operator::Not: 
-      if(node.opnd2) raiseError(node);
-      break;
-    default:
-      if(!node.opnd2) raiseError(node);
-      break;
-  }
-
   visit(*node.opnd1);
   
   if(node.opnd2) {

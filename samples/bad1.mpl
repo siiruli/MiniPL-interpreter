@@ -16,7 +16,7 @@ end;
 
 var x_2 : bol;
 
-
+_x := 1 ! 1;
 
 a := 0 = 0 /* Unterminated comment
 
