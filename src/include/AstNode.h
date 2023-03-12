@@ -8,7 +8,7 @@
 #include "Token.h"
 
 /** @file */ 
-
+/** \defgroup AST AST nodes*/
 
 enum Type {Int, Bool, String, Void, Broken};
 constexpr const char *typenames[] = {
@@ -48,6 +48,8 @@ constexpr const char *nodenames[] = {
   "statement", "expression", "operand"
 };
 
+
+/*! \ingroup AST */
 class ExprAstNode : public AstNodeBase {
   public: 
     ExprValue value;
@@ -65,6 +67,8 @@ typedef std::variant<
   Literal, 
   VarIdent, 
   ExprAstNode> Operand;
+
+/*! \ingroup AST */
 class OpndAstNode : public AstNodeBase {
   public: 
     ExprValue value;
@@ -78,6 +82,7 @@ class OpndAstNode : public AstNodeBase {
 };
 
 
+/*! \ingroup AST */
 class DeclAstNode : public AstNodeBase {
   public: 
     std::string varId;
@@ -85,6 +90,7 @@ class DeclAstNode : public AstNodeBase {
     std::optional<ExprAstNode> value;
 };
 
+/*! \ingroup AST */
 class AssignAstNode : public AstNodeBase {
   public:
     std::string varId;
@@ -92,23 +98,26 @@ class AssignAstNode : public AstNodeBase {
 };
 
 
-
+/*! \ingroup AST */
 class ReadAstNode : public AstNodeBase {
   public: 
     std::string varId;
 };
 
+/*! \ingroup AST */
 class PrintAstNode : public AstNodeBase {
   public:
     ExprAstNode expr;
 };
 
 
+/*! \ingroup AST */
 class StatementsAstNode : public AstNodeBase {
   public:
     std::vector<AstNode> statements; 
 };
 
+/*! \ingroup AST */
 class ForAstNode : public AstNodeBase {
   public:
     std::string varId;
@@ -116,6 +125,7 @@ class ForAstNode : public AstNodeBase {
     StatementsAstNode statements;
 };
 
+/*! \ingroup AST */
 class IfAstNode : public AstNodeBase {
   public:
     ExprAstNode expr;
@@ -129,6 +139,7 @@ inline AstNodeBase & getBaseReference(AstNode &node){
   return base;
 }
 
+/*! \ingroup AST */
 template<class NodeType>
 std::string astNodeName(){
   return nodenames[AstNode(std::in_place_type<NodeType>).index()];;
