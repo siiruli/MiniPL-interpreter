@@ -12,20 +12,20 @@ class TypeChecker {
   public:
     TypeChecker(ErrorHandler &handler) : handler(handler) {}
 
-    Type visit(AstNode &node);
+    void visit(AstNode &node);
     
     Type visit(ExprNode &node);
     Type visit(UnaryOp &node);
     Type visit(BinaryOp &node);
     Type visit(VarNode &node);
         
-    Type visit(IfAstNode &node);
-    Type visit(DeclAstNode &node);
-    Type visit(AssignAstNode &node);
-    Type visit(ForAstNode &node);
-    Type visit(PrintAstNode &node);
-    Type visit(ReadAstNode &node);
-    Type visit(StatementsAstNode &node);
+    void visit(IfAstNode &node);
+    void visit(DeclAstNode &node);
+    void visit(AssignAstNode &node);
+    void visit(ForAstNode &node);
+    void visit(PrintAstNode &node);
+    void visit(ReadAstNode &node);
+    void visit(StatementsAstNode &node);
   private:
     ErrorHandler &handler;
     

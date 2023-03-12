@@ -82,42 +82,38 @@ Type TypeChecker::visit(BinaryOp &node){
   return type;
 }
 
-Type TypeChecker::visit(StatementsAstNode &node){
+void TypeChecker::visit(StatementsAstNode &node){
   for(auto &child : node.statements){
     visit(child);
   }
-  return Type::Void;
 }
 
-Type TypeChecker::visit(AstNode &node){
-  return std::visit([&](auto &node){
-    return visit(node);
+void TypeChecker::visit(AstNode &node){
+  std::visit([&](auto &node){
+    visit(node);
   }, node);
 }
 
-Type TypeChecker::visit(IfAstNode &node){
+void TypeChecker::visit(IfAstNode &node){
   Type type = visit(node.expr);
   type = match(Bool, type, node, getSpan(node.expr));
   visit(node.ifStatements);
   visit(node.elseStatements);
-  return Type::Void;
 }
-Type TypeChecker::visit(DeclAstNode &node){
+void TypeChecker::visit(DeclAstNode &node){
   // initialize variable
   if(auto &expr = node.value){
     Type exprtype = visit(*expr);
     match(node.type, exprtype, node, getSpan(*expr));
   }
   setType(node.varId, node.type);
-  return Type::Void;
 }
-Type TypeChecker::visit(AssignAstNode &node){
+void TypeChecker::visit(AssignAstNode &node){
   Type exprtype = visit(node.expr);
   match(getType(node.varId), exprtype, node, getSpan(node.expr));
-  return Type::Void;
 }
 
-Type TypeChecker::visit(ForAstNode & node){
+void TypeChecker::visit(ForAstNode & node){
   match(Int, visit(node.var), node, node.var.span);
 
   Type start = visit(node.startExpr);
@@ -126,14 +122,11 @@ Type TypeChecker::visit(ForAstNode & node){
   match(Int, end, node, getSpan(node.endExpr));
 
   visit(node.statements);
-  return Type::Void;
 }
-Type TypeChecker::visit(PrintAstNode & node){
+void TypeChecker::visit(PrintAstNode & node){
   visit(node.expr);
-  return Type::Void;
 }
-Type TypeChecker::visit(ReadAstNode & node){
-  return Type::Void;
+void TypeChecker::visit(ReadAstNode & node){
 } 
 
 

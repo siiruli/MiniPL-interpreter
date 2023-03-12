@@ -10,9 +10,9 @@
 /** @file */ 
 /** \defgroup AST AST nodes*/
 
-enum Type {Int, Bool, String, Void, Broken};
+enum Type {Int, Bool, String, Broken};
 constexpr const char *typenames[] = {
-  "int", "bool", "string", "void", "broken"
+  "int", "bool", "string", "broken"
 };
 inline std::ostream & operator<<(std::ostream &os, Type arg){
   return os << "'" << typenames[static_cast<int>(arg)] << "'";
