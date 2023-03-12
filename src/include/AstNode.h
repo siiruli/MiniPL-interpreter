@@ -4,7 +4,6 @@
 #include <memory>
 #include "Util.h"
 #include "Program.h"
-#include "Visitor.h"
 #include "Token.h"
 
 /** @file */ 

@@ -1,6 +1,5 @@
 #include <map>
 #include "Util.h"
-#include "Visitor.h"
 #include "AstNode.h"
 #include "Error.h"
 /** @file */ 
@@ -13,7 +12,7 @@ struct RunTimeException : public std::exception {
   }
 };
 
-class InterpreterVisitor : Visitor {
+class InterpreterVisitor {
   public:
     InterpreterVisitor(std::istream &in, std::ostream &out, ErrorHandler &handler) :
       input(in), output(out), handler(handler) {}
