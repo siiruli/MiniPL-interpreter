@@ -58,22 +58,18 @@ typedef std::variant<
 
 class LiteralNode : public AstNodeBase {
   public: Literal literal;
-  ExprValue value;
 };
 class VarNode : public AstNodeBase {
   public: VarIdent varId;
-  ExprValue value;
 
 };
 class UnaryOp : public AstNodeBase {
   public:
-  ExprValue value;
   Operator op;
   std::unique_ptr<ExprNode> opnd;
 };
 class BinaryOp : public AstNodeBase {
   public:
-  ExprValue value;
   Operator op;
   std::unique_ptr<ExprNode> opnd1, opnd2;
 };
@@ -81,7 +77,7 @@ class BinaryOp : public AstNodeBase {
 /*! \ingroup AST */
 class ExprAstNode : public AstNodeBase {
   public: 
-    ExprValue value;
+
     std::unique_ptr<OpndAstNode> opnd1;
     Operator op;
     inline bool operator==(const ExprAstNode &other) const {
@@ -100,7 +96,7 @@ typedef std::variant<
 /*! \ingroup AST */
 class OpndAstNode : public AstNodeBase {
   public: 
-    ExprValue value;
+
     Operand operand; 
 
     inline bool operator==(const OpndAstNode &other) const {
