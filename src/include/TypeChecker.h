@@ -4,6 +4,8 @@
 #include "AstNode.h"
 #include "Error.h"
 
+/** @file */ 
+
 typedef std::vector<Type> Types;
 
 class TypeChecker {

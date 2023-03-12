@@ -3,6 +3,7 @@
 #include <ostream>
 #include <vector>
 
+/** @file */ 
 struct Position
 {
   inline Position() : lineNumber(0), linePos(0) {}

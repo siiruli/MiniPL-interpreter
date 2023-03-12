@@ -5,6 +5,7 @@
 #include "Program.h"
 #include "Util.h"
 
+/** @file */ 
 // These must be in the same order
 enum class Keyword {
   Var = 0, For, End, In, Do, Read, Print, Int, String, Bool, 

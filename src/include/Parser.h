@@ -1,6 +1,7 @@
 #include "Scanner.h"
 #include "AstNode.h"
 
+/** @file */ 
 class TokenIterator {
   public: 
     virtual Token currentToken() = 0;

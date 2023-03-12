@@ -4,7 +4,7 @@
 #include "AstNode.h"
 #include "Error.h"
 
-
+/** @file */ 
 struct variable {
   variable() : declared{1} {}
   bool declared = 0;

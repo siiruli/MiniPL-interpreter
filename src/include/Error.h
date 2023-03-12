@@ -8,6 +8,7 @@
 #include "Token.h"
 #include "AstNode.h"
 
+/** @file */ 
 
 struct ErrorBase {
   inline virtual std::string description(){

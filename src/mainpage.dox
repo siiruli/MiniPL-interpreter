@@ -1,0 +1,15 @@
+/*! 
+  \mainpage 
+  
+  \section Introduction
+
+  Interpreter for the MiniPL language.
+
+  \section Usage
+
+  Use by running 
+  \code{.sh}
+  ./build/src/MiniPL_interpreter_run <filename>
+  \endcode
+  on the command line.
+*/

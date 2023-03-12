@@ -7,10 +7,12 @@
 #include "Program.h"
 #include "Error.h"
 
+/** @file */ 
 
-
-/* Scans the program for lexical elements, producing tokens one by one. 
-Gives lexical error to the error handler. */
+/*! 
+  \brief Scans the program for lexical elements, producing tokens one by one. 
+  Gives lexical error to the error handler. 
+*/
 class Scanner {
   public:
     Scanner(Program &program, ErrorHandler &handler);

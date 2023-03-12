@@ -7,6 +7,9 @@
 #include "Visitor.h"
 #include "Token.h"
 
+/** @file */ 
+
+
 enum Type {Int, Bool, String, Void, Broken};
 constexpr const char *typenames[] = {
   "int", "bool", "string", "void", "broken"
@@ -44,7 +47,6 @@ constexpr const char *nodenames[] = {
   "declaration", "assignment", "for", "if", "read", "print", 
   "statement", "expression", "operand"
 };
-
 
 class ExprAstNode : public AstNodeBase {
   public: 
