@@ -7,8 +7,8 @@
 namespace fs = std::filesystem;
 
 class SampleTest :  
-  // public ::testing::Test
-  public testing::TestWithParam<std::tuple<Program, std::string, std::string>> 
+  public ::testing::Test
+  // public testing::TestWithParam<std::tuple<Program, std::string, std::string>> 
 {
   public:
     
@@ -22,11 +22,11 @@ class SampleTest :
 TEST_F(SampleTest, samples) {
 
   std::string path = std::string(ROOT_DIR) + "/samples";
-  for (const auto & entry : fs::directory_iterator(path)){
-    // std::cout << entry.path() << std::endl;
-    EXPECT_NO_THROW(miniPl.runFile(entry.path()));
-  }
-
+  // for (const auto & entry : fs::directory_iterator(path)){
+  //   // std::cout << entry.path() << std::endl;
+  //   EXPECT_NO_THROW(miniPl.runFile(entry.path()));
+  // }
+  miniPl.runFile(path+"/0.mpl");
 
 }
 

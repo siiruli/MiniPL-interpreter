@@ -221,59 +221,71 @@ AstNode Parser::printStatement(){
   PrintAstNode node;
   match(Keyword::Print, node);
   node.expr = expression();
-  addMeta(node, node.expr);
+  // addMeta(node, node.expr);
   return node;
 }
 
-ExprAstNode Parser::expression(){
-  ExprAstNode node;
+ExprNode Parser::expression(){
   Token token = it.currentToken();
   if(token.value == TokenValue{Operator::Not}){
+    UnaryOp node;
     node.op = match<Operator>(node);
-    node.opnd1 = std::make_unique<OpndAstNode>(operand());
-    addMeta(node, *node.opnd1);
+    node.opnd = std::make_unique<ExprNode>(operand());
+    addMeta(node, *node.opnd);
+    return node;
   }else{
     
-    node.opnd1 = std::make_unique<OpndAstNode>(operand());
-    addMeta(node, *node.opnd1);
+    ExprNode opnd = operand();
 
     if(std::holds_alternative<Operator>(it.currentToken().value)){
+      BinaryOp node;
       if(it.currentToken().value == TokenValue{Operator::Not}){
         raiseError(node);
       }
+      node.opnd1 = std::make_unique<ExprNode>(std::move(opnd));
       node.op = match<Operator>(node);
-      node.opnd2 = std::make_unique<OpndAstNode>(operand());
+      node.opnd2 = std::make_unique<ExprNode>(operand());
       addMeta(node, *node.opnd2);
+      return node;
     }else{
+      UnaryOp node;
       node.op = Operator::Identity;
+      node.opnd = std::make_unique<ExprNode>(std::move(opnd));
+      addMeta(node, *node.opnd);
+      return node;
     }
   }
-  return node;
 }
-OpndAstNode Parser::operand(){
-  OpndAstNode node;
+ExprNode Parser::operand(){
   Token token = it.currentToken();
-  std::visit( overloaded {
-    [&](VarIdent &arg){
+  ExprNode node = std::visit( overloaded  {
+    [&](VarIdent &arg) -> ExprNode {
       // VarIdent
-      node.operand = match<VarIdent>(node);
+      VarNode node;
+      node.varId = match<VarIdent>(node);
+      return node;
     },
-    [&](Literal &arg){
+    [&](Literal &arg) -> ExprNode {
       // Literal
-      node.operand = match<Literal>(node);
+      LiteralNode node;
+      node.literal = match<Literal>(node);
+      return node;
     },
-    [&](Delimiter &arg){
+    [&](Delimiter &arg) -> ExprNode {
       // (
+      UnaryOp node;
       match(Delimiter::OpenParen, node);
-      ExprAstNode expr = expression();
-      addMeta(node, expr);
-      node.operand = std::move(expr);
+      node.op = Operator::Identity;
+      node.opnd = std::make_unique<ExprNode>(expression());
+      addMeta(node, *node.opnd);
       match(Delimiter::ClosedParen, node);
+      return node;
     },
-    [&](auto &arg){
+    [&](auto &arg) -> ExprNode {
       // epsilon rule
-      // throw std::exception();
+      UnaryOp node;
       raiseError(node);
+      throw ParserException();
     }
   }, token.value);
   return node;
@@ -291,6 +303,12 @@ void Parser::addMeta(NodeType &node, AstNode &childNode){
   AstNodeBase &childBase = getBaseReference(childNode);
   node.span += childBase.span;
 }
+template<class NodeType>
+void Parser::addMeta(NodeType &node, ExprNode &childNode){
+  AstNodeBase &childBase = getBaseReference(childNode);
+  node.span += childBase.span;
+}
+
 // Add metadata from a child AST node to its parent
 template<class NT1, class NT2>
 void Parser::addMeta(NT1 &node, NT2 &childNode){

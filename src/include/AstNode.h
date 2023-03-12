@@ -40,14 +40,43 @@ typedef std::variant<
   IfAstNode, 
   ReadAstNode, 
   PrintAstNode,
-  StatementsAstNode,
-  ExprAstNode,
-  OpndAstNode> AstNode;
+  StatementsAstNode> AstNode;
 constexpr const char *nodenames[] = {
   "declaration", "assignment", "for", "if", "read", "print", 
   "statement", "expression", "operand"
 };
 
+class LiteralNode;
+class VarNode;
+class UnaryOp;
+class BinaryOp;
+typedef std::variant<
+  LiteralNode, 
+  VarNode,
+  UnaryOp,
+  BinaryOp> ExprNode;
+
+class LiteralNode : public AstNodeBase {
+  public: Literal literal;
+  ExprValue value;
+};
+class VarNode : public AstNodeBase {
+  public: VarIdent varId;
+  ExprValue value;
+
+};
+class UnaryOp : public AstNodeBase {
+  public:
+  ExprValue value;
+  Operator op;
+  std::unique_ptr<ExprNode> opnd;
+};
+class BinaryOp : public AstNodeBase {
+  public:
+  ExprValue value;
+  Operator op;
+  std::unique_ptr<ExprNode> opnd1, opnd2;
+};
 
 /*! \ingroup AST */
 class ExprAstNode : public AstNodeBase {
@@ -87,14 +116,14 @@ class DeclAstNode : public AstNodeBase {
   public: 
     std::string varId;
     Type type;
-    std::optional<ExprAstNode> value;
+    std::optional<ExprNode> value;
 };
 
 /*! \ingroup AST */
 class AssignAstNode : public AstNodeBase {
   public:
     std::string varId;
-    ExprAstNode expr;
+    ExprNode expr;
 };
 
 
@@ -107,7 +136,7 @@ class ReadAstNode : public AstNodeBase {
 /*! \ingroup AST */
 class PrintAstNode : public AstNodeBase {
   public:
-    ExprAstNode expr;
+    ExprNode expr;
 };
 
 
@@ -121,14 +150,14 @@ class StatementsAstNode : public AstNodeBase {
 class ForAstNode : public AstNodeBase {
   public:
     std::string varId;
-    ExprAstNode startExpr, endExpr;
+    ExprNode startExpr, endExpr;
     StatementsAstNode statements;
 };
 
 /*! \ingroup AST */
 class IfAstNode : public AstNodeBase {
   public:
-    ExprAstNode expr;
+    ExprNode expr;
     StatementsAstNode ifStatements, elseStatements;
 };
 
@@ -138,9 +167,14 @@ inline AstNodeBase & getBaseReference(AstNode &node){
   }, node);
   return base;
 }
-
+inline AstNodeBase & getBaseReference(ExprNode &node){
+  AstNodeBase &base = std::visit([](auto &node) -> AstNodeBase& {
+    return static_cast<AstNodeBase&>(node);
+  }, node);
+  return base;
+}
 /*! \ingroup AST */
 template<class NodeType>
 std::string astNodeName(){
-  return nodenames[AstNode(std::in_place_type<NodeType>).index()];;
+  return ""; //nodenames[AstNode(std::in_place_type<NodeType>).index()];;
 }

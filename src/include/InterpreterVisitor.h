@@ -21,6 +21,13 @@ class InterpreterVisitor : Visitor {
     std::ostream &output;
     ErrorHandler &handler;
     void visit(AstNode &node);
+
+    ExprValue visit(ExprNode &node);
+    ExprValue visit(UnaryOp &node);
+    ExprValue visit(BinaryOp &node);
+    ExprValue visit(VarNode &node);
+    
+
     void visit(IfAstNode &node);
     void visit(DeclAstNode &node);
     void visit(AssignAstNode &node);
@@ -28,8 +35,7 @@ class InterpreterVisitor : Visitor {
     void visit(PrintAstNode &node);
     void visit(ReadAstNode &node);
     void visit(StatementsAstNode &node);
-    void visit(ExprAstNode &node);
-    void visit(OpndAstNode &node);
+
   private:
 
     std::map<std::string, ExprValue> variables; 

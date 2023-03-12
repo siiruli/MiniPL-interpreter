@@ -34,8 +34,8 @@ class Parser {
     AstNode ifStatement();
     AstNode readStatement();
     AstNode printStatement();
-    ExprAstNode expression();
-    OpndAstNode operand();
+    ExprNode expression();
+    ExprNode operand();
     
   private:
     AstNode astRoot;
@@ -63,7 +63,8 @@ class Parser {
 
     template<class NodeType>
     void addMeta(NodeType &node, AstNode &childNode);
-
+    template<class NodeType>
+    void addMeta(NodeType &node, ExprNode &childNode);
     template<class NT1, class NT2>
     void addMeta(NT1 &node, NT2 &childNode);
 
