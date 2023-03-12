@@ -253,10 +253,27 @@ The variant \code{ExprNode} holds nodes of the types:
   pointers to two expressions. 
 \end{itemize}
 
-\section{Traversal}
+\subsection{Traversal}
 
 The components \code{SemanticAnalyzer}, \code{TypeChecker} and 
-\code{Interpreter}. 
+\code{Interpreter} all traverse through the AST in the same way. 
+They implement \code{visit} functions for all types of AST nodes 
+and recursively visit the children.
+Instead of using the usual visitor design pattern, they use 
+\code{std::visit} to visit the actual objects inside the variants
+\code{StatementNode} and \code{ExprAstNode}. This way the 
+AST nodes do not need to know anything about the visitors, 
+and do not need any methods to accept visitors. 
+
+The traversing 
+components do not use inheritance because their \code{visit}-functions 
+to expression nodes need different types of return values and 
+so can not inherit from the same base class. This is not a large 
+problem in the current use case, because each component has 
+some special behaviour for most node types. However, using 
+inheritance would probably be better because it would make 
+implementing changes easier and less likely to cause bugs.
+One would just have to circumvent the return-value problem in some way.
 
 \label{sect:errors}
 \section{Error handling}
