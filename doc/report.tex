@@ -59,14 +59,13 @@ The codebase has the following main components:
   \item \code{ErrorHandler}: Keeps track of errors found, prints them if asked.
 \end{itemize}
 
-Most of the data is stored in small structs or variants, described 
-below:
+Most of the data is stored in the following struct types:
 \begin{itemize}
   \item \code{Position}: A position in the program code (row and column).
   \item \code{Span}: The start and end positions of a token, node or other object.
   \item \code{Token}: One token. Contains a \code{Span} and 
   a \code{TokenValue}.
-  \item \code{AstNode}: A variant that holds an AST-node 
+  \item AST-nodes: Many different types of nodes 
         (see Section \ref{sect:AST}).
 \end{itemize}
 
@@ -198,7 +197,11 @@ and the bolded Keywords.
 \section{Abstract Syntax Trees}
 
 All AST-nodes inherit the \code{AstNodeBase} class, which contains 
-a \code{Span} for error messages. The type \code{AstNode} is a 
+a \code{Span} for error messages. AST-nodes are split into 
+statements and expressions, which are mostly handled differently.
+They are also stored in different variants.
+
+The type \code{StatementNode} is a 
 \code{std::variant} which may contain an AST-node of any of the 
 following types:
 
@@ -236,19 +239,18 @@ following types:
   \end{itemize}
   \item \code{StatementsAstNode}: a list of statements
   \begin{itemize}
-    \item[] \code{vector<AstNode> stmts}: list of statements
+    \item[] \code{vector<StatementNode> stmts}: list of statements
   \end{itemize}
-  \item \code{ExprAstNode}: expression
-  \begin{itemize}
-    \item[] \code{Operator op}: enum storing the operator
-    \item[] \code{OpndAstNode *opnd1}
-    \item[] \code{OpndAstNode *opnd2}: null for unary operands.
-  \end{itemize}
-  \item \code{OpndAstNode}: operand
-  \begin{itemize}
-    \item[] \code{Operand opnd}, which is one of 
-    \code{Literal, VarIdent, ExprAstNode}
-  \end{itemize}
+\end{itemize}
+
+The variant \code{ExprNode} holds nodes of the types:
+\begin{itemize}
+  \item \code{LiteralNode}: contains a single literal.
+  \item \code{VarNode}: contains a variable identifier.
+  \item \code{UnaryOp}: contains a unary \code{Operator} and a pointer to an 
+  \code{ExprNode}.
+  \item \code{BinaryOp}: contains a binary \code{Operator} and 
+  pointers to two expressions. 
 \end{itemize}
 
 \section{Semantic analysis}
