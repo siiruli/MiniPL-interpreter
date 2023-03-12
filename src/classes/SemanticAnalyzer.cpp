@@ -148,8 +148,10 @@ void SemanticAnalyzer::assignVar(NodeType &node, VarIdent varId){
       SemanticError error;
       error.type = SemErrorType::AssignConstant;
       error.contextSpan = forParent->span;
+      error.span = node.span;
+      error.context = astNodeName<ForAstNode>();
       error.identifier = varId;
-      raiseError(node, error); 
+      handler.raiseError(error);
     }
   }
 
