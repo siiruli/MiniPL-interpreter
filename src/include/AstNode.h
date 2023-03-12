@@ -52,60 +52,36 @@ typedef std::variant<
   BinaryOp> ExprNode;
 
 struct LiteralNode : AstNodeBase { 
+  static constexpr auto name = "literal";
   Literal literal;
 };
 struct VarNode : AstNodeBase { 
+  static constexpr auto name = "variable";
   VarIdent varId;
 };
 struct UnaryOp : AstNodeBase {
+  static constexpr auto name = "expression";
   Operator op;
   std::unique_ptr<ExprNode> opnd;
 };
 struct BinaryOp : AstNodeBase {
+  static constexpr auto name = "expression";
   Operator op;
   std::unique_ptr<ExprNode> opnd1, opnd2;
-};
-
-/*! \ingroup AST */
-struct ExprAstNode : AstNodeBase { 
-
-  std::unique_ptr<OpndAstNode> opnd1;
-  Operator op;
-  inline bool operator==(const ExprAstNode &other) const {
-    return this->op == other.op &&
-      opnd1 == other.opnd1;
-  }
-  // std::optional<std::unique_ptr<OpndAstNode>> opnd2;
-  std::unique_ptr<OpndAstNode> opnd2;
-
-};
-typedef std::variant<
-  Literal, 
-  VarIdent, 
-  ExprAstNode> Operand;
-
-/*! \ingroup AST */
-struct OpndAstNode : AstNodeBase { 
-
-  Operand operand; 
-
-  inline bool operator==(const OpndAstNode &other) const {
-    return this->operand == other.operand;
-  }
-
-
 };
 
 
 /*! \ingroup AST */
 struct DeclAstNode : AstNodeBase { 
-  std::string varId;
+  static constexpr auto name = "declaration";
+  VarIdent varId;
   Type type;
   std::optional<ExprNode> value;
 };
 
 /*! \ingroup AST */
 struct AssignAstNode : AstNodeBase {
+  static constexpr auto name = "assignment";
   std::string varId;
   ExprNode expr;
 };
@@ -113,22 +89,26 @@ struct AssignAstNode : AstNodeBase {
 
 /*! \ingroup AST */
 struct ReadAstNode : AstNodeBase { 
+  static constexpr auto name = "read-statement";
   std::string varId;
 };
 
 /*! \ingroup AST */
 struct PrintAstNode : AstNodeBase {
+  static constexpr auto name = "print-statement";
   ExprNode expr;
 };
 
 
 /*! \ingroup AST */
 struct StatementsAstNode : AstNodeBase {
+  static constexpr auto name = "statements";
   std::vector<AstNode> statements; 
 };
 
 /*! \ingroup AST */
 struct ForAstNode : AstNodeBase {
+  static constexpr auto name = "for-statement";
   VarNode var;
   ExprNode startExpr, endExpr;
   StatementsAstNode statements;
@@ -136,6 +116,7 @@ struct ForAstNode : AstNodeBase {
 
 /*! \ingroup AST */
 struct IfAstNode : AstNodeBase {
+  static constexpr auto name = "if-statement";
   ExprNode expr;
   StatementsAstNode ifStatements, elseStatements;
 };
@@ -151,9 +132,4 @@ inline AstNodeBase & getBaseReference(ExprNode &node){
     return static_cast<AstNodeBase&>(node);
   }, node);
   return base;
-}
-/*! \ingroup AST */
-template<class NodeType>
-std::string astNodeName(){
-  return ""; //nodenames[AstNode(std::in_place_type<NodeType>).index()];;
 }

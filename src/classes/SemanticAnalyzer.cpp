@@ -3,30 +3,6 @@
 #include "SemanticAnalyzer.h"
 
 
-template<class NodeType> 
-void SemanticAnalyzer::raiseError(NodeType &node){
-  SemanticError error;
-  error.type = SemErrorType::Other;
-  error.contextSpan = node.span;
-  raiseError(node, error);
-}
-
-template<class NodeType> 
-void SemanticAnalyzer::raiseError(NodeType &node, VarIdent varId, SemErrorType type){
-  SemanticError error;
-  error.identifier = varId;
-  error.contextSpan = node.span;
-  error.type = type;
-  raiseError(node, error);
-}
-
-template<class NodeType> 
-void SemanticAnalyzer::raiseError(NodeType &node, SemanticError error){
-  error.span = node.span;
-  error.context = astNodeName<NodeType>();
-  handler.raiseError(error);
-}
-
 
 
 void SemanticAnalyzer::visit(ExprNode &node){
@@ -109,35 +85,30 @@ template<class NodeType>
 void SemanticAnalyzer::declareVar(NodeType &node, VarIdent varId){
   // initialize variable
   if(hasVar(node.varId)) {
-    SemanticError error;
-    error.identifier = varId;
-    error.type = SemErrorType::ReDeclared;
-    raiseError(node, error); // redeclaration
+    raiseError(node, node.span, varId, SemErrorType::ReDeclared);
   }
   if(!scopes.empty()){
     SemanticError error;
     error.identifier = varId;
     error.type = SemErrorType::WrongScope;
     error.contextSpan = scopes[0];
-    raiseError(node, error);
+    error.context = "if of for";
+    error.span = node.span;
+    handler.raiseError(error);
   }
   initVar(node.varId);
 }
 template<class NodeType> 
 void SemanticAnalyzer::assignVar(NodeType &node, VarIdent varId){
   if(!hasVar(varId)) {
-    raiseError(node, node.varId, SemErrorType::NotDeclared);
+    raiseError(node, node.span, node.varId, SemErrorType::NotDeclared);
   }
   else{
     ForAstNode *forParent = getVar(varId).forParent;
     if(forParent){
       SemanticError error;
-      error.type = SemErrorType::AssignConstant;
-      error.contextSpan = forParent->span;
-      error.span = node.span;
-      error.context = astNodeName<ForAstNode>();
-      error.identifier = varId;
-      handler.raiseError(error);
+      raiseError(*forParent, node.span, varId, 
+        SemErrorType::AssignConstant);
     }
   }
 
@@ -145,6 +116,18 @@ void SemanticAnalyzer::assignVar(NodeType &node, VarIdent varId){
 template<class NodeType> 
 void SemanticAnalyzer::accessVar(NodeType &node, VarIdent varId){
   if(!hasVar(varId)) 
-    raiseError(node, varId, SemErrorType::NotDeclared);
+    raiseError(node, node.span, varId, SemErrorType::NotDeclared);
 }
+
+
+template<class NodeType> 
+void SemanticAnalyzer::raiseError(NodeType &node, Span span, VarIdent varId, SemErrorType type){
+  SemanticError error;
+  error.identifier = varId;
+  error.span = span;
+  error.type = type;
+  error.addContext(node);
+  handler.raiseError(error);
+}
+
 

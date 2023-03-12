@@ -70,7 +70,7 @@ void ErrorMessager::printError(ErrorBase &error){
 
 
   if(startLine < span.start.lineNumber) 
-    output << lineStart(startLine) << program[startLine];
+    output << lineString(endLine);
   if(startLine+1 < span.start.lineNumber)
     output << lineSkipped();
 
@@ -79,7 +79,7 @@ void ErrorMessager::printError(ErrorBase &error){
   if(endLine > 1 + span.end.lineNumber)
     output << lineSkipped();
   if(endLine > span.end.lineNumber) 
-    output << lineStart(endLine) << program[endLine];
+    output << lineString(endLine);
 
 
   output << std::endl;

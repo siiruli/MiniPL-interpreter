@@ -174,7 +174,6 @@ void TypeChecker::raiseError(NodeType &node,
 
 template<class NodeType> 
 void TypeChecker::raiseError(NodeType &node, TypeError error){
-  error.contextSpan = node.span;
-  error.context = astNodeName<NodeType>();
+  error.addContext(node);
   handler.raiseError(error);
 }

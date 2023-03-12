@@ -355,12 +355,11 @@ ExpectedType Parser::match(NodeType &node){
 template<class NodeType>
 void Parser::raiseError(NodeType &node){
   ParsingError error;
-  error.contextSpan = node.span;
   error.token = it.currentToken();
-  
   error.span = error.token.span;
+
+  error.addContext(node);
   error.contextSpan += error.span;
-  error.context = astNodeName<NodeType>();
   handler.raiseError(error);
 }
 

@@ -34,14 +34,9 @@ class SemanticAnalyzer {
     std::vector<Span> scopes;
     
 
-    template<class NodeType> 
-    void raiseError(NodeType &node);
-    
-    template<class NodeType> 
-    void raiseError(NodeType &node, SemanticError error);
 
     template<class NodeType> 
-    void raiseError(NodeType &node, VarIdent varId, SemErrorType type);
+    void raiseError(NodeType &node, Span span, VarIdent varId, SemErrorType type);
 
 
     std::map<VarIdent, variable> variables; 

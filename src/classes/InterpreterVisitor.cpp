@@ -56,7 +56,7 @@ ExprValue InterpreterVisitor::visit(BinaryOp &node){
     RuntimeError error;
     error.span = node.span;
     error.data = e.what();
-    addMeta(node, error);
+    error.addContext(node);
     handler.raiseError(error);
     throw RunTimeException(e.what());
   }
@@ -128,7 +128,7 @@ void InterpreterVisitor::visit(ReadAstNode & node){
   } catch (std::ios_base::failure &e){
     RuntimeError error;
     error.data = "Could not read " + node.varId + " from input";
-    addMeta(node, error);
+    error.addContext(node);
     error.span = node.span;
     handler.raiseError(error);
     throw RunTimeException("IO failure");

@@ -8,13 +8,13 @@
 #include "AstNode.h"
 
 
-template<class NodeType, class ErrorType>
-inline void addMeta(NodeType &node, ErrorType &error){
-  error.contextSpan = node.span;
-  error.context = astNodeName<NodeType>();
-}
 
 struct ErrorBase {
+  template<class NodeType>
+  inline void addContext(NodeType &node){
+    contextSpan = node.span;
+    context = NodeType::name;
+  }
   inline virtual std::string description(){
     std::stringstream desc;
     desc << errorClass() << ": ";
