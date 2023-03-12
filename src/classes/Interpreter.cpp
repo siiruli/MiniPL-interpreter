@@ -1,8 +1,8 @@
 #include <iostream>
 #include <assert.h>
-#include "InterpreterVisitor.h"
+#include "Interpreter.h"
 
-ExprValue InterpreterVisitor::visit(ExprNode &node){
+ExprValue Interpreter::visit(ExprNode &node){
   ExprValue value;
   value = std::visit(overloaded {
     [&](LiteralNode &node) -> ExprValue {
@@ -17,7 +17,7 @@ ExprValue InterpreterVisitor::visit(ExprNode &node){
   return value;
 }
 
-ExprValue InterpreterVisitor::visit(UnaryOp &node){
+ExprValue Interpreter::visit(UnaryOp &node){
   assert(node.opnd);
   ExprValue opnd = visit(*node.opnd);
   ExprValue val;
@@ -31,7 +31,7 @@ ExprValue InterpreterVisitor::visit(UnaryOp &node){
   }
   return val;
 }
-ExprValue InterpreterVisitor::visit(BinaryOp &node){
+ExprValue Interpreter::visit(BinaryOp &node){
   assert(node.opnd1);
   assert(node.opnd2);
   ExprValue opnd1 = visit(*node.opnd1);
@@ -63,24 +63,24 @@ ExprValue InterpreterVisitor::visit(BinaryOp &node){
   return val;
 }
 
-ExprValue InterpreterVisitor::visit(VarNode &node){
+ExprValue Interpreter::visit(VarNode &node){
   return getVal(node.varId);
 }
 
 
-void InterpreterVisitor::visit(StatementsAstNode &node){
+void Interpreter::visit(StatementsAstNode &node){
   for(auto &child : node.statements){
     visit(child);
   }
 }
 
-void InterpreterVisitor::visit(StatementNode &node){
+void Interpreter::visit(StatementNode &node){
   std::visit([&](auto &node){
     visit(node);
   }, node);
 }
 
-void InterpreterVisitor::visit(IfAstNode &node){
+void Interpreter::visit(IfAstNode &node){
   ExprValue val = visit(node.expr);
   if(val == ExprValue{true}){
     visit(node.ifStatements);
@@ -88,7 +88,7 @@ void InterpreterVisitor::visit(IfAstNode &node){
     visit(node.elseStatements);
   }
 }
-void InterpreterVisitor::visit(DeclAstNode &node){
+void Interpreter::visit(DeclAstNode &node){
   // initialize variable
   initVar(node.type, node.varId);
   if(auto &expr = node.value){
@@ -96,12 +96,12 @@ void InterpreterVisitor::visit(DeclAstNode &node){
     setVar(node.varId, val);
   }
 }
-void InterpreterVisitor::visit(AssignAstNode &node){
+void Interpreter::visit(AssignAstNode &node){
   ExprValue val = visit(node.expr);
   setVar(node.varId, val);
 }
 
-void InterpreterVisitor::visit(ForAstNode & node){
+void Interpreter::visit(ForAstNode & node){
   ExprValue startVal = visit(node.startExpr);
   ExprValue endVal = visit(node.endExpr);
   assert(std::holds_alternative<int>(startVal));
@@ -114,13 +114,13 @@ void InterpreterVisitor::visit(ForAstNode & node){
     visit(node.statements);
   }
 }
-void InterpreterVisitor::visit(PrintAstNode & node){
+void Interpreter::visit(PrintAstNode & node){
   ExprValue val = visit(node.expr);
   std::visit([&](auto& value) {
     output << value;
   }, val);
 }
-void InterpreterVisitor::visit(ReadAstNode & node){
+void Interpreter::visit(ReadAstNode & node){
   try{
     std::visit([&](auto &value) {
       input >> value;
@@ -135,7 +135,7 @@ void InterpreterVisitor::visit(ReadAstNode & node){
   }
 } 
 
-void InterpreterVisitor::initVar(Type type, std::string varId){
+void Interpreter::initVar(Type type, std::string varId){
   ExprValue val;
   switch (type)  {
     case Int: val = int(0); break;
@@ -145,12 +145,12 @@ void InterpreterVisitor::initVar(Type type, std::string varId){
   }
   variables[varId] = val;
 }
-void InterpreterVisitor::setVar(std::string varId, ExprValue val){
+void Interpreter::setVar(std::string varId, ExprValue val){
   variables[varId] = val;
 }
-ExprValue &InterpreterVisitor::getVar(std::string varId){
+ExprValue &Interpreter::getVar(std::string varId){
   return variables[varId];
 }
-ExprValue InterpreterVisitor::getVal(std::string varId){
+ExprValue Interpreter::getVal(std::string varId){
   return variables[varId];
 }

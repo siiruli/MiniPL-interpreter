@@ -55,7 +55,7 @@ The codebase has the following main components:
   \item \code{SemanticAnalyzer}: Finds semantic
         errors, excluding type errors.
   \item \code{TypeChecker}: Finds type errors.
-  \item \code{InterpreterVisitor}: Executes the program.
+  \item \code{Interpreter}: Executes the program.
   \item \code{ErrorHandler}: Keeps track of errors found, prints them if asked.
 \end{itemize}
 
@@ -253,7 +253,10 @@ The variant \code{ExprNode} holds nodes of the types:
   pointers to two expressions. 
 \end{itemize}
 
-\section{Semantic analysis}
+\section{Traversal}
+
+The components \code{SemanticAnalyzer}, \code{TypeChecker} and 
+\code{Interpreter}. 
 
 \label{sect:errors}
 \section{Error handling}
@@ -322,7 +325,7 @@ parenthesis only produces one error. In case of multiple
 declarations of the same variable, the first declaration is 
 assumed to be correct.
 
-When \code{InterpreterVisitor} produces a runtime error, it 
+When \code{Interpreter} produces a runtime error, it 
 raises an error to the \code{ErrorHandler} and throws an exception. 
 The exception is caught by \code{MiniPL} which asks the 
 \code{ErrorHandler} to print the error message and stops running the 

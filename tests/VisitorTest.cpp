@@ -1,6 +1,6 @@
 #include "gtest/gtest.h"
 #include "AstNode.h"
-#include "InterpreterVisitor.h"
+#include "Interpreter.h"
 
 class VisitorTest :  
   public ::testing::Test
@@ -14,7 +14,7 @@ class VisitorTest :
     }
     std::stringstream input, output;
     ErrorHandler handler;
-    InterpreterVisitor visitor{input, output, handler};
+    Interpreter visitor{input, output, handler};
 };
 
 TEST_F(VisitorTest, operandTest){

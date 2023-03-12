@@ -12,9 +12,9 @@ struct RunTimeException : public std::exception {
   }
 };
 
-class InterpreterVisitor {
+class Interpreter {
   public:
-    InterpreterVisitor(std::istream &in, std::ostream &out, ErrorHandler &handler) :
+    Interpreter(std::istream &in, std::ostream &out, ErrorHandler &handler) :
       input(in), output(out), handler(handler) {}
     std::istream &input;
     std::ostream &output;

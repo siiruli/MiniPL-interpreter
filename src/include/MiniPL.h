@@ -1,7 +1,7 @@
 #include "Scanner.h"
 #include "Parser.h"
 #include "AstNode.h"
-#include "InterpreterVisitor.h"
+#include "Interpreter.h"
 
 /** @file */ 
 class MiniPL {

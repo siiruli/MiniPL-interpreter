@@ -52,7 +52,7 @@ void MiniPL::run(Program &program, ErrorHandler &handler){
   }
 
 
-  InterpreterVisitor visitor{input, output, handler};
+  Interpreter visitor{input, output, handler};
   try {
     visitor.visit(ast);
   } catch (RunTimeException &e){
@@ -64,8 +64,5 @@ void MiniPL::run(Program &program, ErrorHandler &handler){
   if(handler.hasErrors()){
     handler.printErrors(program, output);
   }
-
-
-
 
 }
