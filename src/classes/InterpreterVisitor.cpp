@@ -74,7 +74,7 @@ void InterpreterVisitor::visit(StatementsAstNode &node){
   }
 }
 
-void InterpreterVisitor::visit(AstNode &node){
+void InterpreterVisitor::visit(StatementNode &node){
   std::visit([&](auto &node){
     visit(node);
   }, node);

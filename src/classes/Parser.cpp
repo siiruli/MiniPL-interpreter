@@ -27,7 +27,7 @@ Parser::Parser(TokenIterator &it, ErrorHandler &handler)
   : it(it), handler(handler) {};
 
 
-AstNode Parser::program(){
+StatementNode Parser::program(){
   StatementsAstNode stmts;
   // try {
     stmts = statements();
@@ -100,8 +100,8 @@ TokenClass Parser::classify(Token token){
   return c;
 }
 
-std::optional<AstNode> Parser::statement(){
-  std::optional<AstNode> node; 
+std::optional<StatementNode> Parser::statement(){
+  std::optional<StatementNode> node; 
   Token token = it.currentToken();
   std::visit( overloaded {
     [&](VarIdent &arg){
@@ -145,7 +145,7 @@ std::optional<AstNode> Parser::statement(){
   return node;
 }
 
-AstNode Parser::assignment(){
+StatementNode Parser::assignment(){
   AssignAstNode node;
   node.varId = match<VarIdent>(node);
 
@@ -156,7 +156,7 @@ AstNode Parser::assignment(){
   return node;
 }
 
-AstNode Parser::declaration(){
+StatementNode Parser::declaration(){
   DeclAstNode node;
   match(Keyword::Var, node);
   node.varId = match<VarIdent>(node);
@@ -178,7 +178,7 @@ AstNode Parser::declaration(){
   return node;
 }
 
-AstNode Parser::forStatement(){
+StatementNode Parser::forStatement(){
   ForAstNode node;
   match(Keyword::For, node);
   node.var.varId = match<VarIdent>(node.var);
@@ -192,7 +192,7 @@ AstNode Parser::forStatement(){
   match(Keyword::For, node);
   return node;
 }
-AstNode Parser::ifStatement(){
+StatementNode Parser::ifStatement(){
   IfAstNode node;
   match(Keyword::If, node);
   node.expr = expression();
@@ -211,13 +211,13 @@ AstNode Parser::ifStatement(){
 
   return node;
 }
-AstNode Parser::readStatement(){
+StatementNode Parser::readStatement(){
   ReadAstNode node;
   match(Keyword::Read, node);
   node.varId = match<VarIdent>(node);
   return node;
 }
-AstNode Parser::printStatement(){
+StatementNode Parser::printStatement(){
   PrintAstNode node;
   match(Keyword::Print, node);
   node.expr = expression();
@@ -299,7 +299,7 @@ void Parser::addMeta(NodeType &node, Token token){
 }
 // Add metadata from a child AST node to its parent
 template<class NodeType>
-void Parser::addMeta(NodeType &node, AstNode &childNode){
+void Parser::addMeta(NodeType &node, StatementNode &childNode){
   AstNodeBase &childBase = getBaseReference(childNode);
   node.span += childBase.span;
 }

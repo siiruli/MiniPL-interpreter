@@ -33,7 +33,7 @@ void MiniPL::run(Program &program, ErrorHandler &handler){
   ScannerIterator it(scanner); 
   Parser parser(it, handler);
 
-  AstNode ast = parser.program();
+  StatementNode ast = parser.program();
   if(handler.hasErrors()){
     output << "Errors while scanning/parsing. Ending process.\n";
     handler.printErrors(program, output);

@@ -54,7 +54,7 @@ TEST_F(ParserTest, assignment) {
   TestIterator it(makeTokens(list));
 
   Parser parser(it, handler);
-  AstNode node = parser.program();
+  StatementNode node = parser.program();
   ASSERT_TRUE(std::holds_alternative<StatementsAstNode>(node));
   auto &stmts = std::get<StatementsAstNode>(node);
 

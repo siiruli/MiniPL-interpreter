@@ -88,7 +88,7 @@ void TypeChecker::visit(StatementsAstNode &node){
   }
 }
 
-void TypeChecker::visit(AstNode &node){
+void TypeChecker::visit(StatementNode &node){
   std::visit([&](auto &node){
     visit(node);
   }, node);

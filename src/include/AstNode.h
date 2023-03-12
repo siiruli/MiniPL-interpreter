@@ -39,7 +39,7 @@ typedef std::variant<
   IfAstNode, 
   ReadAstNode, 
   PrintAstNode,
-  StatementsAstNode> AstNode;
+  StatementsAstNode> StatementNode;
 
 struct LiteralNode;
 struct VarNode;
@@ -103,7 +103,7 @@ struct PrintAstNode : AstNodeBase {
 /*! \ingroup AST */
 struct StatementsAstNode : AstNodeBase {
   static constexpr auto name = "statements";
-  std::vector<AstNode> statements; 
+  std::vector<StatementNode> statements; 
 };
 
 /*! \ingroup AST */
@@ -121,7 +121,7 @@ struct IfAstNode : AstNodeBase {
   StatementsAstNode ifStatements, elseStatements;
 };
 
-inline AstNodeBase & getBaseReference(AstNode &node){
+inline AstNodeBase & getBaseReference(StatementNode &node){
   AstNodeBase &base = std::visit([](auto &node) -> AstNodeBase& {
     return static_cast<AstNodeBase&>(node);
   }, node);

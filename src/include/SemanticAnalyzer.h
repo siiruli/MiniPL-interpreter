@@ -15,7 +15,7 @@ class SemanticAnalyzer {
   public:
     SemanticAnalyzer(ErrorHandler &handler) : handler(handler) {}
 
-    void visit(AstNode &node);
+    void visit(StatementNode &node);
 
     void visit(ExprNode &node);
     

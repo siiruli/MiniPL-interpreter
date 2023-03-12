@@ -12,7 +12,7 @@ class TypeChecker {
   public:
     TypeChecker(ErrorHandler &handler) : handler(handler) {}
 
-    void visit(AstNode &node);
+    void visit(StatementNode &node);
     
     Type visit(ExprNode &node);
     Type visit(UnaryOp &node);

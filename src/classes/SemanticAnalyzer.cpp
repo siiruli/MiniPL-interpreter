@@ -27,7 +27,7 @@ void SemanticAnalyzer::visit(StatementsAstNode &node){
   }
 }
 
-void SemanticAnalyzer::visit(AstNode &node){
+void SemanticAnalyzer::visit(StatementNode &node){
   std::visit([&](auto &node){
     visit(node);
   }, node);

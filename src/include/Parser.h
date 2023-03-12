@@ -25,20 +25,20 @@ class Parser {
   public:
     Parser(TokenIterator &iterator, ErrorHandler &handler);
 
-    AstNode program();
+    StatementNode program();
     StatementsAstNode statements();
-    std::optional<AstNode> statement();
-    AstNode assignment();
-    AstNode declaration();
-    AstNode forStatement();
-    AstNode ifStatement();
-    AstNode readStatement();
-    AstNode printStatement();
+    std::optional<StatementNode> statement();
+    StatementNode assignment();
+    StatementNode declaration();
+    StatementNode forStatement();
+    StatementNode ifStatement();
+    StatementNode readStatement();
+    StatementNode printStatement();
     ExprNode expression();
     ExprNode operand();
     
   private:
-    AstNode astRoot;
+    StatementNode astRoot;
     TokenIterator &it;
     ErrorHandler &handler;
 
@@ -62,7 +62,7 @@ class Parser {
     void addMeta(NodeType &node, Token token);
 
     template<class NodeType>
-    void addMeta(NodeType &node, AstNode &childNode);
+    void addMeta(NodeType &node, StatementNode &childNode);
     template<class NodeType>
     void addMeta(NodeType &node, ExprNode &childNode);
     template<class NT1, class NT2>

@@ -20,7 +20,7 @@ class InterpreterVisitor : Visitor {
     std::istream &input;
     std::ostream &output;
     ErrorHandler &handler;
-    void visit(AstNode &node);
+    void visit(StatementNode &node);
 
     ExprValue visit(ExprNode &node);
     ExprValue visit(UnaryOp &node);
