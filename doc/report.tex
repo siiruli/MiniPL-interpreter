@@ -2,46 +2,106 @@
 \usepackage{listings}
 \usepackage{amsmath}
 \newcommand*{\code}[1]{\texttt{#1}}
+\usepackage{parskip}
 
 \begin{document}
 
 \section{Architecture}
 
-The program consists of the following components:
+The codebase has the following main components:
 
-\paragraph*{Scanner:} The scanner has one public method: \code{getToken}, 
-which scans and returns the next token from the program. The 
-constructor takes references to the program string and an 
-\code{ErrorHandler}, to which it passes any lexical errors it finds.
-A \code{Token} is a data structure that contains the a \code{value} and 
-a \code{span}: which positions of the code it covers.
-The value of a token can be an integer/string literal, 
-identifier, keyword, operator or punctuation.
+\begin{itemize}
+  \item \code{MiniPL}: The overall interpreter. Has methods 
+        \code{runFile(filename)} and \code{run(program)} for 
+        interpreting a given program.
+  \item \code{Scanner}:  
+        Scans the input program and produces tokens
+  \item \code{Parser}:
+        Parses the tokens and produces an Abstract Syntax Tree (AST).
+  \item \code{SemanticAnalyzer}: Finds semantic
+        errors, excluding type errors.
+  \item \code{TypeChecker}: Finds type errors.
+  \item \code{InterpreterVisitor}: Executes the program.
+  \item \code{ErrorHandler}: Keeps track of errors found, prints them if asked.
+\end{itemize}
 
-\paragraph*{Parser:}
+Most of the data is stored in small structs or variants, described 
+below:
+\begin{itemize}
+  \item \code{Position}: A position in the program code (row and column).
+  \item \code{Span}: The start and end positions of a token, node or other object.
+  \item \code{Token}: One token. Contains a \code{Span} and 
+  a \code{TokenValue}.
+  \item \code{AstNode}: A variant that holds an AST-node 
+        (see Section \ref{sect:AST}).
+\end{itemize}
 
-\paragraph*{ErrorHandler:}
+\clearpage
+\section{Scanning}
 
-\paragraph*{TypeChecker:}
+The \code{Scanner} is an ad-hoc scanner with one-character look-ahead.
+It has one public method: \code{getToken()}, which scans the next token 
+in the program.
+It iterates through the program using a small helper-class 
+\code{ProgramIterator}, which has methods \code{currentChar()}, 
+\code{peekChar()}, and \code{move()} for iterating. The 
+iterator additionaly keeps track of the current program \code{Position}, 
+which the scanner uses to add a \code{Span} to the tokens.
 
-\paragraph*{InterpreterVisitor:}
+The scanner always returns a viable token. After reaching the 
+end of the program, it just keeps returning an \code{Eof} token 
+with the same span. When encountering an error, it skips the 
+wrong character and returns the current token or scans the next token, 
+depending on where the error happened. For information about 
+error messages, see Section \ref{sect:errors}.
+
+
+\subsection{Token patterns}
+
+There are four five of tokens: identifiers, Keywords, 
+literals (integers or strings), operators, and delimiters.
+Below is a regular definitions of the possible tokens. 
+\begin{itemize}
+  \item[] \code{VarIdent} $\rightarrow$ \verb?[A-Za-z][A-Za-z0-9_]*?
+  \item[] \code{Literal} $\rightarrow$ \verb_[0-9]+|"([^\n"]|\\(n|t|\n|.))*"_
+  \item[] \code{Operator} $\rightarrow$ \verb_+|-|*|/|<|=|\&|!_
+  \item[] \code{Delimiter} $\rightarrow$ \verb_:=|;|:|..|(|)|$_
+  \item[] \code{TokenValue} $\rightarrow$ \verb_VarIdent|Literal|Operator|Delimiter_
+\end{itemize}
+The \code{Keyword} tokens form an exception, as they are not scanned 
+based on a regular definition. Whenever an identifier is scanned, 
+the scanner checks whether it is actually a keyword, and returns 
+a \code{Keyword} if necessary.
+The possible keywords are  "var", "for", "end", "in", "do", "read", "print", 
+"int", "string", "bool", "assert", "if", and "else".
+
+The names above correspond to the type names in the code.  
+In the code, identifiers are stored as strings, and literals in a 
+struct of type \code{Literal}, containing a value which is 
+an integer/string variant, while
+values of type \code{Operator}, \code{Delimiter}, and \code{Keyword} 
+are stored as enum classes.
+The values are stored in the \code{std::variant}
+\code{TokenValue}, which may hold any of the above types. 
+
+In addition to the tokens, two types of comments are allowed in 
+the language. Single-line comments have the format \verb_//.*_, 
+and end at the end of the line. Multi-line comments have the format
+\verb_/*...*/_, and can be nested. Nested comments do not allow 
+a regular definition, so they form yet another exception. The 
+scanner skips all comments and whitespace between tokens.
+
 
 
 \clearpage
-\section{Token patterns}
-
-\begin{itemize}
-  \item identifier: \verb?[A-Za-z][A-Za-z0-9_]*?
-  \item integer literal: \verb_[0-9]+_
-  \item string literal: \verb_"([^\n"]|\\(n|t|\n|.))*"_
-  \item operator: \verb_+|-|*|/|<|=|\&|!_
-  \item delimiter: \verb_:=|;|:|..|(|)_
-\end{itemize}
-
-
 \section{Parsing}
 
-\subsection{Context-free grammar}
+The parser is a recursive-descent parser with one-token look-ahead.
+It iterates through the tokens with a small helper class 
+\code{TokenIterator}, which provides the methods \code{currentToken()} 
+and \code{nextToken()} (which moves to the next token and returns that).
+
+\subsection{LL(1) grammar}
 
 
 \newcommand{\cfgvar}[1]{$<$#1$>$}
@@ -49,10 +109,10 @@ identifier, keyword, operator or punctuation.
 \newcommand{\cfgterm}[1]{\textbf{#1}}
 The terminals are \cfgvar{literal}, \cfgvar{op}, \cfgvar{ident}, 
 \cfgvar{unary$\_$op}, the end-of-file symbol \$\$, punctuation 
-and the bolded keywords.
+and the bolded Keywords.
 \begin{align*}
   \cfgrule{prog}{\cfgvar{stmts} \$\$} \\
-  \cfgrule{stmts}{\cfgvar{stmt} \cfgvar{stmts} $\mid$ $\varepsilon$} \\
+  \cfgrule{stmts}{\cfgvar{stmt}; \cfgvar{stmts} $\mid$ $\varepsilon$} \\
   \cfgrule{stmt}{\cfgvar{decl} $\mid$ 
                  \cfgvar{assign} $\mid$
                  \cfgvar{for} $\mid$ 
@@ -100,6 +160,7 @@ and the bolded keywords.
 \end{align*}
 
 \clearpage
+\label{sect:AST}
 \section{Abstract Syntax Trees}
 
 All AST-nodes inherit the \code{AstNodeBase} class, which contains 
@@ -156,7 +217,9 @@ following types:
   \end{itemize}
 \end{itemize}
 
+\section{Semantic analysis}
 
+\label{sect:errors}
 \section{Error handling}
 
 All components are given a reference to the \code{ErrorHandler}, 
@@ -167,7 +230,11 @@ The components then do something component-specific to recover and
 continue processing the input program. If the \code{ErrorHandler} 
 has errors after the scanning and parsing passes, the interpreter 
 ends the process. Otherwise it continues with semantic analysis 
-and finally runs the program.
+and, if no errors are encountered, finally runs the program.
+
+\subsection{Error types}
+
+\subsection{Error recovery}
 
 The \code{Scanner} always returns a token when asked, whether or 
 not it runs into errors while processing. When a problem is 
@@ -182,7 +249,7 @@ The parser has an exception-based racovery approach. When the
 \code{match}-function can not match the current token, an error 
 is raised and an exception thrown. The exception is caught 
 in the \code{statements} function, and tokens are skipped until
-the current token is a semicolon or one of the keywords 
+the current token is a semicolon or one of the Keywords 
 \textbf{var}, \textbf{for}, \textbf{read}, \textbf{print}, 
 or \textbf{if}. The parser uses these to find the start of a 
 new statements and resumes parsing from that point.
@@ -194,7 +261,9 @@ googletest framework. The scanner is well tested with unit tests
 covering all different token types, while other components have 
 only a few limited unit tests. The whole system is tested with 
 integration tests that check whether running the test programs 
-produces the expected behaviour. 
+produces the expected behaviour. Additionally, there is one 
+test that runs all programs in the \code{samples} directory 
+and (hopefully) checks that the interpreter doesn't crash.
 
 There are no automatic tests for the error handling and recovery 
 functionalities. These were tested by hand, by running the incorrect 
