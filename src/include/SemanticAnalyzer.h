@@ -18,10 +18,6 @@ class SemanticAnalyzer {
     void visit(AstNode &node);
 
     void visit(ExprNode &node);
-    void visit(LiteralNode &node);
-    void visit(UnaryOp &node);
-    void visit(BinaryOp &node);
-    void visit(VarNode &node);
     
 
     void visit(IfAstNode &node);
