@@ -93,7 +93,7 @@ struct TypeError : ErrorBase {
   inline virtual std::string errorClass() { return "Type error"; }
   inline virtual std::string shortDescription(){
     std::stringstream desc;
-    desc << "Unexpected types. Expected: ";
+    desc << "Unexpected type. Expected: ";
     for(auto t : expected) desc << t << " ";
     desc << ", got: ";
     for(auto t : got) desc << t << " ";

@@ -34,13 +34,12 @@ class TypeChecker {
 
     // use unique_ptr
 
-    void initVar(Type type, std::string varId);
 
-    void setVar(std::string varId, Type type);
-    Type &getVar(std::string varId);
-    Type getVal(std::string varId);
+    void setType(std::string varId, Type type);
+    Type getType(std::string varId);
 
-
+    template<class NodeType> 
+    Type match(Type type1, Type type2, NodeType &node, Span span);
     
 
 };
