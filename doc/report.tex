@@ -76,12 +76,25 @@ bin/MiniPL_interpreter_tst
 The \code{samples} directory contains some example programs 
 that can be run with the interpreter. Some of them are malformed 
 and produce errors to demonstrate the error recovery strategy 
-of the interpreter. From the build directory, to run the sample 
-\code{samples/1.mpl}, use 
+of the interpreter. Here are some examples of running the sample 
+files from the build directory: 
 \begin{verbatim}
-bin/MiniPL_interpreter_run ../samples/1.mpl
-\end{verbatim}
+project/build$ bin/MiniPL_interpreter_run ../samples/1.mpl
+16
 
+project/build$ bin/MiniPL_interpreter_run ../samples/2.mpl
+Found semantic errors. Ending process.
+Semantic error: Variable ntimes used without declaration 
+at 10:8-10:13 in variable (10:8-10:13)
+10 |if x = ntimes do
+   |       ^-----
+
+project/build$ bin/MiniPL_interpreter_run ../samples/3.mpl
+Give a number 4
+The result is: 24
+x\end{verbatim}
+
+\clearpage
 \section{Architecture}
 
 
@@ -133,6 +146,17 @@ access tokens. Each component has their own error type that they
 can create. \code{ErrorHandler} can access the error base class 
 \code{ErrorBase} but not the specific kinds of errors.
 
+The code heavily utilizes C++ variants to store values with
+multiple possible types. For example, a \code{TokenValue} is 
+a variant that may contain any type of token, and
+\code{StatementNode} and \code{ExprNode} are variants that 
+may contain different types of AstNodes. The evaluated values 
+of expressions are also stored in variants, which are of type 
+\code{ExprValue}. Using variants is useful because they make 
+it possible to store and handle different types of objects in 
+the same way, and still recover the underlying object whenever 
+needed.
+
 
 \clearpage
 \section{Scanning}
@@ -152,7 +176,6 @@ with the same span. When encountering an error, it skips the
 wrong character and returns the current token or scans the next token, 
 depending on where the error happened. For information about 
 error messages, see Section \ref{sect:errors}.
-
 
 \subsection{Token patterns}
 
