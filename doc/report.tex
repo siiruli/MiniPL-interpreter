@@ -40,7 +40,17 @@ unicode = {true},
   \tableofcontents
 \end{titlepage}
 
+
+\section{Introduction}
+This project is an interpreter for a small toy language
+called MiniPL. The interpreter was implemented in C++.
+It performs all the main phases of interpretation: 
+scanning, parsing, semantic analysis (including type checking), 
+and execution. The project is be built with CMake and tested 
+with GoogleTest. 
+
 \section{Architecture}
+
 
 The codebase has the following main components:
 
@@ -56,8 +66,17 @@ The codebase has the following main components:
         errors, excluding type errors.
   \item \code{TypeChecker}: Finds type errors.
   \item \code{Interpreter}: Executes the program.
-  \item \code{ErrorHandler}: Keeps track of errors found, prints them if asked.
+  \item \code{ErrorHandler}: Keeps track of errors. Prints them with
+  \code{printErrors()} .
 \end{itemize}
+The class \code{MiniPL} is the heart of the interpreter. When 
+interpreting a program, it initializes 
+and runs all the other components in order. It can be constructed 
+with references to specific input and output streams as parameters, 
+but the default values are standard input and output. 
+The \code{main} function in \code{main.cpp} just takes a 
+filename as a command line parameter and calls 
+\code{MiniPL.runFile(filename)}. 
 
 Most of the data is stored in the following struct types:
 \begin{itemize}
@@ -67,7 +86,11 @@ Most of the data is stored in the following struct types:
   a \code{TokenValue}.
   \item AST-nodes: Many different types of nodes 
         (see Section \ref{sect:AST}).
+  \item Error: Different 
+  error types all inherit from \code{ErrorBase}.
 \end{itemize}
+
+
 
 \clearpage
 \section{Scanning}
@@ -220,8 +243,8 @@ While parsing, the parser constructs an Abstract Syntax Tree,
 whose structure is descibed in the next section.
 
 \clearpage
-\label{sect:AST}
 \section{Abstract Syntax Trees}
+\label{sect:AST}
 
 All AST-nodes inherit the \code{AstNodeBase} class, which contains 
 a \code{Span} for error messages. AST-nodes are split into 
@@ -353,8 +376,8 @@ produces a runtime error.
 
 
 
-\label{sect:errors}
 \section{Error handling}
+\label{sect:errors}
 
 All components are given a reference to the \code{ErrorHandler}, 
 which they use to raise errors when something unexpected happens.
