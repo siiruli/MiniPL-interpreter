@@ -10,9 +10,11 @@ var a : bool;
 
 var y : bool := !a = !!a; 
 
+
 if y do 
   print "true\n";
 else
   print "false\n";
 end if;
 
+print a & (1=1);

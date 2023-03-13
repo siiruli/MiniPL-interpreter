@@ -36,6 +36,25 @@ INSTANTIATE_TEST_SUITE_P(
       Program{"var X : int := 4 + (6 * 2);\n",
       "print X;"},
       "", "16"
+    },
+    std::tuple{
+      Program{"var X : bool := !!(1+3 = 4/4*4);\n",
+      "print X;\n",
+      "print !X;\n"},
+      "", "10"
+    },
+    std::tuple{
+      Program{"var X : string := \"essr\" + \"a\";\n",
+      "print X + \"\\n\";\n",
+      "print X + X;\n"},
+      "", "essra\nessraessra"
+    },
+    std::tuple{
+      Program{"var X : bool := \"aa\" < \"ab\";\n",
+      "print X;\n",
+      "print \"\\n\";\n",
+      "print X & X;\n"},
+      "", "1\n1"
     }
   )
 );

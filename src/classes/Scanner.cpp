@@ -260,6 +260,7 @@ std::optional<Operator> Scanner::scanOperator(){
     case '<': lexeme = Operator::Less; break;
     case '=': lexeme = Operator::Equal; break;
     case '!': lexeme = Operator::Not; break;
+    case '&': lexeme = Operator::And; break;
     default:
       // error
       lexeme = std::nullopt;
