@@ -216,10 +216,8 @@ The structure of the \code{Parser} differs slightly from this grammar
 because the parsing of the variables \cfgvar{decl} and \cfgvar{decl\_assign}, as well 
 as \cfgvar{expr} and \cfgvar{expr\_tail} are merged into single 
 methods \code{declaration()} and \code{expression()}.
-
 While parsing, the parser constructs an Abstract Syntax Tree, 
-whose structure closely represents the variables in the grammar 
-above, with some variables merged into one node.
+whose structure is descibed in the next section.
 
 \clearpage
 \label{sect:AST}
@@ -303,6 +301,27 @@ some special behaviour for most node types. However, using
 inheritance would probably be better because it would make 
 implementing changes easier and less likely to cause bugs.
 One would just have to circumvent the return-value problem in some way.
+
+\subsection{Semantic analysis}
+
+The specification states that MiniPL uses a single global scope 
+for all names. This makes it unclear what should happen when 
+a variable is declared inside an if- or for-statement, 
+especially since variables can only be declared once.
+For clarity, I have decided that variables can not be 
+declared in inner 'scopes', i.e. inside \code{if} or \code{for}.
+
+The semantic analysis is split into 
+two components: \code{SemanticAnalyzer}, and \code{TypeChecker}.
+The semantic analyzer checks that all variables are declared 
+exactly once, before they are used, that variables are not 
+declared inside if- or for-statements, and that 
+the loop variable of a for-statement can not be assigned 
+inside the loop. The type checker checks that all expressions
+and variables have the correct types. If the 
+analysis produces no errors, the code can be executed by the 
+\code{Interpreter}.
+
 
 \label{sect:errors}
 \section{Error handling}
