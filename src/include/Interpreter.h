@@ -1,3 +1,4 @@
+#pragma once
 #include <map>
 #include "Util.h"
 #include "AstNode.h"

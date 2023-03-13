@@ -1,3 +1,4 @@
+#pragma once
 #include "Scanner.h"
 #include "AstNode.h"
 
