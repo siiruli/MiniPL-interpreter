@@ -50,7 +50,7 @@ INSTANTIATE_TEST_SUITE_P(
       "", "essra\nessraessra"
     },
     std::tuple{
-      Program{"var X : bool := \"aa\" < \"ab\";\n",
+      Program{"var X : bool := \"aa\" < \"ab\" = 1 < 2;\n",
       "print X;\n",
       "print \"\\n\";\n",
       "print X & X;\n"},
