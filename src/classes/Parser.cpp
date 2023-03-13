@@ -412,36 +412,3 @@ void Parser::raiseError(NodeType &node, ParsingError error){
   error.contextSpan += error.span;
   handler.raiseError(error);
 }
-
-template<class ExpectedType, class NodeType>
-std::optional<ExpectedType> Parser::expect(NodeType &node){
-  Token token = it.currentToken();
-  if(std::holds_alternative<ExpectedType>(token.value)){
-    addMeta(node, token);
-    it.nextToken();
-    return std::get<ExpectedType>(token.value);
-  }else{
-    // Error
-    // return it.currentToken();
-    
-    // Error error{token.span, ParsingError::UnexpectedToken, ""};
-    // handler.raiseError(error);
-    return {};
-    // exit(1);
-  }
-}
-
-template<class NodeType>
-bool Parser::expect(const TokenValue expected, NodeType &node){
-  Token token = it.currentToken();
-  if(token.value == expected){
-    addMeta(node, it.currentToken());
-    it.nextToken();
-    return true;
-  }else{
-    // ERROR
-
-    // exit(1);
-    return false;
-  }
-}

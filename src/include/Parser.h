@@ -52,11 +52,7 @@ class Parser {
 
     std::vector<TokenValue> expectedVals;
 
-    template<class ExpectedType, class NodeType>
-    std::optional<ExpectedType> expect(NodeType &node);
-    
-    template<class NodeType>
-    bool expect(const TokenValue expected, NodeType &node);
+
 
 
     template<class NodeType>
