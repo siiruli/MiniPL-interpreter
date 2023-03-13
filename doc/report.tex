@@ -126,7 +126,7 @@ scanner skips all comments and whitespace between tokens.
 
 
 
-\clearpage
+% \clearpage
 \section{Parsing}
 
 The parser is a recursive-descent parser with one-token look-ahead.
@@ -201,14 +201,14 @@ variables \cfgvar{expr($i$)} , \cfgvar{expr$\_$tail($i$)},
 \cfgvar{unary$\_$op($i$)} and \cfgvar{op($i$)}. The index goes 
 from $0$ (lowest) to max\_i (highest), and the 'operands' 
 of expression with level $i$ are expressions of level $i+1$.
-There are 6 different precedence classes (copied from c++):
+There are 6 different precedence classes (copied from C++):
 \begin{itemize}
-  \item[5:] logical not (!)
-  \item[4:] div and mul (/, *)
-  \item[3:] add, subtract (+, -)
+  \item[5:] logical not ($!$)
+  \item[4:] div and mul ($/$, $*$)
+  \item[3:] add, subtract ($+$, $-$)
   \item[2:] less than ($<$)
-  \item[1:] equal (=)
-  \item[0:] logical and (\&)
+  \item[1:] equal ($=$)
+  \item[0:] logical and ($\&$)
 \end{itemize}
 
 % \subsection{Parser}
