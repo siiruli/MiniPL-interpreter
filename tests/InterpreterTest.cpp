@@ -40,7 +40,7 @@ INSTANTIATE_TEST_SUITE_P(
     std::tuple{
       Program{"var X : bool := !!(1+3 = 4/4*4);\n",
       "print X;\n",
-      "print !X;\n"},
+      "print !!!!!X;\n"},
       "", "10"
     },
     std::tuple{
