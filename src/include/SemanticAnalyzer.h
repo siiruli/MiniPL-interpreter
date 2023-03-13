@@ -8,7 +8,7 @@
 struct variable {
   variable() : declared{1} {}
   bool declared = 0;
-  ForAstNode *forParent;
+  ForAstNode *forParent = 0;
 };
 
 class SemanticAnalyzer {

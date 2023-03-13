@@ -34,7 +34,7 @@ class Parser {
     StatementNode ifStatement();
     StatementNode readStatement();
     StatementNode printStatement();
-    ExprNode expression();
+    ExprNode expression(int precedence = 0);
     ExprNode operand();
     
   private:

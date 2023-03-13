@@ -224,36 +224,69 @@ StatementNode Parser::printStatement(){
   // addMeta(node, node.expr);
   return node;
 }
+bool isUnaryOp(TokenValue op){
+  return op == TokenValue{Operator::Not} || 
+    op == TokenValue{Operator::Identity};
+}
+const int op_max_precedence = 5;
+int getPrecedence(Operator op){
+    switch (op)
+  {
+    case Operator::Identity:
+    case Operator::Not:
+      return 5;
+    case Operator::Mul: 
+    case Operator::Div: 
+      return 4;
+    case Operator::Sub: 
+    case Operator::Add: 
+      return 3;
+    case Operator::Less:
+      return 2;
+    case Operator::Equal: 
+      return 1;
+    case Operator::And:
+      return 0;
+    break;
+  }
+  return 0;
+}
+int getPrecedence(TokenValue op){
+  if(std::holds_alternative<Operator>(op)){
+    return getPrecedence(std::get<Operator>(op));
+  }else return -1;
+}
 
-ExprNode Parser::expression(){
+
+
+ExprNode Parser::expression(int precedence){
+  if(precedence > op_max_precedence) return operand();
   Token token = it.currentToken();
-  if(token.value == TokenValue{Operator::Not}){
+  if(isUnaryOp(token.value) 
+    && getPrecedence(token.value) == precedence){
     UnaryOp node;
     node.op = match<Operator>(node);
-    node.opnd = std::make_unique<ExprNode>(operand());
+    node.opnd = std::make_unique<ExprNode>(expression(precedence));
     addMeta(node, *node.opnd);
     return node;
   }else{
     
-    ExprNode opnd = operand();
+    ExprNode opnd = expression(precedence+1);
 
-    if(std::holds_alternative<Operator>(it.currentToken().value)){
+    while(std::holds_alternative<Operator>(it.currentToken().value) 
+        && getPrecedence(it.currentToken().value) == precedence){
       BinaryOp node;
-      if(it.currentToken().value == TokenValue{Operator::Not}){
+      if(isUnaryOp(it.currentToken().value)){
         raiseError(node);
       }
       node.opnd1 = std::make_unique<ExprNode>(std::move(opnd));
+      addMeta(node, *node.opnd1);
       node.op = match<Operator>(node);
-      node.opnd2 = std::make_unique<ExprNode>(operand());
+      node.opnd2 = std::make_unique<ExprNode>(expression(precedence+1));
       addMeta(node, *node.opnd2);
-      return node;
-    }else{
-      UnaryOp node;
-      node.op = Operator::Identity;
-      node.opnd = std::make_unique<ExprNode>(std::move(opnd));
-      addMeta(node, *node.opnd);
-      return node;
+      opnd = std::move(node);
     }
+    return opnd;
   }
 }
 ExprNode Parser::operand(){

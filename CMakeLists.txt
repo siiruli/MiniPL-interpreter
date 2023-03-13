@@ -11,7 +11,7 @@ message("PROJECT SOURCE DIRECTORY ${PROJECT_SOURCE_DIR}")
 # # Compile flags
 # SET(GCC_COVERAGE_COMPILE_FLAGS "-DARMA_DONT_USE_WRAPPER -std=c++17 -ggdb -Wall -Wextra -g -O3 -march=native -MMD -MP -fopenmp")
 # SET(GCC_COVERAGE_LINK_FLAGS    "-DARMA_DONT_USE_WRAPPER -larmadillo -lopenblas -llapack -fopenmp -lnlopt -lm")
-SET(GCC_COVERAGE_COMPILE_FLAGS "-std=c++17 -O2 -Wall")
+SET(GCC_COVERAGE_COMPILE_FLAGS "-std=c++17 -Wall")
 SET(GCC_COVERAGE_LINK_FLAGS    "")
 
 # # Add to CMake variables

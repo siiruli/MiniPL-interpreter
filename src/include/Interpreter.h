@@ -61,7 +61,7 @@ class Interpreter {
           return func(arg1, arg2); 
         },
         [&](auto arg1, auto arg2)  -> ExprValue {
-          exit(1); return "TypeError";
+          throw(RunTimeException("wrong types")); return "TypeError";
         }
       }, a, b);
     };
@@ -72,18 +72,18 @@ class Interpreter {
 namespace Op {
   auto add = overloaded {
     [](auto a, auto b){return a+b;},
-    [](bool a, bool b){exit(1); return "TypeError";}
+    [](bool a, bool b){throw(RunTimeException("wrong types")); return "TypeError";}
   };
   auto sub = overloaded {
-    [](auto a, auto b){exit(1); return "TypeError";},
+    [](auto a, auto b){throw(RunTimeException("wrong types")); return "TypeError";},
     [](int a, int b){return a-b;}
   };
   auto mul = overloaded {
-    [](auto a, auto b){exit(1); return "TypeError";},
+    [](auto a, auto b){throw(RunTimeException("wrong types")); return "TypeError";},
     [](int a, int b){return a*b;}
   };
   auto div = overloaded {
-    [](auto a, auto b){exit(1); return "TypeError";},
+    [](auto a, auto b){throw(RunTimeException("wrong types")); return "TypeError";},
     [](int a, int b){
       if(b == 0){
         throw RunTimeException("Division by zero");
@@ -94,12 +94,15 @@ namespace Op {
   auto eq = [](auto a, auto b){return a == b;};
   auto less = [](auto a, auto b){return a < b;};  
   auto logAnd = overloaded {
-    [](auto a, auto b){exit(1); return "TypeError";},
-    [](bool a, bool b){return a && b;}
+    [](bool a, bool b){return a && b;},
+    [](auto a, auto b){throw(RunTimeException("wrong types")); return "TypeError";}
   };
-  auto logNot = overloaded {
-    [](auto a){exit(1); return "TypeError";},
-    [](bool a){return !a;}
+  auto logNot = [](ExprValue val) {
+    if(std::holds_alternative<bool>(val)){
+      return !std::get<bool>(val);
+    }else{
+      throw(RunTimeException("wrong type"));
+    }
   };
 
 }
