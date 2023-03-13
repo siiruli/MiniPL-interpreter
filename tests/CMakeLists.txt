@@ -21,11 +21,14 @@ SET(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} ${GCC_COVERAGE_COMPILE_FLAGS}")
 SET(CMAKE_EXE_LINKER_FLAGS  "${CMAKE_EXE_LINKER_FLAGS} ${GCC_COVERAGE_LINK_FLAGS}")
 
 
+set_target_properties(${BINARY} PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
 
 include_directories("/usr/local/include")
 include_directories("${PROJECT_SOURCE_DIR}/src/include")
 
 message("${PROJECT_SOURCE_DIR}/src/include")
+
+
 
 #set_property(DIRECTORY PROPERTY VS_DEBUGGER_WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}")
   
