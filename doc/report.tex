@@ -43,7 +43,10 @@ unicode = {true},
 
 \section{Introduction}
 This project is an interpreter for a small toy language
-called MiniPL. The interpreter was implemented in C++.
+called MiniPL. 
+The language and project specifications are included in the 
+appendix.
+The interpreter was implemented in C++.
 It performs all the main phases of interpretation: 
 scanning, parsing, semantic analysis (including type checking), 
 and execution. The project is built with CMake and tested 
@@ -55,6 +58,9 @@ which can be installed on Ubuntu with:
 \begin{verbatim}
 sudo apt install cmake
 \end{verbatim}
+
+The binary is included in the submission just in case there 
+are problems.
 
 \paragraph*{Usage:} Build the project as shown below.
 
@@ -565,8 +571,8 @@ sample programs and looking at the output.
 pagecommand={\section{#2}\label{pdf:#2}}]{#1}
 \includepdf[pages={2-},scale=0.7]{#1}}
 
-% \pdfappendix{MiniPL.pdf}{MiniPL Specification}
+\pdfappendix{MiniPL.pdf}{MiniPL Specification}
 
-% \pdfappendix{CourseProject.pdf}{Project Specification}
+\pdfappendix{CourseProject.pdf}{Project Specification}
 
 \end{document}
