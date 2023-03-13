@@ -46,8 +46,32 @@ This project is an interpreter for a small toy language
 called MiniPL. The interpreter was implemented in C++.
 It performs all the main phases of interpretation: 
 scanning, parsing, semantic analysis (including type checking), 
-and execution. The project is be built with CMake and tested 
-with GoogleTest. 
+and execution. The project is built with CMake and tested 
+with GoogleTest. GoogleTest is included in the zip file in 
+folder \code{libraries}, so it does not need to be installed.
+
+\paragraph*{Dependencies:} Building the project requires CMake, 
+which can be installed on Ubuntu with: 
+\begin{verbatim}
+sudo apt install cmake
+\end{verbatim}
+
+\paragraph*{Usage:} Build the project as shown below.
+
+\begin{verbatim}
+# create build directory
+mkdir build
+cd build
+cmake ..
+
+# build and run source target
+make MiniPL_interpreter_run
+bin/MiniPL_interpreter_run <filename>
+
+# build and run test target
+make MiniPL_interpreter_tst
+bin/MiniPL_interpreter_tst
+\end{verbatim}
 
 \section{Architecture}
 
