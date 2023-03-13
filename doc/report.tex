@@ -144,6 +144,7 @@ The parser implements the LL(1) grammar shown below.
 The terminals are \cfgvar{literal}, \cfgvar{op}, \cfgvar{ident}, 
 \cfgvar{unary$\_$op}, the end-of-file symbol \$\$, punctuation 
 and the bolded Keywords.
+
 \begin{align*}
   \cfgrule{prog}{\cfgvar{stmts} \$\$} \\
   \cfgrule{stmts}{\cfgvar{stmt}; \cfgvar{stmts} $\mid$ $\varepsilon$} \\
@@ -180,20 +181,37 @@ and the bolded Keywords.
   \cfgrule{else}{
     \cfgterm{else} \cfgvar{stmts} $\mid$ $\varepsilon$
   } \\
-  \cfgrule{expr}{ 
-    \cfgvar{opnd} \cfgvar{expr$\_$tail} 
-    $\mid$ \cfgvar{unary$\_$op} \cfgvar{opnd}
+  \cfgrule{expr}{ \cfgvar{expr($0$)} }\\
+  \cfgrule{expr($i$)}{ 
+    \cfgvar{expr(i+1)} \cfgvar{expr$\_$tail($i$)} 
+    $\mid$ \cfgvar{unary$\_$op($i$)} \cfgvar{epxr($i$)}
   } \\
-  \cfgrule{expr$\_$tail}{
-    \cfgvar{op} \cfgvar{opnd} $\mid$ $\varepsilon$
+  \cfgrule{expr$\_$tail($i$)}{
+    \cfgvar{op($i$)} \cfgvar{expr($i+1$)} \cfgvar{expr$\_$tail($i$)} $\mid$ $\varepsilon$
   } \\
-  \cfgrule{opnd}{
+  \cfgrule{expr($\max\_i+1$)}{
     \cfgvar{literal} $\mid$ \cfgvar{ident} 
     $\mid$ \cfgterm{(} \cfgvar{expr} \cfgterm{)}
   } \\
 \end{align*}
+The grammar is modified from the specification to allow 
+for expression with more than two operands. Operator 
+precedence is represented with the precedence index $i$ in 
+variables \cfgvar{expr($i$)} , \cfgvar{expr$\_$tail($i$)},
+\cfgvar{unary$\_$op($i$)} and \cfgvar{op($i$)}. The index goes 
+from $0$ (lowest) to max\_i (highest), and the 'operands' 
+of expression with level $i$ are expressions of level $i+1$.
+There are 6 different precedence classes (copied from c++):
+\begin{itemize}
+  \item[5:] logical not (!)
+  \item[4:] div and mul (/, *)
+  \item[3:] add, subtract (+, -)
+  \item[2:] less than (<)
+  \item[1:] equal (=)
+  \item[0:] logical and (\&)
+\end{itemize}
 
-\subsection{Parser}
+% \subsection{Parser}
 The structure of the \code{Parser} differs slightly from this grammar 
 because the parsing of the variables \cfgvar{decl} and \cfgvar{decl\_assign}, as well 
 as \cfgvar{expr} and \cfgvar{expr\_tail} are merged into single 
