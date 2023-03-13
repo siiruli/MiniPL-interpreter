@@ -302,7 +302,7 @@ inheritance would probably be better because it would make
 implementing changes easier and less likely to cause bugs.
 One would just have to circumvent the return-value problem in some way.
 
-\subsection{Semantic analysis}
+\subsection{Semantic analysis and behaviour}
 
 The specification states that MiniPL uses a single global scope 
 for all names. This makes it unclear what should happen when 
@@ -310,6 +310,7 @@ a variable is declared inside an if- or for-statement,
 especially since variables can only be declared once.
 For clarity, I have decided that variables can not be 
 declared in inner 'scopes', i.e. inside \code{if} or \code{for}.
+
 
 The semantic analysis is split into 
 two components: \code{SemanticAnalyzer}, and \code{TypeChecker}.
@@ -321,6 +322,35 @@ inside the loop. The type checker checks that all expressions
 and variables have the correct types. If the 
 analysis produces no errors, the code can be executed by the 
 \code{Interpreter}.
+
+The \code{Interpreter} visits the AST and executes the 
+program based on the information in the nodes. The 
+variable identifiers are stored in an \code{std::map}.
+The read statement is impemented 
+using \code{std::cin}, with the failbits on. If an 
+incorrect value is given as input, \code{cin} throws an 
+exception which is catched by the interpreter and converted 
+into a normal MiniPL runtime error.
+Integers are stored as the usual 32-bit \code{int}, and 
+integer overflow is undefined behaviour (same as C++, no 
+additional checks).
+In a division operation the interpreter checks that the 
+divisor is not zero and causes a runtime error if necessary.
+
+
+The language specification mentions that print and read 
+statements can handle integers and strings, but
+I decided to allow boolean values in the print and read 
+statements as well. I feel that this is more convenient for 
+a programmer who wants to use e.g. debug prints in their 
+program.  This also means the there are no type checks 
+for read and print. 
+In the input and output, Booleans are always printed as 
+'0' if false and '1' 
+if true. Likewise, when reading a boolean from input, the 
+input has to be either '0' or '1'. Inputting any other value 
+produces a runtime error.
+
 
 
 \label{sect:errors}
