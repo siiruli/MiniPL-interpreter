@@ -73,6 +73,15 @@ make MiniPL_interpreter_tst
 bin/MiniPL_interpreter_tst
 \end{verbatim}
 
+The \code{samples} directory contains some example programs 
+that can be run with the interpreter. Some of them are malformed 
+and produce errors to demonstrate the error recovery strategy 
+of the interpreter. From the build directory, to run the sample 
+\code{samples/1.mpl}, use 
+\begin{verbatim}
+bin/MiniPL_interpreter_run ../samples/1.mpl
+\end{verbatim}
+
 \section{Architecture}
 
 
@@ -102,7 +111,8 @@ The \code{main} function in \code{main.cpp} just takes a
 filename as a command line parameter and calls 
 \code{MiniPL.runFile(filename)}. 
 
-Most of the data is stored in the following struct types:
+Most of the data is stored in structs of the following types, 
+which only depend on each other:
 \begin{itemize}
   \item \code{Position}: A position in the program code (row and column).
   \item \code{Span}: The start and end positions of a token, node or other object.
@@ -114,6 +124,14 @@ Most of the data is stored in the following struct types:
   error types all inherit from \code{ErrorBase}.
 \end{itemize}
 
+The main components (other than \code{MiniPL}) do not directly 
+communicate with each other, but they all depend on some of 
+these structs. 
+The \code{Scanner} does not depend on the AST-nodes, and 
+the the other components (apart from \code{Parser}) can not 
+access tokens. Each component has their own error type that they 
+can create. \code{ErrorHandler} can access the error base class 
+\code{ErrorBase} but not the specific kinds of errors.
 
 
 \clearpage
