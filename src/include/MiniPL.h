@@ -1,3 +1,5 @@
+#pragma once
+#include <fstream>
 #include "Scanner.h"
 #include "Parser.h"
 #include "AstNode.h"
@@ -15,7 +17,10 @@ class MiniPL {
     MiniPL(std::istream &in, std::ostream &out) : 
       input{in}, 
       output{out} 
-    {}
+    {
+      input.exceptions(std::ifstream::failbit | 
+      std::ifstream::badbit | std::ifstream::eofbit);
+    }
 
     void runFile(std::string filename);
     void runFile(std::string filename, ErrorHandler &handler);
