@@ -4,7 +4,7 @@
 \newcommand*{\code}[1]{\texttt{#1}}
 \usepackage{parskip}
 \usepackage{pdfpages}
-
+\usepackage{moreverb}
 % \usepackage{pdfpages}
 \usepackage{pgffor}
 \usepackage{hyperref}      
@@ -78,6 +78,7 @@ that can be run with the interpreter. Some of them are malformed
 and produce errors to demonstrate the error recovery strategy 
 of the interpreter. Here are some examples of running the sample 
 files from the build directory: 
+
 \begin{verbatim}
 project/build$ bin/MiniPL_interpreter_run ../samples/1.mpl
 16
@@ -92,7 +93,8 @@ at 10:8-10:13 in variable (10:8-10:13)
 project/build$ bin/MiniPL_interpreter_run ../samples/3.mpl
 Give a number 4
 The result is: 24
-x\end{verbatim}
+x
+\end{verbatim}
 
 \clearpage
 \section{Architecture}
@@ -478,6 +480,27 @@ can represent are listed below:
 \end{itemize}
 
 % \subsection{Error messages}
+\begin{verbatim}
+---------------------------------------------------------------
+Lexical error: Unexpected newline at 13:23-13:23
+Found in string literal (13:9-13:23)
+13 |  print "This is y: p;
+   |                      ^
+
+Syntax error: Unexpected keyword 'print' at 14:3-14:7
+Found in print-statement (13:3-14:7)
+13 |  print "This is y: p;
+14 |  print y; 
+   |  ^----        
+---------------------------------------------------------------
+Runtime error: Division by zero at 3:16-3:18
+Found in expression (3:16-3:18)
+3 |var x : int := 1/0;
+  |               ^--
+---------------------------------------------------------------
+\end{verbatim}
+
+
 
 \subsection{Error recovery}
 

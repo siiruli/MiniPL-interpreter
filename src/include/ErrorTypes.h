@@ -20,7 +20,8 @@ struct ErrorBase {
     desc << errorClass() << ": ";
     desc << shortDescription();
     desc << " at " << span;
-    desc << " in " << context << " (" << contextSpan << ")";
+    desc << "\n";
+    desc << "Found in " << context << " (" << contextSpan << ")";
     return desc.str(); 
   };
   Span span;
