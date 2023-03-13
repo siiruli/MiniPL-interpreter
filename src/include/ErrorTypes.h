@@ -53,16 +53,26 @@ struct ScanningError : ErrorBase {
   
   
 };
+
+inline std::string valueStr(TokenValue value){
+  std::stringstream desc;
+  if(std::holds_alternative<VarIdent>(value)) 
+    desc << "identifier '" << value << "'";
+  else desc << value;
+  return desc.str();
+}
 struct ParsingError : ErrorBase {
   Token token;
   std::string data;
+
+  std::optional<TokenValue> expected = std::nullopt;
+  
   inline virtual std::string errorClass() { return "Syntax error"; }
   inline virtual std::string shortDescription(){ 
     std::stringstream desc;
-    desc << "Unexpected ";
-    if(std::holds_alternative<VarIdent>(token.value)) 
-      desc << "identifier '" << token.value << "'";
-    else desc << token.value;
+    desc << "Unexpected " << valueStr(token.value);
+    if(expected.has_value()) 
+      desc << "(expected " << valueStr(expected.value()) << ")";
     return desc.str();
   }
 };

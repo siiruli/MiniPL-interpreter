@@ -70,7 +70,7 @@ class Parser {
 
 
     template<class NodeType>
-    void raiseError(NodeType &node);
+    void raiseError(NodeType &node, ParsingError error = ParsingError{});
 
     TokenClass classify(Token token);  
     

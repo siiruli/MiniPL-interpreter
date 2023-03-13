@@ -375,7 +375,9 @@ void Parser::match(TokenValue expected, NodeType &node){
     it.nextToken();
   }else{
     // ERROR
-    raiseError(node);
+    ParsingError error;
+    error.expected = expected;
+    raiseError(node, error);
     throw ParserException();
     // exit(1);
   }
@@ -403,11 +405,9 @@ ExpectedType Parser::match(NodeType &node){
 }
 
 template<class NodeType>
-void Parser::raiseError(NodeType &node){
-  ParsingError error;
+void Parser::raiseError(NodeType &node, ParsingError error){
   error.token = it.currentToken();
   error.span = error.token.span;
-
   error.addContext(node);
   error.contextSpan += error.span;
   handler.raiseError(error);
