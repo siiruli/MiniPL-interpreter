@@ -26,7 +26,7 @@ class Parser {
     Parser(TokenIterator &iterator, ErrorHandler &handler);
 
     StatementNode program();
-    StatementsAstNode statements();
+    StatementsAstNode statements(bool isRoot = false);
     std::optional<StatementNode> statement();
     StatementNode assignment();
     StatementNode declaration();

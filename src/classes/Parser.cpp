@@ -30,7 +30,7 @@ Parser::Parser(TokenIterator &it, ErrorHandler &handler)
 StatementNode Parser::program(){
   StatementsAstNode stmts;
   // try {
-    stmts = statements();
+    stmts = statements(true);
   try{
     match(Delimiter::Eof, stmts);
   }catch(ParserException &e){
@@ -39,7 +39,7 @@ StatementNode Parser::program(){
   return stmts;
 }
 
-StatementsAstNode Parser::statements(){
+StatementsAstNode Parser::statements(bool isRoot){
   StatementsAstNode node;
   while(true){
     try {
@@ -47,15 +47,31 @@ StatementsAstNode Parser::statements(){
         node.statements.push_back(std::move(*stmt));
         addMeta(node, stmt.value());
       }else{
-        break;
+        if(isRoot && classify(it.currentToken()) == TokenClass::EndKeyword){
+          // skip end for and end if
+          it.nextToken();
+          Token token = it.currentToken();
+          if(token.value == TokenValue{Keyword::For} 
+            || token.value == TokenValue{Keyword::If}){
+            it.nextToken();
+          }
+          if(it.currentToken().value == TokenValue{Delimiter::Semicolon}){
+            it.nextToken();
+          }
+          continue;
+        }
+        else break;
       }
     } catch(ParserException &e){
       while(classify(it.currentToken()) == TokenClass::Unimportant){
         it.nextToken();
       }
       auto c = classify(it.currentToken());
+      if(c == TokenClass::EndKeyword){
+        if(!isRoot) return node;
+        else continue;
+      }
       if(c == TokenClass::EndOfStmt) it.nextToken();
-
     }
   }
   return node;
@@ -78,7 +94,8 @@ TokenClass Parser::classify(Token token){
           c = TokenClass::StartOfStmt;
           break;
         case Keyword::End:
-          // c = TokenClass::EndKeyword; 
+          c = TokenClass::EndKeyword;
+          break; 
         default:
           c = TokenClass::Unimportant;
           break;

@@ -70,7 +70,7 @@ void ErrorMessager::printError(ErrorBase &error){
   if(startLine > endLine) return;
 
   if(startLine < span.start.lineNumber) 
-    output << lineString(endLine);
+    output << lineString(startLine);
   if(startLine+1 < span.start.lineNumber)
     output << lineSkipped();
 
