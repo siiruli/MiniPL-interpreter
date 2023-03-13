@@ -100,7 +100,7 @@ The codebase has the following main components:
   \item \code{TypeChecker}: Finds type errors.
   \item \code{Interpreter}: Executes the program.
   \item \code{ErrorHandler}: Keeps track of errors. Prints them with
-  \code{printErrors()} .
+  \code{printErrors()}.
 \end{itemize}
 The class \code{MiniPL} is the heart of the interpreter. When 
 interpreting a program, it initializes 
@@ -118,7 +118,7 @@ which only depend on each other:
   \item \code{Span}: The start and end positions of a token, node or other object.
   \item \code{Token}: One token. Contains a \code{Span} and 
   a \code{TokenValue}.
-  \item AST-nodes: Many different types of nodes 
+  \item AST-nodes: Many types of nodes 
         (see Section \ref{sect:AST}).
   \item Error: Different 
   error types all inherit from \code{ErrorBase}.
@@ -128,7 +128,7 @@ The main components (other than \code{MiniPL}) do not directly
 communicate with each other, but they all depend on some of 
 these structs. 
 The \code{Scanner} does not depend on the AST-nodes, and 
-the the other components (apart from \code{Parser}) can not 
+the other components (apart from \code{Parser}) can not 
 access tokens. Each component has their own error type that they 
 can create. \code{ErrorHandler} can access the error base class 
 \code{ErrorBase} but not the specific kinds of errors.
@@ -143,7 +143,7 @@ in the program.
 It iterates through the program using a small helper-class 
 \code{ProgramIterator}, which has methods \code{currentChar()}, 
 \code{peekChar()}, and \code{move()} for iterating. The 
-iterator additionaly keeps track of the current program \code{Position}, 
+iterator additionally keeps track of the current program \code{Position}, 
 which the scanner uses to add a \code{Span} to the tokens.
 
 The scanner always returns a viable token. After reaching the 
@@ -158,7 +158,7 @@ error messages, see Section \ref{sect:errors}.
 
 There are four five of tokens: identifiers, Keywords, 
 literals (integers or strings), operators, and delimiters.
-Below is a regular definitions of the possible tokens. 
+Below is a regular definition of the possible tokens. 
 \begin{itemize}
   \item[] \code{VarIdent} $\rightarrow$ \verb?[A-Za-z][A-Za-z0-9_]*?
   \item[] \code{Literal} $\rightarrow$ \verb_[0-9]+|"([^\n"]|\\(n|t|\n|.))*"_
@@ -282,7 +282,7 @@ because the parsing of the variables \cfgvar{decl} and \cfgvar{decl\_assign}, as
 as \cfgvar{expr} and \cfgvar{expr\_tail} are merged into single 
 methods \code{declaration()} and \code{expression()}.
 While parsing, the parser constructs an Abstract Syntax Tree, 
-whose structure is descibed in the next section.
+whose structure is described in the next section.
 
 \clearpage
 \section{Abstract Syntax Trees}
@@ -294,7 +294,7 @@ statements and expressions, which are mostly handled differently.
 They are also stored in different variants.
 
 The type \code{StatementNode} is a 
-\code{std::variant} which may contain an AST-node of any of the 
+\code{std::variant} which may contain an AST-node of one of the 
 following types:
 
 \begin{itemize}
@@ -353,7 +353,7 @@ They implement \code{visit} functions for all types of AST nodes
 and recursively visit the children.
 Instead of using the usual visitor design pattern, they use 
 \code{std::visit} to visit the actual objects inside the variants
-\code{StatementNode} and \code{ExprAstNode}. This way the 
+\code{StatementNode} and \code{ExprNode}. This way the 
 AST nodes do not need to know anything about the visitors, 
 and do not need any methods to accept visitors. 
 
@@ -362,12 +362,12 @@ components do not use inheritance because their \code{visit}-functions
 to expression nodes need different types of return values and 
 so can not inherit from the same base class. This is not a large 
 problem in the current use case, because each component has 
-some special behaviour for most node types. However, using 
+some special behavior for most node types. However, using 
 inheritance would probably be better because it would make 
 implementing changes easier and less likely to cause bugs.
 One would just have to circumvent the return-value problem in some way.
 
-\subsection{Semantic analysis and behaviour}
+\subsection{Semantic analysis and behavior}
 
 The specification states that MiniPL uses a single global scope 
 for all names. This makes it unclear what should happen when 
@@ -383,7 +383,7 @@ The semantic analyzer checks that all variables are declared
 exactly once, before they are used, that variables are not 
 declared inside if- or for-statements, and that 
 the loop variable of a for-statement can not be assigned 
-inside the loop. The type checker checks that all expressions
+inside the loop. The \code{TypeChecker} checks that all expressions
 and variables have the correct types. If the 
 analysis produces no errors, the code can be executed by the 
 \code{Interpreter}.
@@ -391,13 +391,13 @@ analysis produces no errors, the code can be executed by the
 The \code{Interpreter} visits the AST and executes the 
 program based on the information in the nodes. The 
 variable identifiers are stored in an \code{std::map}.
-The read statement is impemented 
-using \code{std::cin}, with the failbits on. If an 
+The read statement is implemented 
+using \code{std::cin}, with the fail bits on. If an 
 incorrect value is given as input, \code{cin} throws an 
-exception which is catched by the interpreter and converted 
+exception which is caught by the interpreter and converted 
 into a normal MiniPL runtime error.
 Integers are stored as the usual 32-bit \code{int}, and 
-integer overflow is undefined behaviour (same as C++, no 
+integer overflow is undefined behavior (same as C++, no 
 additional checks).
 In a division operation the interpreter checks that the 
 divisor is not zero and causes a runtime error if necessary.
@@ -410,7 +410,7 @@ statements as well. I feel that this is more convenient for
 a programmer who wants to use e.g. debug prints in their 
 program.  This also means the there are no type checks 
 for read and print. 
-In the input and output, Booleans are always printed as 
+In the input and output, booleans are always printed as 
 '0' if false and '1' 
 if true. Likewise, when reading a boolean from input, the 
 input has to be either '0' or '1'. Inputting any other value 
@@ -428,7 +428,7 @@ of whether errors have been encountered.
 The components then do something component-specific to recover and 
 continue processing the input program. If the \code{ErrorHandler} 
 has errors after the scanning and parsing passes, the interpreter 
-ends the process. Otherwise it continues with semantic analysis 
+ends the process. Otherwise, it continues with semantic analysis 
 and, if no errors are encountered, finally runs the program.
 
 \subsection{Error types}
@@ -463,11 +463,11 @@ not it runs into errors while processing. When a problem is
 encountered and the current token can not be scanned, the scanner 
 skips it and scans the next token (after raising an error to the 
 handler). In some cases, e.g. when encountering a newline while 
-scanning a string, the \code{Scanner} can return the the token it 
+scanning a string, the \code{Scanner} can return the token it 
 was scanning while the error happened. When the end of the 
 program has been reached, the Scanner returns an end-of-file token.
 
-The \code{Parser} has an exception-based racovery approach. When the 
+The \code{Parser} has an exception-based recovery approach. When the 
 \code{match}-function can not match the current token, an error 
 is raised and an exception thrown. The exception is caught 
 in the \code{statements} function, and tokens are skipped until
@@ -480,7 +480,7 @@ new statements and resumes parsing from that point.
 The \code{TypeChecker} can return a \code{Broken} type from e.g.
 a malformed expression or an undeclared variable. Type checks 
 for broken types are automatically skipped to avoid cascading 
-errors. Thus a long expression with a type error in inner 
+errors. Thus, a long expression with a type error in inner 
 parenthesis only produces one error. In case of multiple 
 declarations of the same variable, the first declaration is 
 assumed to be correct.
@@ -493,8 +493,8 @@ program.
 
 \section{Testing}
 
-Automated testing of the interpreter was implemented with the 
-googletest framework. All tests and sample programs were written 
+The GoogleTest framework was used to write automated 
+tests for the project. All tests and sample programs were written 
 by hand, based on whatever 
 things I thought were important. When encountering a bug, I would 
 fix the bug and write a test for it. 
@@ -504,7 +504,7 @@ The scanner is well tested with unit tests
 covering all different token types, while other components have 
 only a few limited unit tests. The whole system is tested with 
 integration tests that check whether running the test programs 
-produces the expected behaviour. Additionally, there is one 
+produces the expected behavior. Additionally, there is one 
 test that runs all programs in the \code{samples} directory 
 and (hopefully) checks that the interpreter doesn't crash.
 
