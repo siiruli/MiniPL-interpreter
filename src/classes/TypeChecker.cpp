@@ -156,17 +156,9 @@ template<class NodeType>
 void TypeChecker::raiseError(NodeType &node, 
     Types exp, Types got, Span span){
   
-  TypeError error;
-  
-  error.span = span;
+  TypeError error = createError<TypeError>(span, node);  
   error.expected = exp;
   error.got = got;
-  raiseError(node, error);
-}
-
-
-template<class NodeType> 
-void TypeChecker::raiseError(NodeType &node, TypeError error){
-  error.addContext(node);
   handler.raiseError(error);
 }
+

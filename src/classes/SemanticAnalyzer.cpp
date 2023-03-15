@@ -106,7 +106,6 @@ void SemanticAnalyzer::assignVar(NodeType &node, VarIdent varId){
   else{
     ForAstNode *forParent = getVar(varId).forParent;
     if(forParent){
-      SemanticError error;
       raiseError(*forParent, node.span, varId, 
         SemErrorType::AssignConstant);
     }
@@ -122,11 +121,9 @@ void SemanticAnalyzer::accessVar(NodeType &node, VarIdent varId){
 
 template<class NodeType> 
 void SemanticAnalyzer::raiseError(NodeType &node, Span span, VarIdent varId, SemErrorType type){
-  SemanticError error;
+  SemanticError error = createError<SemanticError>(span, node);
   error.identifier = varId;
-  error.span = span;
   error.type = type;
-  error.addContext(node);
   handler.raiseError(error);
 }
 

@@ -91,10 +91,8 @@ ExprValue Interpreter::visit(BinaryOp &node){
         break;
     }
   } catch (RunTimeException &e){
-    RuntimeError error;
-    error.span = node.span;
+    RuntimeError error = createError<RuntimeError>(node.span, node);
     error.data = e.what();
-    error.addContext(node);
     handler.raiseError(error);
     throw RunTimeException(e.what());
   }
@@ -164,10 +162,8 @@ void Interpreter::visit(ReadAstNode & node){
       input >> value;
     }, getVar(node.varId));
   } catch (std::ios_base::failure &e){
-    RuntimeError error;
+    RuntimeError error = createError<RuntimeError>(node.span, node);
     error.data = "Could not read " + node.varId + " from input";
-    error.addContext(node);
-    error.span = node.span;
     handler.raiseError(error);
     throw RunTimeException("IO failure");
   }

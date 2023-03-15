@@ -7,9 +7,16 @@
 #include "Token.h"
 #include "AstNode.h"
 
-
+template<class ErrorType, class NodeType>
+ErrorType createError(Span span, NodeType &node){
+  ErrorType error;
+  error.span = span;
+  error.addContext(node);
+  return error;
+}
 
 struct ErrorBase {
+
   template<class NodeType>
   inline void addContext(NodeType &node){
     contextSpan = node.span;
@@ -117,6 +124,7 @@ struct TypeError : ErrorBase {
 };
 
 struct RuntimeError : ErrorBase {
+
   std::string data;
   inline virtual std::string errorClass() { return "Runtime error"; }
   inline virtual std::string shortDescription(){ 
