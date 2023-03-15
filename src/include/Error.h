@@ -4,6 +4,7 @@
 #include <iostream>
 #include <ostream>
 #include <sstream>
+#include <memory>
 #include "Program.h"
 #include "Token.h"
 #include "ErrorTypes.h"
@@ -16,7 +17,6 @@ class ErrorMessager {
     inline ErrorMessager(Program &program, std::ostream &output) 
       : program(program), output(output) {}
 
-    void printError(Error &error);
     void printError(ErrorBase &error);
 
   private:
@@ -37,15 +37,19 @@ class ErrorMessager {
 
 class ErrorHandler {
   public:
+    template<class ErrorType>
+    void raiseError(ErrorType error) {
+      errors.push_back(std::make_unique<ErrorType>(error)); 
+    }
 
-    void raiseError(Error error);
+
     bool hasErrors();
 
     uint errorNumber();
     void printErrors(Program &program, std::ostream &ostream);
 
   private:
-    std::vector<Error> errors;
+    std::vector<std::unique_ptr<ErrorBase>> errors;
 
 
 };

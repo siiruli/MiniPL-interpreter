@@ -134,6 +134,3 @@ struct RuntimeError : ErrorBase {
   }
 };
 
-typedef std::variant<
-  ScanningError, ParsingError, SemanticError, TypeError, RuntimeError
-> Error;

@@ -5,18 +5,6 @@
 
 x := 1;
 
-if 1=1 do
-  var x : int;
-end if;
-
-var r : int := r + x;
-
-for y in 0..y do 
-  y := 10;
-  x := x + 1;
-end for;
-y := 1;
-
 
 var x : int := "8"; // int can't be initialized to string
 var y : string := 5 + "hello"; // Can't add string to int
