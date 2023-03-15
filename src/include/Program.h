@@ -40,6 +40,11 @@ struct Span
   Span(uint a, uint b, uint c, uint d) : start(a, b), end(c,d) {}
 
   Position start, end;
+
+  inline bool isValid() {
+    return start <= end;
+  }
+
   inline bool operator==(const Span &other) const {
     return this->start == other.start && this->end == other.end;
   }  
@@ -56,6 +61,7 @@ struct Span
 };
 
 inline std::ostream & operator<<(std::ostream &os, Span span){
+  if(!span.isValid()) return os << "-";
   return os << span.start << "-" << span.end;
 }
 

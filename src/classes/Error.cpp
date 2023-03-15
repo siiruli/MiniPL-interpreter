@@ -42,8 +42,8 @@ std::string ErrorMessager::lineSkipped(){
   return std::string(lineStartLength()-2, ' ') + "...\n";
 }
 void ErrorMessager::printSpan(Span span){
+  if(!span.isValid()) return;
   auto [start, end] = span;
-  if(!(start <= end)) return;
   output << lineString(start.lineNumber);
   int n = end.lineNumber == start.lineNumber ? 
     end.linePos - start.linePos : 
