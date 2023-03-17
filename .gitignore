@@ -9,3 +9,5 @@ build/*
 
 *.toc
 *.out
+
+!doc/report.pdf
