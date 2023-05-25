@@ -4,7 +4,13 @@
 
 /** @file */ 
 
-typedef std::variant<int, bool, std::string> ExprValue;
+// integer type
+using num = long long;
+inline num stringToNum(std::string s){
+  return stoll(s); 
+}
+
+typedef std::variant<num, bool, std::string> ExprValue;
 
 template<class... Ts> struct overloaded : Ts... { 
   using Ts::operator()...; 

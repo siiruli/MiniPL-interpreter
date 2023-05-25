@@ -159,7 +159,7 @@ std::optional<Literal> Scanner::scanInteger(){
     lexeme += *c;
     program.move();
   }
-  return Literal{std::stoi(lexeme)};
+  return Literal{stringToNum(lexeme)};
 }
 
 std::optional<Literal> Scanner::scanString(){

@@ -52,7 +52,7 @@ class Interpreter {
     ExprValue funcVisitor(T func, ExprValue a, ExprValue b) 
     {
       return std::visit( overloaded {
-        [&](int arg1, int arg2) -> ExprValue {
+        [&](num arg1, num arg2) -> ExprValue {
           return func(arg1, arg2); 
         },
         [&](std::string arg1, std::string arg2) -> ExprValue {

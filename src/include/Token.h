@@ -46,7 +46,7 @@ inline std::ostream & operator<<(std::ostream &os, Operator op){
 }
 
 struct Literal {
-  std::variant<int, std::string> value;
+  std::variant<num, std::string> value;
   inline bool operator==(const Literal &other) const {
     return value == other.value;
   }
@@ -57,7 +57,7 @@ struct Literal {
 
 inline std::ostream & operator<<(std::ostream &os, Literal l){
   std::visit(overloaded {
-    [&](int &arg){
+    [&](num &arg){
       os << "integer literal '" << arg << "'";
     },
     [&](std::string &arg){

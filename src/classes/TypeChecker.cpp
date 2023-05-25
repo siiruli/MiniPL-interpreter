@@ -7,7 +7,7 @@ Type TypeChecker::visit(ExprNode &node){
   Type value;
   value = std::visit(overloaded {
     [&](LiteralNode &node) -> Type {
-      return (std::holds_alternative<int>(node.literal.value)) 
+      return (std::holds_alternative<num>(node.literal.value)) 
                 ? Type::Int : Type::String;;
       
     },

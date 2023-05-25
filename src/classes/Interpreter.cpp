@@ -9,15 +9,15 @@ namespace Op {
   };
   auto sub = overloaded {
     [](auto a, auto b){throw(RunTimeException("wrong types")); return "TypeError";},
-    [](int a, int b){return a-b;}
+    [](num a, num b){return a-b;}
   };
   auto mul = overloaded {
     [](auto a, auto b){throw(RunTimeException("wrong types")); return "TypeError";},
-    [](int a, int b){return a*b;}
+    [](num a, num b){return a*b;}
   };
   auto div = overloaded {
     [](auto a, auto b){throw(RunTimeException("wrong types")); return "TypeError";},
-    [](int a, int b){
+    [](num a, num b){
       if(b == 0){
         throw RunTimeException("Division by zero");
       }
@@ -140,12 +140,12 @@ void Interpreter::visit(AssignAstNode &node){
 void Interpreter::visit(ForAstNode & node){
   ExprValue startVal = visit(node.startExpr);
   ExprValue endVal = visit(node.endExpr);
-  assert(std::holds_alternative<int>(startVal));
-  int start = std::get<int>(startVal);
-  assert(std::holds_alternative<int>(endVal));
-  int end = std::get<int>(endVal);
+  assert(std::holds_alternative<num>(startVal));
+  num start = std::get<num>(startVal);
+  assert(std::holds_alternative<num>(endVal));
+  num end = std::get<num>(endVal);
 
-  for(int i= start; i<= end; ++i){
+  for(num i= start; i<= end; ++i){
     this->setVar(node.var.varId, i);
     visit(node.statements);
   }
@@ -172,7 +172,7 @@ void Interpreter::visit(ReadAstNode & node){
 void Interpreter::initVar(Type type, std::string varId){
   ExprValue val;
   switch (type)  {
-    case Int: val = int(0); break;
+    case Int: val = num{0}; break;
     case Bool: val = bool(false); break;
     case String: val = ""; break;
     default: break;
